@@ -14,3 +14,6 @@ typedef struct {
     Ship submarine;
     Ship destroyer;
 } Fleet;
+
+char **initMap();
+void createMap();
