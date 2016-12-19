@@ -16,4 +16,6 @@ typedef struct {
 } Fleet;
 
 char **initMap();
-void createMap();
+void createMap(char **map);
+void displayMap(char **map);
+void placeShip(char **map);
