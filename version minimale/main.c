@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include "functions.h"
 
 int main() {
@@ -27,9 +28,10 @@ int main() {
    
     /* Map display (this is temporary, I just want to see what I'm doing) */
     displayMap(p1_def);
+    placeFleet(p1_def, &line, &column, &p1_fleet);
    
-    placeShip(p1_def, &line, &column, &p1_fleet);
-    displayMap(p1_def);
+    // placeShip(p1_def, &line, &column, &p1_fleet);
+    // displayMap(p1_def);
 
     return 0;
 }
