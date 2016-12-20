@@ -64,28 +64,98 @@ void displayMap(char **map) {
 
 /* Creates the maps (2 for each player) */
 
+Fleet createFleet() {
+    Fleet my_fleet;
+    my_fleet.carrier.length = 2;
+    my_fleet.carrier.orientation = 0;
+    my_fleet.carrier.life = 2;
+    my_fleet.battleship.length = 3;
+    my_fleet.battleship.orientation = 0;
+    my_fleet.battleship.life = 3;
+    my_fleet.cruiser.length = 3;
+    my_fleet.cruiser.orientation = 0;
+    my_fleet.cruiser.life = 3;
+    my_fleet.submarine.length = 4;
+    my_fleet.submarine.orientation = 0;
+    my_fleet.submarine.life = 4;
+    my_fleet.destroyer.length = 5;
+    my_fleet.destroyer.orientation = 0;
+    my_fleet.destroyer.life = 5;
+
+    return my_fleet;
+}
+
 /* START */
 /* Select a slot | put the line & the column values in variables*/
 void selectSlot(char **map, int *l, int *c) {
     int i;
     char line;
-    printf("Which line ?\n");
-    scanf("%c", &line);
-    line = toupper(line);
-    printf("Which column ?\n");
-    scanf("%d", c);
-    printf("You have choosen %c %d\n", line, *c);
+
+    do {
+        printf("Which line ?\n");
+        scanf("%c", &line);
+        line = toupper(line);
+    } while(line<'A' || line>('A'+NDIM-2));          // Repeat until player choose a correct line
+
+    do {
+        printf("Which column ?\n");
+        scanf("%d", c);
+    } while(*c<1 || *c>=NDIM);                       // Repeat until player choose a correct column
+    
+    
+    
+    //printf("You have choosen %c %d\n", line, *c);
     for (i = 0; i < NDIM; i++) {
-        if (map[i][0] == line)      // Find the line number which countains the letter
+        if (map[i][0] == line)                      // Find the line number which countains the letter
          *l = i;           
     }
 }
 
+int setOrientation() {
+    int o;
+   // do {
+        printf("Which orientation ? (0: horizontal  1: vertical)\n");
+        scanf("%d",&o);
+   // } while();                          // Repeat until player choose 0 or 1
+   
+    return o;
+}
+
+int checkPosition(char **map, int *l, int *c, int o, int ship_length) {
+    int i;
+    if (o == 0) {                                   // If it's horizontal
+        for (i = 0; i<ship_length; i++) {
+            if (map[*l][*c+i]!='.')                 // If it's not an empty space
+                return 0;
+        }
+    }
+    else {                                          // If it's vertical
+        for (i = 0; i<ship_length; i++) {
+            if (map[*l+i][*c]!='.')                 // If it's not an empty space
+                return 0;
+        }
+    }
+    return 1;
+}
+
 /* Players place their ships */
-void placeShip(char **map, int *l, int *c) {
-    selectSlot(map, l, c);
-    printf("l = %d c = %d\n", *l, *c);
-    map[*l][*c] = '*';
+void placeShip(char **map, int *l, int *c, Fleet *p_fleet) {
+    int i, o;
+    do {
+        printf("Set carrier (%d)\n", p_fleet->carrier.length);
+        selectSlot(map, l, c);
+        o = setOrientation();
+    } while (checkPosition(map, l, c, o, p_fleet->carrier.length)==0);
+    if (o == 0) {
+        for (i = 0; i< p_fleet->carrier.length; i++) {
+            map[*l][*c+i]='*';
+        }
+    }
+    else {
+        for (i = 0; i< p_fleet->carrier.length; i++) {
+            map[*l+i][*c]='*';
+        }
+    }
 }
 /* A player is randomly chosen to start */
 
