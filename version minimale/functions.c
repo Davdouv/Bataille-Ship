@@ -6,7 +6,7 @@
 #include <math.h>
 #include "functions.h"
 
-#define NDIM 11
+#define NDIM 11     // Grid dimensions
 
 /* INIT */
 /* Creates the maps | Return NULL if malloc failed */
@@ -52,7 +52,7 @@ void displayMap(char **map) {
     for (i = 0; i < NDIM; i++) {
         for (j = 0; j < NDIM; j++) {
             if (j>9 && i == 0)
-                printf("1%c", (map[i][j] - 10));
+                printf("1%c", (map[i][j] - 10));    // Change the display (but not the value) for numbers >= 10
             else {
                 printf("%c ", map[i][j]);
             }
@@ -65,21 +65,27 @@ void displayMap(char **map) {
 /* Creates the maps (2 for each player) */
 
 /* START */
-/* Players place their ships */
-void placeShip(char **map) {
-    int i, c;
-    char l;
+/* Select a slot | put the line & the column values in variables*/
+void selectSlot(char **map, int *l, int *c) {
+    int i;
+    char line;
     printf("Which line ?\n");
-    scanf("%c", &l);
-    l = toupper(l);
+    scanf("%c", &line);
+    line = toupper(line);
     printf("Which column ?\n");
-    scanf("%d", &c);
-    printf("You have choosen %c %d\n", l, c);
+    scanf("%d", c);
+    printf("You have choosen %c %d\n", line, *c);
     for (i = 0; i < NDIM; i++) {
-        if (map[i][0] == l)
-            map[i][c] = '*';
+        if (map[i][0] == line)      // Find the line number which countains the letter
+         *l = i;           
     }
+}
 
+/* Players place their ships */
+void placeShip(char **map, int *l, int *c) {
+    selectSlot(map, l, c);
+    printf("l = %d c = %d\n", *l, *c);
+    map[*l][*c] = '*';
 }
 /* A player is randomly chosen to start */
 
