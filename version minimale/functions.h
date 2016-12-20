@@ -2,9 +2,9 @@
 /* Declaration of structures and functions */
 
 typedef struct {
-    int h;
-    int v;
+    int length;
     int orientation; /* 0: horizontal  1: vertical */
+    int life;
 } Ship;
 
 typedef struct {
@@ -18,5 +18,8 @@ typedef struct {
 char **initMap();
 void createMap(char **map);
 void displayMap(char **map);
+Fleet createFleet();
 void selectSlot(char **map, int *l, int *c);
-void placeShip(char **map, int *l, int *c);
+int setOrientation();
+int checkPosition(char **map, int *l, int *c, int o, int ship_length);
+void placeShip(char **map, int *l, int *c, Fleet *p_fleet);
