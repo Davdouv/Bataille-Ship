@@ -11,6 +11,8 @@
 #include "functions.h"
 
 int main() {
+    int line;
+    int column;
     char **p1_att;
     char **p1_def;
     char **p2_att;
@@ -25,7 +27,7 @@ int main() {
     /* Map display (this is temporary, I just want to see what I'm doing) */
     displayMap(p1_def);
    
-    placeShip(p1_def);
+    placeShip(p1_def, &line, &column);
     displayMap(p1_def);
 
     return 0;
