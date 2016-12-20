@@ -136,21 +136,33 @@ int setOrientation() {
     return o;
 }
 
+/* Check if slots are free. Return 1 if it is, 0 if it's not */
 int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
     int i;
     if (o == 0) {                                   // If it's horizontal
         for (i = 0; i<ship_length; i++) {
-            if (map[*l][*c+i]!='.')                 // If it's not an empty space
+            if (*c+i < NDMI) {
+                if (map[*l][*c+i]!='.')   {         // If it's not an empty space
+                    return 0;
+                }             
+            }
+            else                                    // If it's out of the grid
                 return 0;
         }
     }
     else {                                          // If it's vertical
-        for (i = 0; i<ship_length; i++) {
-            if (map[*l+i][*c]!='.')                 // If it's not an empty space
+        for (i = 0; i<ship_length; i++)
+        {
+            if (*l+i < NDIM) {
+                if (map[*l+i][*c] != '.') {         // If it's not an empty space
+                    return 0;
+                }
+            }
+            else                                    // If it's out of the grid
                 return 0;
         }
     }
-    return 1;
+    return 1;                                       // If no problem
 }
 
 /* Players place their ships */
