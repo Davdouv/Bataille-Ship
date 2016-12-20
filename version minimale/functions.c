@@ -228,6 +228,13 @@ int checkHit(char **map_att, char **map_def, int *l, int *c) {
     }
 }
 
+/* Manage ships life */
+int shipDmg () {
+    // Détecte le bateau touché ?
+    // Fonction qui gère les dmg (life--)
+    // Détecte si détruit (if (life==0))
+}
+
 /* Manage attacks */
 void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet) {
     int i, check = 1;
@@ -239,15 +246,16 @@ void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet)
             check = checkHit(map_att, map_def, l, c);
         } while(check == -1);
         
-        if (check == 1) {
+        if (check == 1) {           // If hit
+            // shipDmg(); // Le X changera en fonction du bateau touché
             map_att[*l][*c] = 'X';
             printf("You can shoot again !\n");
         }
 
-        if (check == 0) {
+        if (check == 0) {           // If miss
             map_att[*l][*c] = 'O';
         }
         displayMap(map_att);
-    } while(check == 1);
+    } while(check == 1);            // Attack while success
 } 
 /* Player gets the result of his attack */

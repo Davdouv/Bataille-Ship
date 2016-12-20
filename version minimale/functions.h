@@ -26,4 +26,5 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length);
 void placeShip(char **map, int *l, int *c, Ship *p_ship);
 void placeFleet(char **map, int *l, int *c, Fleet *p_fleet);
 int checkHit(char **map, char **map_def, int *l, int *c);
+int shipDmg ();
 void attackFleet(char **map_atk, char **map_def, int *l, int *c, Fleet *p_fleet);
