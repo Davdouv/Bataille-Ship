@@ -18,4 +18,5 @@ typedef struct {
 char **initMap();
 void createMap(char **map);
 void displayMap(char **map);
-void placeShip(char **map);
+void selectSlot(char **map, int *l, int *c);
+void placeShip(char **map, int *l, int *c);
