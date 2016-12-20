@@ -100,14 +100,29 @@ Fleet createFleet() {
 /* Select a slot | put the line & the column values in variables l and c */
 void selectSlot(char **map, int *l, int *c) {
     int i;
-    char letter = ' ';
-    char *line = &letter;
+    char *line;
 
     do {
+        // printf("1: %c\n", *line); // Debug
         printf("Which line?\n");
-        scanf(" %c", line);
+        // printf("2: %c\n", *line); // Debug
+        scanf("%c", line);
         *line = toupper(*line);
     } while(*line<'A' || *line>('A'+NDIM-2));          // Repeat until player choose a correct line
+
+    // do {
+    //     if (!line) { 
+    //         printf("1: %c\n", line);
+    //         printf("Which line?\n");
+    //     } else {
+    //         printf("2: %c\n", line);
+    //         printf("Which line? (Choose a correct letter)\n");
+    //         scanf("%c", &line); // prevent the loop from being repeated twice for no reason
+    //     }
+    //     printf("3: %c\n", line);
+    //     scanf("%c", &line);
+    //     line = toupper(line);
+    // } while(line<'A' || line>('A'+NDIM-2));
 
     do {
         printf("Which column?\n");
@@ -159,10 +174,10 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship) {
     do {
         selectSlot(map, l, c);
         o = setOrientation();
-        checkposition = checkPlacement(map, l, c, o, p_ship->length);
-        if (checkposition == 0) {
-            printf("You must replace your ship, it is stepping over another or it's out of the map.\n");
-        }
+        checkposition = checkPosition(map, l, c, o, p_ship->length);
+        // if (checkposition == 0) { // C'est supposé prévenir qu'il y a un pb, mais ces 3 lignes font planter l'exécution'
+        //      printf("You must replace your ship, it is stepping over another.\n");
+        // }
     } while (checkposition == 0);
     if (o == 0) {
         for (i = 0; i< p_ship->length; i++) {
@@ -177,7 +192,7 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship) {
 }
 
 void placeFleet(char **map, int *l, int *c, Fleet *p_fleet) {
-    int i;
+    int i, o;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     for(i=0;i<5;i++) { 
@@ -186,6 +201,7 @@ void placeFleet(char **map, int *l, int *c, Fleet *p_fleet) {
         displayMap(map);
         current_ship += 1; // the pointer changes to the next ship 
     }
+    
 }
 /* A player is randomly chosen to start */
 
