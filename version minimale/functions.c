@@ -10,7 +10,7 @@
 #define NDIM 11     // Grid dimensions
 
 /* INIT */
-/* Creates the maps | Return NULL if malloc failed */
+/* Creates the maps | Return the map or NULL if malloc failed */
 char** initMap() {
     int i;
     char **map = malloc(NDIM * sizeof(char*));
@@ -63,8 +63,7 @@ void displayMap(char **map) {
     printf("\n");
 }
 
-/* Creates the fleet */
-
+/* Creates the fleet | Return fleet */
 Fleet createFleet() {
     Fleet my_fleet;
 
@@ -107,6 +106,9 @@ void selectSlot(char **map, int *l, int *c) {
         printf("Which line?\n");
         scanf(" %c", line);
         *line = toupper(*line);
+        if (*line<'A' || *line>('A'+NDIM-2)) {
+            printf("Please choose a correct line letter.\n");
+        }
     } while(*line<'A' || *line>('A'+NDIM-2));          // Repeat until player choose a correct line
 
     do {
@@ -123,6 +125,7 @@ void selectSlot(char **map, int *l, int *c) {
     }
 }
 
+/* Check if orientation is set correctly and return 0 or 1 */
 int setOrientation() {
     int o;
     do {
@@ -141,7 +144,7 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
     int i;
     if (o == 0) {                                   // If it's horizontal
         for (i = 0; i<ship_length; i++) {
-            if (*c+i < NDMI) {
+            if (*c+i < NDIM) {
                 if (map[*l][*c+i]!='.')   {         // If it's not an empty space
                     return 0;
                 }             
@@ -168,6 +171,7 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
 /* Players place their ships */
 void placeShip(char **map, int *l, int *c, Ship *p_ship) {
     int i, o, checkposition;
+    // Select Position
     do {
         selectSlot(map, l, c);
         o = setOrientation();
@@ -176,6 +180,7 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship) {
             printf("You must replace your ship, it is stepping over another or it's out of the map.\n");
         }
     } while (checkposition == 0);
+    // If set then change map value
     if (o == 0) {
         for (i = 0; i< p_ship->length; i++) {
             map[*l][*c+i]='*';
@@ -188,6 +193,7 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship) {
     }
 }
 
+/* Place all ships */
 void placeFleet(char **map, int *l, int *c, Fleet *p_fleet) {
     int i;
     Ship *current_ship; // pointer to the ship that is placed
@@ -204,6 +210,8 @@ void placeFleet(char **map, int *l, int *c, Fleet *p_fleet) {
 /* TURN */
 /* Player gets the damages on his map (except for the first turn) */
 /* Player attacks */
+
+/* Check what contains the selected slot */
 int checkHit(char **map_att, char **map_def, int *l, int *c) {
     if (map_att[*l][*c] != '.') {
         printf("You already shot here. Choose again\n");
@@ -220,6 +228,7 @@ int checkHit(char **map_att, char **map_def, int *l, int *c) {
     }
 }
 
+/* Manage attacks */
 void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet) {
     int i, check = 1;
     displayMap(map_att);
