@@ -33,5 +33,5 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship);
 void placeFleet(char **map, int *l, int *c, Fleet *p_fleet);
 int checkHit(char **map, char **map_def, int *l, int *c);
 Ship* detectShip(int *l, int *c, Fleet *p_fleet);
-void shipDmg(Ship *damaged_ship);
+void shipDmg(char **map, int *l, int *c, Ship *damaged_ship);
 void attackFleet(char **map_atk, char **map_def, int *l, int *c, Fleet *p_fleet);

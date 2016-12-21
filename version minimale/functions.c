@@ -240,17 +240,35 @@ Ship* detectShip(int *l, int *c, Fleet *p_fleet) {
     damaged_ship = &(p_fleet->carrier);                 // pointer initialized to the first ship Carrier
     for (ship=0; ship<5; ship++) {                      // check all ships
         for (i=0; i<damaged_ship->length; i++) {
-            if (damaged_ship->slot[i].line == *l && damaged_ship->slot[i].column == *c)     // check all ship coordinates
+            if (damaged_ship->slot[i].line == *l && damaged_ship->slot[i].column == *c) {   // check all ship coordinates
                 return damaged_ship;
+            }
         }
+        damaged_ship += 1;
     }
     return NULL;        // if the function failed
 }
 
 /* Manage ships life */
-void shipDmg (Ship *damaged_ship) {
+void shipDmg (char **map, int *l, int *c, Ship *damaged_ship) {
+    // Manage printf for each ships by finding the number of the ship
+    int num, i;
+    Fleet fleet;
+    Fleet *pt_fleet;
+    Ship *pt_ship = &(pt_fleet->carrier);
+    for (i=0; i<5; i++) {
+        if (pt_ship->name == damaged_ship->name)
+            num = i;
+        pt_ship += 1;
+    }
+    map[*l][*c] = '1'+num;
+
+    // Manage life
     damaged_ship->life--;
-    printf("%s hit ! Life = %d\n",damaged_ship->name, damaged_ship->life);
+    if (damaged_ship->life==0)
+        printf("%s destroyed !\n",damaged_ship->name);
+    else
+        printf("%s hit ! Life = %d\n",damaged_ship->name, damaged_ship->life);
 }
 
 /* Manage attacks */
@@ -266,8 +284,7 @@ void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet)
         } while(check == -1);
         
         if (check == 1) {           // If hit
-            shipDmg(detectShip(l, c, p_fleet));
-            map_att[*l][*c] = 'X';
+            shipDmg(map_att, l, c, detectShip(l, c, p_fleet));
             printf("You can shoot again !\n");
         }
 
