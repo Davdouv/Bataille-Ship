@@ -11,7 +11,7 @@ typedef struct {
     int length;
     int orientation; /* 0: horizontal  1: vertical */
     int life;
-    Coordinates slot[5];
+    Coordinates slot;
 } Ship;
 
 typedef struct {
@@ -34,4 +34,7 @@ void placeFleet(char **map, int *l, int *c, Fleet *p_fleet);
 int checkHit(char **map, char **map_def, int *l, int *c);
 Ship* detectShip(int *l, int *c, Fleet *p_fleet);
 void shipDmg(char **map, int *l, int *c, Ship *damaged_ship);
-void attackFleet(char **map_atk, char **map_def, int *l, int *c, Fleet *p_fleet);
+void attackFleet(char **map_atk, char **map_def, int *l, int *c, Fleet *p_fleet, int adversary_life);
+int whoBegins();
+
+void flemme(char **map, int *l, int *c, Fleet *p_fleet);
