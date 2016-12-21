@@ -184,11 +184,15 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship) {
     if (o == 0) {
         for (i = 0; i< p_ship->length; i++) {
             map[*l][*c+i]='*';
+            p_ship->slot[i].line=*l;
+            p_ship->slot[i].column=*c+i;
         }
     }
     else {
         for (i = 0; i< p_ship->length; i++) {
             map[*l+i][*c]='*';
+            p_ship->slot[i].line=*l+i;
+            p_ship->slot[i].column=*c;
         }
     }
 }
@@ -228,16 +232,31 @@ int checkHit(char **map_att, char **map_def, int *l, int *c) {
     }
 }
 
+/* Check all ships coordinates to find which one has the same as the attack */
+Ship* detectShip(int *l, int *c, Fleet *p_fleet) {
+    int ship, i;
+    Ship *damaged_ship;
+
+    damaged_ship = &(p_fleet->carrier);                 // pointer initialized to the first ship Carrier
+    for (ship=0; ship<5; ship++) {                      // check all ships
+        for (i=0; i<damaged_ship->length; i++) {
+            if (damaged_ship->slot[i].line == *l && damaged_ship->slot[i].column == *c)     // check all ship coordinates
+                return damaged_ship;
+        }
+    }
+    return NULL;        // if the function failed
+}
+
 /* Manage ships life */
-int shipDmg () {
-    // Détecte le bateau touché ?
-    // Fonction qui gère les dmg (life--)
-    // Détecte si détruit (if (life==0))
+void shipDmg (Ship *damaged_ship) {
+    damaged_ship->life--;
+    printf("%s hit ! Life = %d\n",damaged_ship->name, damaged_ship->life);
 }
 
 /* Manage attacks */
 void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet) {
     int i, check = 1;
+
     displayMap(map_att);
     printf("It's your time to attack !\n");
     do {
@@ -247,7 +266,7 @@ void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet)
         } while(check == -1);
         
         if (check == 1) {           // If hit
-            // shipDmg(); // Le X changera en fonction du bateau touché
+            shipDmg(detectShip(l, c, p_fleet));
             map_att[*l][*c] = 'X';
             printf("You can shoot again !\n");
         }

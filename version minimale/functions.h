@@ -2,10 +2,16 @@
 /* Declaration of structures and functions */
 
 typedef struct {
+    int line;
+    int column;
+} Coordinates;
+
+typedef struct {
     char name[11];
     int length;
     int orientation; /* 0: horizontal  1: vertical */
     int life;
+    Coordinates slot[5];
 } Ship;
 
 typedef struct {
@@ -26,5 +32,6 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length);
 void placeShip(char **map, int *l, int *c, Ship *p_ship);
 void placeFleet(char **map, int *l, int *c, Fleet *p_fleet);
 int checkHit(char **map, char **map_def, int *l, int *c);
-int shipDmg ();
+Ship* detectShip(int *l, int *c, Fleet *p_fleet);
+void shipDmg(Ship *damaged_ship);
 void attackFleet(char **map_atk, char **map_def, int *l, int *c, Fleet *p_fleet);
