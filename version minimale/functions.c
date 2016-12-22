@@ -8,7 +8,9 @@
 #include "functions.h"
 
 #define NDIM 11     // Grid dimensions
+#define NSHIPS 5    // Number of ships /!\ MUST NOT EXCEED 5 ! /!\
 
+/* MAP FUNCTIONS */
 /* INIT */
 /* Creates the maps | Return the map or NULL if malloc failed */
 char** initMap() {
@@ -36,10 +38,10 @@ void createMap(char **map) {
                 map[i][j] = ' ';            // First slot
             }
             else if (i == 0 && j > 0) {
-                map[i][j] = '0'+j;            // Columns
+                map[i][j] = '0' + j;            // Columns
             }
             else if (i > 0 && j == 0) {
-                map[i][j] = 'A'+(i-1);        // Lines
+                map[i][j] = 'A' + (i - 1);        // Lines
             }
             else
                 map[i][j] = '.';            // Slots
@@ -63,8 +65,20 @@ void displayMap(char **map) {
     printf("\n");
 }
 
+/* FLEET FUNCTIONS */
+/* INIT */
+/* Return the fleet or NULL if malloc failed */
+Fleet* initFleet() {
+    Fleet *fleet = malloc(sizeof(Fleet));
+    if (fleet == NULL) {
+        return NULL;
+    }
+
+    return fleet;
+}
+
 /* Creates the fleet | Return fleet */
-Fleet createFleet() {
+void createFleet(Fleet* pt_fleet) {
     Fleet my_fleet;
 
     strncpy(my_fleet.carrier.name, "Carrier", 11);
@@ -87,10 +101,21 @@ Fleet createFleet() {
     my_fleet.destroyer.length = 5;
     my_fleet.destroyer.life = 5;
 
-    return my_fleet;
+    *pt_fleet = my_fleet;
+
+    //return my_fleet;
 }
 
 /* START */
+/* Make scanf() works */
+void purge(void)
+{
+    char c;
+    while ((c = getchar()) != '\n' && c != EOF)
+    {
+    }
+}
+
 /* Select a slot | put the line & the column values in variables l and c */
 void selectSlot(char **map, int *l, int *c) {
     int i;
@@ -100,23 +125,25 @@ void selectSlot(char **map, int *l, int *c) {
     do {
         printf("Which line?\n");
         scanf(" %c", line);
+        purge();
         *line = toupper(*line);
-        if (*line<'A' || *line>('A'+NDIM-2)) {
+        if (*line<'A' || *line>('A' + NDIM - 2)) {
             printf("Please choose a correct line letter.\n");
         }
-    } while(*line<'A' || *line>('A'+NDIM-2));          // Repeat until player choose a correct line
+    } while (*line<'A' || *line>('A' + NDIM - 2));          // Repeat until player choose a correct line
 
     do {
         printf("Which column?\n");
         scanf("%d", c);
-        if (*c<1 || *c>=NDIM) {
+        purge();
+        if (*c<1 || *c >= NDIM) {
             printf("Please choose a correct column number.\n");
         }
-    } while(*c<1 || *c>=NDIM);                       // Repeat until player choose a correct column
-    
+    } while (*c<1 || *c >= NDIM);                       // Repeat until player choose a correct column
+
     for (i = 0; i < NDIM; i++) {
         if (map[i][0] == *line)                      // Find the line number which countains the letter
-         *l = i;           
+            *l = i;
     }
 }
 
@@ -125,12 +152,13 @@ int setOrientation() {
     int o;
     do {
         printf("Which orientation? (0: horizontal  1: vertical)\n");
-        scanf("%d",&o);
+        scanf("%d", &o);
+        purge();
         if (o != 0 && o != 1) {
             printf("Please choose between 0 or 1.\n");
         }
-    } while(o != 0 && o != 1);                          // Repeat until player choose 0 or 1
-   
+    } while (o != 0 && o != 1);                          // Repeat until player choose 0 or 1
+
     return o;
 }
 
@@ -139,10 +167,10 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
     int i;
     if (o == 0) {                                   // If it's horizontal
         for (i = 0; i<ship_length; i++) {
-            if (*c+i < NDIM) {
-                if (map[*l][*c+i]!='.')   {         // If it's not an empty space
+            if (*c + i < NDIM) {
+                if (map[*l][*c + i] != '.') {         // If it's not an empty space
                     return 0;
-                }             
+                }
             }
             else                                    // If it's out of the grid
                 return 0;
@@ -151,8 +179,8 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
     else {                                          // If it's vertical
         for (i = 0; i<ship_length; i++)
         {
-            if (*l+i < NDIM) {
-                if (map[*l+i][*c] != '.') {         // If it's not an empty space
+            if (*l + i < NDIM) {
+                if (map[*l + i][*c] != '.') {         // If it's not an empty space
                     return 0;
                 }
             }
@@ -178,18 +206,18 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship) {
 
     // Save the position and orientation in the Ship
     p_ship->orientation = o;
-    p_ship->slot.line=*l;
-    p_ship->slot.column=*c;
+    p_ship->slot.line = *l;
+    p_ship->slot.column = *c;
 
     // If set then change map value
     if (o == 0) {
         for (i = 0; i< p_ship->length; i++) {
-            map[*l][*c+i]='*';
+            map[*l][*c + i] = '*';
         }
     }
     else {
         for (i = 0; i< p_ship->length; i++) {
-            map[*l+i][*c]='*';
+            map[*l + i][*c] = '*';
         }
     }
 }
@@ -199,21 +227,21 @@ void placeFleet(char **map, int *l, int *c, Fleet *p_fleet) {
     int i;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
-    for(i=0;i<5;i++) { 
+    for (i = 0; i<NSHIPS; i++) {
         printf("Set %s (%d)\n", current_ship->name, current_ship->length);
         placeShip(map, l, c, current_ship);
         displayMap(map);
-        current_ship += 1; // the pointer changes to the next ship 
+        current_ship += 1; // the pointer changes to the next ship
     }
 }
 
 void flemme(char **map, int *l, int *c, Fleet *p_fleet) { // pour placer qu'un bateau parce que sinon c'est relou
     int i;
     Ship *current_ship; // pointer to the ship that is placed
-    current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier 
-        printf("Set %s (%d)\n", current_ship->name, current_ship->length);
-        placeShip(map, l, c, current_ship);
-        displayMap(map);
+    current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
+    printf("Set %s (%d)\n", current_ship->name, current_ship->length);
+    placeShip(map, l, c, current_ship);
+    displayMap(map);
 }
 
 /* A player is randomly chosen to start */
@@ -225,7 +253,7 @@ int whoBegins() {
 /* TURN */
 /* Player gets the damages on his map (except for the first turn) */
 void getDamages(char **map_def, int *l, int *c) {
-    
+
 }
 /* Player attacks */
 
@@ -239,7 +267,7 @@ int checkHit(char **map_att, char **map_def, int *l, int *c) {
         printf("Hit !\n");
         return 1;                   // Ship
     }
-        
+
     else if (map_def[*l][*c] == '.') {
         printf("Miss !\n");
         return 0;                   // Water
@@ -251,13 +279,14 @@ Ship* detectShip(int *l, int *c, Fleet *p_fleet) {
     int ship, i;
     Ship *damaged_ship;
     damaged_ship = &(p_fleet->carrier);                 // pointer initialized to the first ship Carrier
-    for (ship=0; ship<1; ship++) {                      // check all ships
-        for (i=0; i<damaged_ship->length; i++) {         // check the whole length of the ship
+    for (ship = 0; ship<NSHIPS; ship++) {                      // check all ships
+        for (i = 0; i<damaged_ship->length; i++) {         // check the whole length of the ship
             if (damaged_ship->orientation == 0) {       // if the ship is displayed horizontably
                 if ((&(damaged_ship->slot))->line == *l && ((&(damaged_ship->slot))->column + i) == *c) {   // check all ship coordinates
                     return damaged_ship;
                 }
-            } else {
+            }
+            else {
                 if (((&(damaged_ship->slot))->line + i) == *l && (&(damaged_ship->slot))->column == *c) {   // check all ship coordinates
                     return damaged_ship;
                 }
@@ -269,26 +298,26 @@ Ship* detectShip(int *l, int *c, Fleet *p_fleet) {
 }
 
 /* Manage ships life */
-void shipDmg (char **map, int *l, int *c, Ship *damaged_ship) {
+void shipDmg(char **map, int *l, int *c, Ship *damaged_ship) {
     // Manage printf for each ships by finding the number of the ship
-    int num, i;
+    int num = 0, i;
     Fleet fleet;
     Fleet *pt_fleet;
     pt_fleet = &fleet;
     Ship *pt_ship = &(pt_fleet->carrier);
-    for (i=0; i<5; i++) {
+    for (i = 0; i<NSHIPS; i++) {
         if (pt_ship->name == damaged_ship->name)
             num = i;
         pt_ship += 1;
     }
-    map[*l][*c] = '1'+num;
+    map[*l][*c] = '1' + num;
 
     // Manage life
     damaged_ship->life--;
-    if (damaged_ship->life==0)
-        printf("%s destroyed !\n",damaged_ship->name);
+    if (damaged_ship->life == 0)
+        printf("%s destroyed !\n", damaged_ship->name);
     else
-        printf("%s hit ! Life = %d\n",damaged_ship->name, damaged_ship->life);
+        printf("%s hit ! Life = %d\n", damaged_ship->name, damaged_ship->life);
 }
 
 /* Manage attacks */
@@ -302,25 +331,31 @@ void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet,
         do {
             selectSlot(map_att, l, c);
             check = checkHit(map_att, map_def, l, c);
-        } while(check == -1);
-        
+        } while (check == -1);
+
         if (check == 1) {           // If hit
             shipDmg(map_att, l, c, detectShip(l, c, p_fleet));
             *adversary_life -= 1;
             if (*adversary_life != 0) {
                 printf("You can shoot again !\n");
-            } else {
+            }
+            else {
                 break;
             }
         }
 
-        if (check == 0) {           // If miss
+        else if (check == 0) {           // If miss
             map_att[*l][*c] = 'O';
         }
 
-        
-        displayMap(map_att);
-    } while(check == 1);            // Attack while success
-} 
 
-/* Player gets the result of his attack */
+        displayMap(map_att);
+    } while (check == 1);            // Attack while success
+}
+
+/* Free memory */
+void freeGame(char **p_att,char **p_def, Fleet *p_fleet) {
+    free(p_att);
+    free(p_def);
+    free(p_fleet);
+}
