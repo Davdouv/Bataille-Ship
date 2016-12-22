@@ -15,7 +15,7 @@ int main() {
     int line, column, p1_life, p2_life;
     char **p1_att, **p1_def;
     char **p2_att, **p2_def;
-    Fleet *p1_fleet; // Il faudrait créer une fonction initFleet pour alouer la mémoire comme pour initMap
+    Fleet *p1_fleet;
     Fleet *p2_fleet;
 
     /* MODE FLEMME */

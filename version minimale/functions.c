@@ -192,7 +192,7 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
 }
 
 /* Players place their ships */
-void placeShip(char **map, int *l, int *c, Ship *p_ship) {
+void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship) {
     int i, o, checkposition;
     // Select Position
     do {
@@ -212,12 +212,12 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship) {
     // If set then change map value
     if (o == 0) {
         for (i = 0; i< p_ship->length; i++) {
-            map[*l][*c + i] = '*';
+            map[*l][*c + i] = '1'+num_ship;
         }
     }
     else {
         for (i = 0; i< p_ship->length; i++) {
-            map[*l + i][*c] = '*';
+            map[*l + i][*c] = '1'+num_ship;
         }
     }
 }
@@ -229,18 +229,17 @@ void placeFleet(char **map, int *l, int *c, Fleet *p_fleet) {
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     for (i = 0; i<NSHIPS; i++) {
         printf("Set %s (%d)\n", current_ship->name, current_ship->length);
-        placeShip(map, l, c, current_ship);
+        placeShip(map, l, c, current_ship, i);
         displayMap(map);
         current_ship += 1; // the pointer changes to the next ship
     }
 }
 
 void flemme(char **map, int *l, int *c, Fleet *p_fleet) { // pour placer qu'un bateau parce que sinon c'est relou
-    int i;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     printf("Set %s (%d)\n", current_ship->name, current_ship->length);
-    placeShip(map, l, c, current_ship);
+    placeShip(map, l, c, current_ship, 0);
     displayMap(map);
 }
 
@@ -255,6 +254,7 @@ int whoBegins() {
 void getDamages(char **map_def, int *l, int *c) {
 
 }
+
 /* Player attacks */
 
 /* Check what contains the selected slot */
@@ -263,7 +263,7 @@ int checkHit(char **map_att, char **map_def, int *l, int *c) {
         printf("You already shot here. Choose again\n");
         return -1;                  // Already shot here
     }
-    if (map_def[*l][*c] == '*') {
+    if (map_def[*l][*c] >= '1' && map_def[*l][*c] <= '5') {
         printf("Hit !\n");
         return 1;                   // Ship
     }
@@ -298,20 +298,7 @@ Ship* detectShip(int *l, int *c, Fleet *p_fleet) {
 }
 
 /* Manage ships life */
-void shipDmg(char **map, int *l, int *c, Ship *damaged_ship) {
-    // Manage printf for each ships by finding the number of the ship
-    int num = 0, i;
-    Fleet fleet;
-    Fleet *pt_fleet;
-    pt_fleet = &fleet;
-    Ship *pt_ship = &(pt_fleet->carrier);
-    for (i = 0; i<NSHIPS; i++) {
-        if (pt_ship->name == damaged_ship->name)
-            num = i;
-        pt_ship += 1;
-    }
-    map[*l][*c] = '1' + num;
-
+void shipDmg(Ship *damaged_ship) {
     // Manage life
     damaged_ship->life--;
     if (damaged_ship->life == 0)
@@ -334,12 +321,14 @@ void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet,
         } while (check == -1);
 
         if (check == 1) {           // If hit
-            shipDmg(map_att, l, c, detectShip(l, c, p_fleet));
+            map_att[*l][*c] = 'X';
+            shipDmg(detectShip(l, c, p_fleet));
             *adversary_life -= 1;
             if (*adversary_life != 0) {
                 printf("You can shoot again !\n");
             }
             else {
+                displayMap(map_def);
                 break;
             }
         }
@@ -347,7 +336,6 @@ void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet,
         else if (check == 0) {           // If miss
             map_att[*l][*c] = 'O';
         }
-
 
         displayMap(map_att);
     } while (check == 1);            // Attack while success
