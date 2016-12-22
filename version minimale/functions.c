@@ -274,6 +274,7 @@ void shipDmg (char **map, int *l, int *c, Ship *damaged_ship) {
     int num, i;
     Fleet fleet;
     Fleet *pt_fleet;
+    pt_fleet = &fleet;
     Ship *pt_ship = &(pt_fleet->carrier);
     for (i=0; i<5; i++) {
         if (pt_ship->name == damaged_ship->name)
@@ -291,7 +292,8 @@ void shipDmg (char **map, int *l, int *c, Ship *damaged_ship) {
 }
 
 /* Manage attacks */
-void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet, int adversary_life) {
+/* Attacker's att map - Adversary's def map - l - c - adversary's fleet - adversary's life */
+void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet, int *adversary_life) {
     int i, check = 1;
 
     displayMap(map_att);
@@ -304,13 +306,19 @@ void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet,
         
         if (check == 1) {           // If hit
             shipDmg(map_att, l, c, detectShip(l, c, p_fleet));
-            adversary_life -= 1;
-            printf("You can shoot again !\n");
+            *adversary_life -= 1;
+            if (*adversary_life != 0) {
+                printf("You can shoot again !\n");
+            } else {
+                break;
+            }
         }
 
         if (check == 0) {           // If miss
             map_att[*l][*c] = 'O';
         }
+
+        
         displayMap(map_att);
     } while(check == 1);            // Attack while success
 } 

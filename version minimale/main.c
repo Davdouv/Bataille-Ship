@@ -18,8 +18,16 @@ int main() {
     Fleet p1_fleet; // Il faudrait créer une fonction initFleet pour alouer la mémoire comme pour initMap
     Fleet p2_fleet;
 
+    /* MODE FLEMME */
+    /* 0 pour oui, 1 pour non */
+    int f = 0;
+
     /* Life initialisation */
-    p1_life = p2_life = 17;
+    if (f == 1 ) {
+        p1_life = p2_life = 17;
+    } else {
+        p1_life = p2_life = 2;
+    }
    
    /* Maps Initialisation */
     p1_att = initMap();
@@ -42,29 +50,36 @@ int main() {
     /* Player 1 : Fleet placement */
     displayMap(p1_def);
     printf("Player 1 has to place their fleet.\n");
-    placeFleet(p1_def, &line, &column, &p1_fleet);
-    //flemme(p1_def, &line, &column, &p1_fleet);
+    if (f == 1 ) {
+        placeFleet(p1_def, &line, &column, &p1_fleet);
+    } else {
+        flemme(p1_def, &line, &column, &p1_fleet);
+    }
+    
 
     /* Player 2 : Fleet placement */
     displayMap(p2_def);
     printf("Player 2 has to place their fleet.\n");
-    placeFleet(p2_def, &line, &column, &p2_fleet);
-    //flemme(p2_def, &line, &column, &p2_fleet);
+    if (f == 1 ) {
+        placeFleet(p2_def, &line, &column, &p2_fleet);
+    } else {
+        flemme(p2_def, &line, &column, &p2_fleet);
+    }
 
     /* GAME ON */
     while (p1_life != 0)  {  
     printf("* Player 1 *\n\n");
-    attackFleet(p1_att, p1_def, &line, &column, &p1_fleet, p2_life);
+    attackFleet(p1_att, p2_def, &line, &column, &p2_fleet, &p2_life);
     if (p2_life == 0) {break;}
     printf("* Player 2 *\n\n");
-    attackFleet(p2_att, p2_def, &line, &column, &p2_fleet, p1_life);
+    attackFleet(p2_att, p1_def, &line, &column, &p1_fleet, &p1_life);
     }
 
     /* End of the game */
     if (p1_life == 0) {
-        printf("The winner is player 2.\nCongratulations!\n");
+        printf("\n***\nThe winner is player 2.\nCongratulations!\n***\n");
     } else {
-        printf("The winner is player 1.\nCongratulations!\n");
+        printf("\n***\nThe winner is player 1.\nCongratulations!\n***\n");
     }
 
     return 0;
