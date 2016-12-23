@@ -3,15 +3,20 @@
 #define WIDTH 1280
 #define HEIGHT 720
 
+#include <MLV/MLV_all.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <MLV/MLV_all.h>
 #include "functions.h"
 
 #define NDIM 11     // Grid dimensions
 #define NSHIPS 5    // Number of ships MUST NOT EXCEED 5!
+
+#define x_corner WIDTH/3
+#define y_corner HEIGHT/4
+#define tab_dim HEIGHT/2
+#define cel_dim tab_dim/NDIM
 
 /* MAP FUNCTIONS */
 /* INIT */
@@ -28,53 +33,83 @@ char** initMap() {
             return NULL;
         }
     }
-
     return map;
 }
 
 /* Give a value to each slots */
 void createMap(char **map) {
 	int i, j;
-	int corner = HEIGHT/4;
-	int tab_dim = HEIGHT/2;
-	int cel_dim = tab_dim/NDIM;
-	MLV_draw_filled_rectangle(corner, corner, tab_dim, tab_dim, MLV_COLOR_WHITE);
 	for (i = 0; i < NDIM; i++) {
 		for (j = 0; j < NDIM; j++) {
 			if (i == 0 && j == 0) {
 				map[i][j] = ' ';            // First slot
-				
 			}
 			else if (i == 0 && j > 0) {
 				map[i][j] = '0' + j;            // Columns
-				MLV_draw_filled_rectangle(corner+(j*cel_dim), corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
 			}
 			else if (i > 0 && j == 0) {
 				map[i][j] = 'A' + (i - 1);        // Lines
-				MLV_draw_filled_rectangle(corner+(j*cel_dim), corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
 			}
 			else {
-				map[i][j] = '.';            // Slots
-				MLV_draw_filled_rectangle(corner+(j*cel_dim), corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_BLUE);
+				map[i][j] = '.';            // Slots				
 			}
 		}
 	}
 }
 
+/* Make declaration of image of the size of a cell easier */
+MLV_Image* image(char* img_name, char* format) {
+    char file[40];
+    MLV_Image *my_image;
+
+    strcpy(file, "img/");
+    strcat(file, img_name);
+    strcat(file, ".");
+    strcat(file, format);
+
+    my_image = MLV_load_image(file);
+    MLV_resize_image_with_proportions(my_image, cel_dim, cel_dim);
+    return my_image;
+}
+
 /* Display the map */
 void displayMap(char **map) {
     int i, j;
-    for (i = 0; i < NDIM; i++) {
-        for (j = 0; j < NDIM; j++) {
-            if (j > 9 && i == 0)
-                printf("1%c", (map[i][j] - 10));    // Change the display (but not the value) for numbers >= 10
-            else {
-                printf("%c ", map[i][j]);
+
+    MLV_Image *water;
+    water = image("water","jpg");
+
+	//MLV_draw_filled_rectangle(x_corner, y_corner, tab_dim, tab_dim, MLV_COLOR_WHITE);
+	for (i = 0; i < NDIM; i++) {
+		for (j = 0; j < NDIM; j++) {
+			if (i == 0 && j == 0) {
+				map[i][j] = ' ';            // First slot
+                MLV_draw_filled_rectangle(x_corner, y_corner, cel_dim, cel_dim, MLV_COLOR_RED);
+			}
+			else if (i == 0 && j > 0) {
+				map[i][j] = '0' + j;            // Columns
+				MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
+                MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, "0", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+			}
+			else if (i > 0 && j == 0) {
+				map[i][j] = 'A' + (i - 1);        // Lines
+				MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
+                MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, "A", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+			}
+			else {
+				map[i][j] = '.';            // Slots
+			    //MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_BLUE);
+                //MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, ".", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+                MLV_draw_image (water, x_corner+(j*cel_dim), y_corner+(i*cel_dim));
             }
-        }
-        printf("\n");
-    }
-    printf("\n");
+            MLV_draw_line(x_corner+(j*cel_dim), y_corner, x_corner+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
+		}
+        MLV_draw_line(x_corner+(j*cel_dim), y_corner, x_corner+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
+        MLV_draw_line(x_corner, y_corner+(i*cel_dim), x_corner+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
+	}
+    MLV_draw_line(x_corner, y_corner+(i*cel_dim), x_corner+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
+    MLV_actualise_window();
+    MLV_free_image(water);
 }
 
 /* FLEET FUNCTIONS */
@@ -119,43 +154,23 @@ void createFleet(Fleet* pt_fleet) {
 }
 
 /* START */
-/* Make scanf() works */
-void purge(void)
-{
-    char c;
-    while ((c = getchar()) != '\n' && c != EOF)
-    {
-    }
-}
 
 /* Select a slot | put the line & the column values in variables l and c */
 void selectSlot(char **map, int *l, int *c) {
-    int i;
-    char letter = ' ';
-    char *line = &letter;
+    int i, j;
+    int x, y;
 
-    do {
-        printf("Which line?\n");
-        scanf(" %c", line);
-        purge();
-        *line = toupper(*line);
-        if (*line<'A' || *line>('A' + NDIM - 2)) {
-            printf("Please choose a correct line letter.\n");
+    MLV_wait_mouse(&x, &y);
+
+    if ((x>=x_corner && x <= x_corner+tab_dim) && (y>=y_corner && y<=y_corner+tab_dim)) {
+        for (i=(y_corner+cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
+            for (j=(x_corner+cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {
+                if (y<=i && x<=j) {
+                    *l=i-cel_dim;
+                    *c=j-cel_dim;
+                }
+            }
         }
-    } while (*line<'A' || *line>('A' + NDIM - 2));          // Repeat until player choose a correct line
-
-    do {
-        printf("Which column?\n");
-        scanf("%d", c);
-        purge();
-        if (*c<1 || *c >= NDIM) {
-            printf("Please choose a correct column number.\n");
-        }
-    } while (*c<1 || *c >= NDIM);                       // Repeat until player choose a correct column
-
-    for (i = 0; i < NDIM; i++) {
-        if (map[i][0] == *line)                      // Find the line number which countains the letter
-            *l = i;
     }
 }
 
@@ -165,7 +180,6 @@ int setOrientation() {
     do {
         printf("Which orientation? (0: horizontal  1: vertical)\n");
         scanf("%d", &o);
-        purge();
         if (o != 0 && o != 1) {
             printf("Please choose between 0 or 1.\n");
         }
@@ -205,8 +219,47 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
 
 /* Players place their ships */
 void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship) {
-    int i, o, checkposition;
+    int i , j, o = 0;
+    int b = 0;
+    int x, y;
+
+    MLV_Image *carrier1, *carrier2, *carrier3;
+
+    carrier1 = image("fleet/carrier1","png");
+    carrier2 = image("fleet/carrier2","png");
+    carrier3 = image("fleet/carrier3","png");
+
+    MLV_draw_text_box(
+        WIDTH/4, y_corner-100, tab_dim*2, 50,
+        "Cliquer sur un bateau pour le sélectionner et le positionner sur la grille.\nFaîtes un clique droit pour changer sa rotation.", 9,
+        MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_COLOR_WHITE,
+        MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+        );
+    MLV_actualise_window();
+
+    MLV_wait_mouse(&x, &y);
+
+    if ((x>=x_corner && x <= x_corner+tab_dim) && (y>=y_corner && y<=y_corner+tab_dim)) {
+        for (i=(y_corner+cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
+            for (j=(x_corner+cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {
+                if (y<=i && x<=j) {
+                    j=j-cel_dim;
+                    i=i-cel_dim;
+                    MLV_draw_image (carrier1, j, i);
+                    MLV_draw_image (carrier2, j+cel_dim, i);
+                    MLV_draw_image (carrier3, j+cel_dim+cel_dim, i);
+                    b = 1;
+                    break;
+                }
+            }
+            if (b==1)
+                break;
+        }
+    }
+    MLV_actualise_window();
+
     // Select Position
+    /*
     do {
         selectSlot(map, l, c);
         o = setOrientation();
@@ -215,7 +268,7 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship) {
             printf("You must replace your ship, it is stepping over another or it's out of the map.\n");
         }
     } while (checkposition == 0);
-
+    */
     // Save the position and orientation in the Ship
     p_ship->orientation = o;
     p_ship->slot.line = *l;
@@ -242,7 +295,7 @@ void placeFleet(char **map, int *l, int *c, Fleet *p_fleet) {
     for (i = 0; i<NSHIPS; i++) {
         printf("Set %s (%d)\n", current_ship->name, current_ship->length);
         placeShip(map, l, c, current_ship, i);
-        displayMap(map);
+        //displayMap(map);
         current_ship += 1; // the pointer changes to the next ship
     }
 }

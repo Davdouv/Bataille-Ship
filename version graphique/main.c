@@ -7,11 +7,11 @@
 #define WIDTH 1280
 #define HEIGHT 720
 
+#include <MLV/MLV_all.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <MLV/MLV_all.h>
 #include "functions.h"
 
 int main( int argc, char *argv[] ){
@@ -23,7 +23,7 @@ int main( int argc, char *argv[] ){
 
     /* MODE FLEMME */
     /* 0 pour oui, 1 pour non */
-    int f = 1;
+    int f = 0;
 
     /* Life initialisation */
     if (f == 1) {
@@ -55,7 +55,7 @@ int main( int argc, char *argv[] ){
 
     /* Window creation and display */
     MLV_create_window( "nom_du_jeu", "jeu", WIDTH, HEIGHT);
-
+    
     /* Player 1 : Fleet placement */
     displayMap(p1_def);
     printf("Player 1 has to place their fleet.\n");
@@ -93,11 +93,11 @@ int main( int argc, char *argv[] ){
     else {
         printf("\n***\nThe winner is player 1.\nCongratulations!\n***\n");
     }
-
-    // Attend 5 secondes
+    
+    // Wait 5 secondes
     MLV_wait_seconds(5);
 
-    // Ferme la fenêtre
+    // Close Window
     MLV_free_window();
 
     /* Free Memory */
