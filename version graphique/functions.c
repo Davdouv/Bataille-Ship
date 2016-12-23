@@ -1,5 +1,7 @@
 /* FUNCTIONS.C */
 #define _CRT_SECURE_NO_WARNINGS
+#define WIDTH 1280
+#define HEIGHT 720
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,22 +34,31 @@ char** initMap() {
 
 /* Give a value to each slots */
 void createMap(char **map) {
-    int i, j;
-    for (i = 0; i < NDIM; i++) {
-        for (j = 0; j < NDIM; j++) {
-            if (i == 0 && j == 0) {
-                map[i][j] = ' ';            // First slot
-            }
-            else if (i == 0 && j > 0) {
-                map[i][j] = '0' + j;            // Columns
-            }
-            else if (i > 0 && j == 0) {
-                map[i][j] = 'A' + (i - 1);        // Lines
-            }
-            else
-                map[i][j] = '.';            // Slots
-        }
-    }
+	int i, j;
+	int corner = HEIGHT/4;
+	int tab_dim = HEIGHT/2;
+	int cel_dim = tab_dim/NDIM;
+	MLV_draw_filled_rectangle(corner, corner, tab_dim, tab_dim, MLV_COLOR_WHITE);
+	for (i = 0; i < NDIM; i++) {
+		for (j = 0; j < NDIM; j++) {
+			if (i == 0 && j == 0) {
+				map[i][j] = ' ';            // First slot
+				
+			}
+			else if (i == 0 && j > 0) {
+				map[i][j] = '0' + j;            // Columns
+				MLV_draw_filled_rectangle(corner+(j*cel_dim), corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
+			}
+			else if (i > 0 && j == 0) {
+				map[i][j] = 'A' + (i - 1);        // Lines
+				MLV_draw_filled_rectangle(corner+(j*cel_dim), corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
+			}
+			else {
+				map[i][j] = '.';            // Slots
+				MLV_draw_filled_rectangle(corner+(j*cel_dim), corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_BLUE);
+			}
+		}
+	}
 }
 
 /* Display the map */

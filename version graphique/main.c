@@ -4,6 +4,8 @@
 /*       et Daphné Rose      */
 /* * * * * * * * * * * * * * */
 #define _CRT_SECURE_NO_WARNINGS
+#define WIDTH 1280
+#define HEIGHT 720
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,6 +53,9 @@ int main( int argc, char *argv[] ){
     createFleet(p1_fleet);
     createFleet(p2_fleet);
 
+    /* Window creation and display */
+    MLV_create_window( "nom_du_jeu", "jeu", WIDTH, HEIGHT);
+
     /* Player 1 : Fleet placement */
     displayMap(p1_def);
     printf("Player 1 has to place their fleet.\n");
@@ -88,6 +93,12 @@ int main( int argc, char *argv[] ){
     else {
         printf("\n***\nThe winner is player 1.\nCongratulations!\n***\n");
     }
+
+    // Attend 5 secondes
+    MLV_wait_seconds(5);
+
+    // Ferme la fenêtre
+    MLV_free_window();
 
     /* Free Memory */
     freeGame(p1_att, p1_def, p1_fleet);
