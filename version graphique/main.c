@@ -95,7 +95,7 @@ int main( int argc, char *argv[] ){
     else {
         printf("\n***\nThe winner is player 1.\nCongratulations!\n***\n");
     }
-    
+    */
     // Wait 5 secondes
     MLV_wait_seconds(5);
 
@@ -105,6 +105,6 @@ int main( int argc, char *argv[] ){
     // Free Memory //
     freeGame(p1_att, p1_def, p1_fleet);
     freeGame(p2_att, p2_def, p2_fleet);
-*/
+
     return 0;
 }
