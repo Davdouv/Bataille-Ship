@@ -15,7 +15,9 @@
 #include "functions.h"
 
 int main( int argc, char *argv[] ){
-    int line, column, p1_life, p2_life;
+    int line, column;
+    int x, y;
+   // int p1_life, p2_life;
     char **p1_att, **p1_def;
     char **p2_att, **p2_def;
     Fleet *p1_fleet;
@@ -26,13 +28,13 @@ int main( int argc, char *argv[] ){
     int f = 0;
 
     /* Life initialisation */
-    if (f == 1) {
+    /*if (f == 1) {
         p1_life = p2_life = 17;
     }
     else {
         p1_life = p2_life = 2;
     }
-
+*/
     /* Maps Initialisation */
     p1_att = initMap();
     p1_def = initMap();
@@ -60,24 +62,24 @@ int main( int argc, char *argv[] ){
     displayMap(p1_def);
     printf("Player 1 has to place their fleet.\n");
     if (f == 1) {
-        placeFleet(p1_def, &line, &column, p1_fleet);
+        placeFleet(p1_def, &line, &column, p1_fleet, &x, &y);
     }
     else {
-        flemme(p1_def, &line, &column, p1_fleet);
+        flemme(p1_def, &line, &column, p1_fleet, &x, &y);
     }
 
-
-    /* Player 2 : Fleet placement */
+/*
+    // Player 2 : Fleet placement //
     displayMap(p2_def);
     printf("Player 2 has to place their fleet.\n");
     if (f == 1) {
-        placeFleet(p2_def, &line, &column, p2_fleet);
+        placeFleet(p2_def, &line, &column, p2_fleet, &x, &y);
     }
     else {
-        flemme(p2_def, &line, &column, p2_fleet);
+        flemme(p2_def, &line, &column, p2_fleet, &x, &y);
     }
 
-    /* GAME ON */
+    // GAME ON //
     while (p1_life != 0) {
         printf("* Player 1 *\n\n");
         attackFleet(p1_att, p2_def, &line, &column, p2_fleet, &p2_life);
@@ -86,7 +88,7 @@ int main( int argc, char *argv[] ){
         attackFleet(p2_att, p1_def, &line, &column, p1_fleet, &p1_life);
     }
 
-    /* End of the game */
+    // End of the game //
     if (p1_life == 0) {
         printf("\n***\nThe winner is player 2.\nCongratulations!\n***\n");
     }
@@ -100,9 +102,9 @@ int main( int argc, char *argv[] ){
     // Close Window
     MLV_free_window();
 
-    /* Free Memory */
+    // Free Memory //
     freeGame(p1_att, p1_def, p1_fleet);
     freeGame(p2_att, p2_def, p2_fleet);
-
+*/
     return 0;
 }

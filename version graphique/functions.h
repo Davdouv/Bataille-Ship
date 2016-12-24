@@ -31,11 +31,11 @@ void createMap(char **map);
 void displayMap(char **map);
 Fleet* initFleet();
 void createFleet(Fleet* pt_fleet);
-void selectSlot(char **map, int *l, int *c);
+int selectSlot(char **map, int *l, int *c, int *x, int *y);
 int setOrientation();
 int checkPlacement(char **map, int *l, int *c, int o, int ship_length);
-void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship);
-void placeFleet(char **map, int *l, int *c, Fleet *p_fleet);
+void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y);
+void placeFleet(char **map, int *l, int *c, Fleet *p_fleet, int *x, int *y);
 int checkHit(char **map, char **map_def, int *l, int *c);
 Ship* detectShip(int *l, int *c, Fleet *p_fleet);
 void shipDmg(Ship *damaged_ship);
@@ -44,6 +44,6 @@ void freeGame(char **p_att, char **p_def, Fleet *p_fleet);
 
 MLV_Image* image(char* img_name, char* format);
 
-void flemme(char **map, int *l, int *c, Fleet *p_fleet);
+void flemme(char **map, int *l, int *c, Fleet *p_fleet, int *x, int *y);
 
 #endif

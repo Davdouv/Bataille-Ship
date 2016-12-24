@@ -83,21 +83,21 @@ void displayMap(char **map) {
 	for (i = 0; i < NDIM; i++) {
 		for (j = 0; j < NDIM; j++) {
 			if (i == 0 && j == 0) {
-				map[i][j] = ' ';            // First slot
+				//map[i][j] = ' ';            // First slot
                 MLV_draw_filled_rectangle(x_corner, y_corner, cel_dim, cel_dim, MLV_COLOR_RED);
 			}
 			else if (i == 0 && j > 0) {
-				map[i][j] = '0' + j;            // Columns
-				MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
+				//map[i][j] = '0' + j;            // Columns
+				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
                 MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, "0", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 			}
 			else if (i > 0 && j == 0) {
-				map[i][j] = 'A' + (i - 1);        // Lines
-				MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
+				//map[i][j] = 'A' + (i - 1);        // Lines
+				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
                 MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, "A", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 			}
 			else {
-				map[i][j] = '.';            // Slots
+				//map[i][j] = '.';            // Slots
 			    //MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_BLUE);
                 //MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, ".", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
                 MLV_draw_image (water, x_corner+(j*cel_dim), y_corner+(i*cel_dim));
@@ -149,34 +149,69 @@ void createFleet(Fleet* pt_fleet) {
     my_fleet.destroyer.life = 5;
 
     *pt_fleet = my_fleet;
-
-    //return my_fleet;
 }
 
 /* START */
 
-/* Select a slot | put the line & the column values in variables l and c */
-void selectSlot(char **map, int *l, int *c) {
+/* Select a slot | put the line & the column values in variables l and c and coordinates in x and y */
+// Return 1 if succeed, 0 if not
+int selectSlot(char **map, int *l, int *c, int *x, int *y) {
     int i, j;
-    int x, y;
+    int b = 0;
 
-    MLV_wait_mouse(&x, &y);
+    *l = 1; // Reset line cursor
+    *c = 1; // Reset column cursor
+    MLV_wait_mouse(x, y);
 
-    if ((x>=x_corner && x <= x_corner+tab_dim) && (y>=y_corner && y<=y_corner+tab_dim)) {
-        for (i=(y_corner+cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
-            for (j=(x_corner+cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {
-                if (y<=i && x<=j) {
-                    *l=i-cel_dim;
-                    *c=j-cel_dim;
+    if ((*x>=(x_corner+cel_dim) && *x <= x_corner+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
+        for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
+            for (j=(x_corner+2*cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {
+                if (*y<=i && *x<=j) {     // If it's inside the last cel
+                    *x=j-cel_dim;
+                    *y=i-cel_dim;
+                    return b = 1;
                 }
+                *c = *c+1;
             }
+            *c=1;
+            *l = *l+1;
         }
     }
+    return b;       // If mouse pressed outside
 }
 
-/* Check if orientation is set correctly and return 0 or 1 */
+/* Wait for keyboard pressed to set orientation and return 0 or 1 */
 int setOrientation() {
-    int o;
+    int o = 0;
+    MLV_Keyboard_button touche;
+    MLV_Event event;
+    MLV_Button_state state;
+
+    // Instructions
+    MLV_draw_text_box(
+         WIDTH/4, y_corner+tab_dim+100, tab_dim*2, 50,
+        "Cliquer sur un bateau pour le sélectionner et le positionner sur la grille.\nAppuyer sur espace pour changer sa rotation.", 9,
+         MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_COLOR_WHITE,
+         MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+    );
+    MLV_actualise_window();
+
+    // Keyboard management
+    event = MLV_get_event(&touche, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &state);
+    if (event == MLV_KEY) {
+        if (state == MLV_PRESSED && touche == MLV_KEYBOARD_SPACE) {
+            o = 1;
+            MLV_draw_text_box(
+            WIDTH/5, y_corner+tab_dim+100, tab_dim*2, 50,
+            "GG !.", 9,
+            MLV_COLOR_BLACK, MLV_COLOR_RED, MLV_COLOR_WHITE,
+            MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+            );
+            MLV_actualise_window();
+        }
+    }
+    
+    /*
     do {
         printf("Which orientation? (0: horizontal  1: vertical)\n");
         scanf("%d", &o);
@@ -184,7 +219,7 @@ int setOrientation() {
             printf("Please choose between 0 or 1.\n");
         }
     } while (o != 0 && o != 1);                          // Repeat until player choose 0 or 1
-
+    */
     return o;
 }
 
@@ -198,8 +233,9 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
                     return 0;
                 }
             }
-            else                                    // If it's out of the grid
+            else   {                // If it's out of the grid
                 return 0;
+            }                                     
         }
     }
     else {                                          // If it's vertical
@@ -218,46 +254,37 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
 }
 
 /* Players place their ships */
-void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship) {
-    int i , j, o = 0;
-    int b = 0;
-    int x, y;
+void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y) {
+    int i , o = 0;
+    int select = 0;
+    int checkposition;
 
-    MLV_Image *carrier1, *carrier2, *carrier3;
+    // ONLY FOR CARRIER NOW
+    MLV_Image *carrier[3];
 
-    carrier1 = image("fleet/carrier1","png");
-    carrier2 = image("fleet/carrier2","png");
-    carrier3 = image("fleet/carrier3","png");
+    carrier[0] = image("fleet/carrier1","png");
+    carrier[1] = image("fleet/carrier2","png");
+    carrier[2] = image("fleet/carrier3","png");
 
-    MLV_draw_text_box(
-        WIDTH/4, y_corner-100, tab_dim*2, 50,
-        "Cliquer sur un bateau pour le sélectionner et le positionner sur la grille.\nFaîtes un clique droit pour changer sa rotation.", 9,
-        MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_COLOR_WHITE,
-        MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-        );
-    MLV_actualise_window();
+    o = setOrientation();
+    printf("orientation = %d\n", o);
+    select = selectSlot(map, l, c, x, y);
+    printf("l = %d c = %d\n",*l, *c);
+    if (select == 1) {                  // If mouse pressed inside the grid
+        checkposition = checkPlacement(map, l, c, o, p_ship->length);
+    }
 
-    MLV_wait_mouse(&x, &y);
-
-    if ((x>=x_corner && x <= x_corner+tab_dim) && (y>=y_corner && y<=y_corner+tab_dim)) {
-        for (i=(y_corner+cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
-            for (j=(x_corner+cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {
-                if (y<=i && x<=j) {
-                    j=j-cel_dim;
-                    i=i-cel_dim;
-                    MLV_draw_image (carrier1, j, i);
-                    MLV_draw_image (carrier2, j+cel_dim, i);
-                    MLV_draw_image (carrier3, j+cel_dim+cel_dim, i);
-                    b = 1;
-                    break;
-                }
-            }
-            if (b==1)
-                break;
+    if (checkposition == 1) {
+        for (i = 0; i < 3; i++) {
+            MLV_draw_image (carrier[i], (*x)+i*cel_dim, *y);
         }
     }
-    MLV_actualise_window();
 
+    MLV_actualise_window();
+    for (i = 0; i < 3; i++) {
+        MLV_free_image(carrier[i]);
+    }
+    
     // Select Position
     /*
     do {
@@ -274,6 +301,7 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship) {
     p_ship->slot.line = *l;
     p_ship->slot.column = *c;
 
+
     // If set then change map value
     if (o == 0) {
         for (i = 0; i< p_ship->length; i++) {
@@ -288,23 +316,23 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship) {
 }
 
 /* Place all ships */
-void placeFleet(char **map, int *l, int *c, Fleet *p_fleet) {
+void placeFleet(char **map, int *l, int *c, Fleet *p_fleet, int *x, int *y) {
     int i;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     for (i = 0; i<NSHIPS; i++) {
         printf("Set %s (%d)\n", current_ship->name, current_ship->length);
-        placeShip(map, l, c, current_ship, i);
+        placeShip(map, l, c, current_ship, i, x, y);
         //displayMap(map);
         current_ship += 1; // the pointer changes to the next ship
     }
 }
 
-void flemme(char **map, int *l, int *c, Fleet *p_fleet) { // pour placer qu'un bateau parce que sinon c'est relou
+void flemme(char **map, int *l, int *c, Fleet *p_fleet, int *x, int *y) { // pour placer qu'un bateau parce que sinon c'est relou
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     printf("Set %s (%d)\n", current_ship->name, current_ship->length);
-    placeShip(map, l, c, current_ship, 0);
+    placeShip(map, l, c, current_ship, 0, x, y);
     displayMap(map);
 }
 
@@ -371,9 +399,10 @@ void shipDmg(Ship *damaged_ship) {
 /* Manage attacks */
 /* Attacker's att map - Adversary's def map - l - c - adversary's fleet - adversary's life */
 void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet, int *adversary_life) {
-    int check = 1;
+    /*int check = 1;
 
     displayMap(map_att);
+    
     printf("It's your time to attack !\n");
     do {
         do {
@@ -400,6 +429,7 @@ void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet,
 
         displayMap(map_att);
     } while (check == 1);            // Attack while success
+    */
 }
 
 /* Free memory */
