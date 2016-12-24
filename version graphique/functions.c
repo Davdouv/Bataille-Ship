@@ -158,7 +158,6 @@ void createFleet(Fleet* pt_fleet) {
 int selectSlot(char **map, int *l, int *c, int *x, int *y) {
     int i, j;
     int b = 0;
-    MLV_Event event;
 
     *l = 1; // Reset line cursor
     *c = 1; // Reset column cursor
@@ -177,28 +176,6 @@ int selectSlot(char **map, int *l, int *c, int *x, int *y) {
             *l = *l+1;
         }
     }
-   /*
-   do {
-        event = MLV_get_event(NULL, NULL, NULL, NULL, NULL, x, y, NULL, NULL);
-        if (event == MLV_MOUSE_BUTTON) {
-            if ((*x>=(x_corner+cel_dim) && *x <= x_corner+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
-                for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
-                    for (j=(x_corner+2*cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {
-                        if (*y<=i && *x<=j) {     // If it's inside the last cel
-                            *x=j-cel_dim;
-                            *y=i-cel_dim;
-                            return b = 1;
-                        }
-                        *c = *c+1;
-                    }
-                    *c=1;
-                    *l = *l+1;
-                }
-            }
-        }
-    } while(b!=1 && event != MLV_MOUSE_BUTTON);
-    */
-
     return b;       // If mouse pressed outside
 }
 
@@ -277,48 +254,47 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
 
 // Orientation + select
 int putShip(char **map, int *l, int *c, int *x, int *y) {
+    int i, j;
     int select;
     int o = 0;
-    MLV_Keyboard_button touche;
     MLV_Event keyboard, mouse;
+    MLV_Keyboard_button touche;
     MLV_Button_state state;
 
     // Instructions
     MLV_draw_text_box(
-         WIDTH/4, y_corner+tab_dim+100, tab_dim*2, 50,
+         WIDTH/4, y_corner-100, tab_dim*2, 50,
         "Cliquer sur un bateau pour le sélectionner et le positionner sur la grille.\nAppuyer sur espace pour changer sa rotation.", 9,
          MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_COLOR_WHITE,
          MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
     );
     MLV_actualise_window();
 
-    // Keyboard management
+    // Keyboard & Mouse management
     do {
         keyboard = MLV_get_event(&touche, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &state);
         mouse = MLV_get_event(NULL, NULL, NULL, NULL, NULL, x, y, NULL, NULL);
+        // If space bar pressed
         if (keyboard == MLV_KEY) {
             if (state == MLV_PRESSED && touche == MLV_KEYBOARD_SPACE) {
                 if (o == 0)
-                    o = 1;
+                    o = 1;                                              // Change orientation
                 else if (o == 1)
                     o = 0;
-                MLV_draw_text_box(
-                WIDTH/5, y_corner+tab_dim+100, tab_dim*2, 50,
-                "GG !.", 9,
-                MLV_COLOR_BLACK, MLV_COLOR_RED, MLV_COLOR_WHITE,
-                MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-                );
-                MLV_actualise_window();
+
+                //MLV_actualise_window();
+                printf("orientation = %d\n", o);
             }
         }
-        if (mouse == MLV_MOUSE_BUTTON) {
+        // If mouse pressed
+        if (mouse == MLV_MOUSE_BUTTON) {                            
             if ((*x>=(x_corner+cel_dim) && *x <= x_corner+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
-                for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
-                    for (j=(x_corner+2*cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {
+                for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {          // Lines
+                    for (j=(x_corner+2*cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {      // Columns
                         if (*y<=i && *x<=j) {     // If it's inside the last cel
-                            *x=j-cel_dim;
+                            *x=j-cel_dim;         // x = corner of that cel
                             *y=i-cel_dim;
-                            select = 1;
+                            select = 1;           // select worked
                         }
                         if (select == 1)
                             break;
@@ -331,7 +307,6 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
                 }
             }
         }
-        printf("orientation = %d\n", o);
     } while(select != 1 && mouse != MLV_MOUSE_BUTTON);
 
     return o;
@@ -348,14 +323,22 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, i
     carrier[0] = image("fleet/carrier1","png");
     carrier[1] = image("fleet/carrier2","png");
 
-    o = putShip(map, l, c, x, y);
-   // printf("orientation = %d\n", o);
-    printf("l = %d c = %d\n",*l, *c);
-    checkposition = checkPlacement(map, l, c, o, p_ship->length);
+    //do {
+        o = putShip(map, l, c, x, y);
+        printf("l = %d c = %d\n",*l, *c);
+        checkposition = checkPlacement(map, l, c, o, p_ship->length);
+    //} while(checkposition!=1);
 
     if (checkposition == 1) {
-        for (i = 0; i < 2; i++) {
-            MLV_draw_image (carrier[i], (*x)+i*cel_dim, *y);
+        if (o == 0) {
+            for (i = 0; i < 2; i++) {
+                MLV_draw_image (carrier[i], (*x)+i*cel_dim, *y);
+            }
+        }
+        else if (o == 1) {
+            for (i = 0; i < 2; i++) {
+                MLV_draw_image (carrier[i], *x, (*y)+i*cel_dim);
+            }
         }
     }
 
@@ -412,7 +395,7 @@ void flemme(char **map, int *l, int *c, Fleet *p_fleet, int *x, int *y) { // pou
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     printf("Set %s (%d)\n", current_ship->name, current_ship->length);
     placeShip(map, l, c, current_ship, 0, x, y);
-    displayMap(map);
+    //displayMap(map);
 }
 
 /* TURN */

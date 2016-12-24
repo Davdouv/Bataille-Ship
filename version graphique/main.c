@@ -68,7 +68,7 @@ int main( int argc, char *argv[] ){
         flemme(p1_def, &line, &column, p1_fleet, &x, &y);
     }
 
-/*
+
     // Player 2 : Fleet placement //
     displayMap(p2_def);
     printf("Player 2 has to place their fleet.\n");
@@ -79,7 +79,7 @@ int main( int argc, char *argv[] ){
         flemme(p2_def, &line, &column, p2_fleet, &x, &y);
     }
 
-    // GAME ON //
+/*    // GAME ON //
     while (p1_life != 0) {
         printf("* Player 1 *\n\n");
         attackFleet(p1_att, p2_def, &line, &column, p2_fleet, &p2_life);
