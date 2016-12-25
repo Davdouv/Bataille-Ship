@@ -13,10 +13,10 @@
 #define NDIM 11     // Grid dimensions
 #define NSHIPS 5    // Number of ships MUST NOT EXCEED 5!
 
-#define x_corner WIDTH/3
-#define y_corner HEIGHT/4
-#define tab_dim HEIGHT/2
-#define cel_dim tab_dim/NDIM
+#define x_corner WIDTH/3        // x coordinate of the top/left corner of the grid
+#define y_corner HEIGHT/4       // y coordinate of the top/left corner of the grid
+#define tab_dim HEIGHT/2        // Grid size (it's a square)
+#define cel_dim tab_dim/NDIM    // Cel size (square too)
 
 /* MAP FUNCTIONS */
 /* INIT */
@@ -58,12 +58,13 @@ void createMap(char **map) {
 }
 
 /* Make declaration of image of the size of a cell easier */
-MLV_Image* image(char* img_name, char* format) {
+MLV_Image* image(char* img_name, char* img_num, char* format) {
     char file[40];
     MLV_Image *my_image;
 
     strcpy(file, "img/");
     strcat(file, img_name);
+    strcat(file, img_num);
     strcat(file, ".");
     strcat(file, format);
 
@@ -77,9 +78,11 @@ void displayMap(char **map) {
     int i, j;
 
     MLV_Image *water;
-    water = image("water","jpg");
+    water = image("water","","jpg");
 
-	//MLV_draw_filled_rectangle(x_corner, y_corner, tab_dim, tab_dim, MLV_COLOR_WHITE);
+    // Hide the previous display
+	MLV_draw_filled_rectangle(0, 0, WIDTH, HEIGHT, MLV_COLOR_BLACK);
+
 	for (i = 0; i < NDIM; i++) {
 		for (j = 0; j < NDIM; j++) {
 			if (i == 0 && j == 0) {
@@ -225,6 +228,7 @@ int setOrientation() {
 /* Check if slots are free. Return 1 if it is, 0 if it's not */
 int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
     int i;
+    printf("Check : l = %d c = %d\n", *l, *c);
     if (o == 0) {                                   // If it's horizontal
         for (i = 0; i<ship_length; i++) {
             if (*c + i < NDIM) {
@@ -252,7 +256,7 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
     return 1;                                       // If no problem
 }
 
-// Orientation + select
+// Give Orientation + selected slot
 int putShip(char **map, int *l, int *c, int *x, int *y) {
     int i, j;
     int select;
@@ -260,6 +264,9 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
     MLV_Event keyboard, mouse;
     MLV_Keyboard_button touche;
     MLV_Button_state state;
+
+    *l = 1; // Reset line cursor
+    *c = 1; // Reset column cursor
 
     // Instructions
     MLV_draw_text_box(
@@ -316,37 +323,58 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
 void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y) {
     int i , o;
     int checkposition;
+    char file_name[16] = "fleet/";
+    char num[2];
+    MLV_Image *ship_img[5];
 
-    // ONLY FOR CARRIER NOW
-    MLV_Image *carrier[2];
+    strcat(file_name, p_ship->name);
+    for (i = 0; i < p_ship->length; i++)
+    {
+        sprintf(num,"%d",i+1);
+        ship_img[i] = image(file_name,num,"png");       // Load each img of the actual ship
+    }
 
-    carrier[0] = image("fleet/carrier1","png");
-    carrier[1] = image("fleet/carrier2","png");
-
-    //do {
+    do {
         o = putShip(map, l, c, x, y);
         printf("l = %d c = %d\n",*l, *c);
         checkposition = checkPlacement(map, l, c, o, p_ship->length);
-    //} while(checkposition!=1);
+        if (checkposition == 0) {
+            MLV_draw_text_box(
+                80, y_corner+(tab_dim/2), 250, 70,
+                "You ship can not be placed here.\nPlease put it somewhere else", 9,
+                MLV_COLOR_RED, MLV_COLOR_RED, MLV_COLOR_WHITE,
+                MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+            );
+            MLV_actualise_window();
+        }
+    } while(checkposition==0);
 
     if (checkposition == 1) {
+        // Hide the warning message
+        MLV_draw_filled_rectangle(80, y_corner+(tab_dim/2), 250, 70, MLV_COLOR_BLACK);
+
         if (o == 0) {
-            for (i = 0; i < 2; i++) {
-                MLV_draw_image (carrier[i], (*x)+i*cel_dim, *y);
+            for (i = 0; i < p_ship->length; i++) {
+                if (num_ship == 0) {
+                    MLV_draw_image (ship_img[i], (*x)+i*cel_dim, *y);
+                }
             }
         }
         else if (o == 1) {
-            for (i = 0; i < 2; i++) {
-                MLV_draw_image (carrier[i], *x, (*y)+i*cel_dim);
+            for (i = 0; i < p_ship->length; i++) {
+                if (num_ship == 0) {
+                    MLV_draw_image (ship_img[i], *x, (*y)+i*cel_dim);
+                }
             }
         }
     }
-
-    MLV_actualise_window();
-    for (i = 0; i < 2; i++) {
-        MLV_free_image(carrier[i]);
-    }
     
+    MLV_actualise_window();
+    
+    for (i = 0; i < p_ship->length; i++) {
+            MLV_free_image(ship_img[i]);
+    }
+
     // Select Position
     /*
     do {
@@ -385,6 +413,7 @@ void placeFleet(char **map, int *l, int *c, Fleet *p_fleet, int *x, int *y) {
     for (i = 0; i<NSHIPS; i++) {
         printf("Set %s (%d)\n", current_ship->name, current_ship->length);
         placeShip(map, l, c, current_ship, i, x, y);
+        MLV_actualise_window();
         //displayMap(map);
         current_ship += 1; // the pointer changes to the next ship
     }

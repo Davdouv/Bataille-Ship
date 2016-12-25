@@ -43,7 +43,7 @@ void shipDmg(Ship *damaged_ship);
 void attackFleet(char **map_atk, char **map_def, int *l, int *c, Fleet *p_fleet, int *adversary_life);
 void freeGame(char **p_att, char **p_def, Fleet *p_fleet);
 
-MLV_Image* image(char* img_name, char* format);
+MLV_Image* image(char* img_name, char* img_num, char* format);
 
 void flemme(char **map, int *l, int *c, Fleet *p_fleet, int *x, int *y);
 
