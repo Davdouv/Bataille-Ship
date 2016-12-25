@@ -262,8 +262,9 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
     int select;
     int o = 0;
     MLV_Event keyboard, mouse;
-    MLV_Keyboard_button touche;
-    MLV_Button_state state;
+    MLV_Keyboard_button key;
+    MLV_Button_state key_state;
+    MLV_Button_state mouse_state;
 
     *l = 1; // Reset line cursor
     *c = 1; // Reset column cursor
@@ -279,11 +280,11 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
 
     // Keyboard & Mouse management
     do {
-        keyboard = MLV_get_event(&touche, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &state);
-        mouse = MLV_get_event(NULL, NULL, NULL, NULL, NULL, x, y, NULL, NULL);
+        keyboard = MLV_get_event(&key, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &key_state);
+        mouse = MLV_get_event(NULL, NULL, NULL, NULL, NULL, x, y, NULL, &mouse_state);
         // If space bar pressed
         if (keyboard == MLV_KEY) {
-            if (state == MLV_PRESSED && touche == MLV_KEYBOARD_SPACE) {
+            if (key_state == MLV_PRESSED && key == MLV_KEYBOARD_SPACE) {
                 if (o == 0)
                     o = 1;                                              // Change orientation
                 else if (o == 1)
@@ -294,7 +295,7 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
             }
         }
         // If mouse pressed
-        if (mouse == MLV_MOUSE_BUTTON) {                            
+        if (mouse == MLV_MOUSE_BUTTON && mouse_state == MLV_RELEASED) {                            
             if ((*x>=(x_corner+cel_dim) && *x <= x_corner+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
                 for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {          // Lines
                     for (j=(x_corner+2*cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {      // Columns
@@ -355,26 +356,22 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, i
 
         if (o == 0) {
             for (i = 0; i < p_ship->length; i++) {
-                if (num_ship == 0) {
-                    MLV_draw_image (ship_img[i], (*x)+i*cel_dim, *y);
-                }
+                MLV_draw_image (ship_img[i], (*x)+i*cel_dim, *y);
             }
         }
         else if (o == 1) {
             for (i = 0; i < p_ship->length; i++) {
-                if (num_ship == 0) {
-                    MLV_draw_image (ship_img[i], *x, (*y)+i*cel_dim);
-                }
+                MLV_draw_image (ship_img[i], *x, (*y)+i*cel_dim);
             }
         }
     }
-    
+
     MLV_actualise_window();
-    
+    /*
     for (i = 0; i < p_ship->length; i++) {
             MLV_free_image(ship_img[i]);
     }
-
+*/
     // Select Position
     /*
     do {
