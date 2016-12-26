@@ -32,7 +32,6 @@ void displayMap(char **map);
 Fleet* initFleet();
 void createFleet(Fleet* pt_fleet);
 int selectSlot(char **map, int *l, int *c, int *x, int *y);
-int setOrientation();
 int checkPlacement(char **map, int *l, int *c, int o, int ship_length);
 int putShip(char **map, int *l, int *c, int *x, int *y);
 void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y);

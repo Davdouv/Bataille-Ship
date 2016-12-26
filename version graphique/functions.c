@@ -76,6 +76,8 @@ MLV_Image* image(char* img_name, char* img_num, char* format) {
 /* Display the map */
 void displayMap(char **map) {
     int i, j;
+    char num[2];
+    char letter[2]="A ";
 
     MLV_Image *water;
     water = image("water","","jpg");
@@ -85,22 +87,21 @@ void displayMap(char **map) {
 
 	for (i = 0; i < NDIM; i++) {
 		for (j = 0; j < NDIM; j++) {
-			if (i == 0 && j == 0) {
-				//map[i][j] = ' ';            // First slot
+			if (i == 0 && j == 0) {         // First slot
+				//map[i][j] = ' ';            
                 MLV_draw_filled_rectangle(x_corner, y_corner, cel_dim, cel_dim, MLV_COLOR_RED);
 			}
-			else if (i == 0 && j > 0) {
-				//map[i][j] = '0' + j;            // Columns
+			else if (i == 0 && j > 0) {     // Columns
+                sprintf(num,"%d",j);            
 				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
-                MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, "0", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+                MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, num, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 			}
-			else if (i > 0 && j == 0) {
-				//map[i][j] = 'A' + (i - 1);        // Lines
+			else if (i > 0 && j == 0) {     // Lines
+                letter[0]= 'A'+i-1;       
 				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
-                MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, "A", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+                MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, letter, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 			}
-			else {
-				//map[i][j] = '.';            // Slots
+			else {                          // Slots            
 			    //MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_BLUE);
                 //MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, ".", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
                 MLV_draw_image (water, x_corner+(j*cel_dim), y_corner+(i*cel_dim));
@@ -182,49 +183,6 @@ int selectSlot(char **map, int *l, int *c, int *x, int *y) {
     return b;       // If mouse pressed outside
 }
 
-/* Wait for keyboard pressed to set orientation and return 0 or 1 */
-int setOrientation() {
-    int o = 0;
-    MLV_Keyboard_button touche;
-    MLV_Event event;
-    MLV_Button_state state;
-
-    // Instructions
-    MLV_draw_text_box(
-         WIDTH/4, y_corner+tab_dim+100, tab_dim*2, 50,
-        "Cliquer sur un bateau pour le sélectionner et le positionner sur la grille.\nAppuyer sur espace pour changer sa rotation.", 9,
-         MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_COLOR_WHITE,
-         MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-    );
-    MLV_actualise_window();
-
-    // Keyboard management
-    event = MLV_get_event(&touche, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &state);
-    if (event == MLV_KEY) {
-        if (state == MLV_PRESSED && touche == MLV_KEYBOARD_SPACE) {
-            o = 1;
-            MLV_draw_text_box(
-            WIDTH/5, y_corner+tab_dim+100, tab_dim*2, 50,
-            "GG !.", 9,
-            MLV_COLOR_BLACK, MLV_COLOR_RED, MLV_COLOR_WHITE,
-            MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-            );
-            MLV_actualise_window();
-        }
-    }
-    
-    /*
-    do {
-        printf("Which orientation? (0: horizontal  1: vertical)\n");
-        scanf("%d", &o);
-        if (o != 0 && o != 1) {
-            printf("Please choose between 0 or 1.\n");
-        }
-    } while (o != 0 && o != 1);                          // Repeat until player choose 0 or 1
-    */
-    return o;
-}
-
 /* Check if slots are free. Return 1 if it is, 0 if it's not */
 int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
     int i;
@@ -259,7 +217,7 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
 // Give Orientation + selected slot
 int putShip(char **map, int *l, int *c, int *x, int *y) {
     int i, j;
-    int select;
+    int select = 0;
     int o = 0;
     MLV_Event keyboard, mouse;
     MLV_Keyboard_button key;
@@ -280,6 +238,7 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
 
     // Keyboard & Mouse management
     do {
+        printf("JE RENTRE\n");
         keyboard = MLV_get_event(&key, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &key_state);
         mouse = MLV_get_event(NULL, NULL, NULL, NULL, NULL, x, y, NULL, &mouse_state);
         // If space bar pressed
@@ -295,7 +254,7 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
             }
         }
         // If mouse pressed
-        if (mouse == MLV_MOUSE_BUTTON && mouse_state == MLV_RELEASED) {                            
+        if (mouse == MLV_MOUSE_BUTTON && mouse_state == MLV_PRESSED) {                          
             if ((*x>=(x_corner+cel_dim) && *x <= x_corner+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
                 for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {          // Lines
                     for (j=(x_corner+2*cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {      // Columns
@@ -316,6 +275,7 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
             }
         }
     } while(select != 1 && mouse != MLV_MOUSE_BUTTON);
+            //printf("SELECT = %d\n",select);
 
     return o;
 }
@@ -335,6 +295,7 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, i
         ship_img[i] = image(file_name,num,"png");       // Load each img of the actual ship
     }
 
+    // Select a valid Position
     do {
         o = putShip(map, l, c, x, y);
         printf("l = %d c = %d\n",*l, *c);
@@ -367,22 +328,12 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, i
     }
 
     MLV_actualise_window();
-    /*
+
     for (i = 0; i < p_ship->length; i++) {
             MLV_free_image(ship_img[i]);
     }
-*/
-    // Select Position
-    /*
-    do {
-        selectSlot(map, l, c);
-        o = setOrientation();
-        checkposition = checkPlacement(map, l, c, o, p_ship->length);
-        if (checkposition == 0) {
-            printf("You must replace your ship, it is stepping over another or it's out of the map.\n");
-        }
-    } while (checkposition == 0);
-    */
+
+
     // Save the position and orientation in the Ship
     p_ship->orientation = o;
     p_ship->slot.line = *l;
@@ -400,6 +351,8 @@ void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, i
             map[*l + i][*c] = '1'+num_ship;
         }
     }
+
+    MLV_wait_seconds(1); // Wait 1 second
 }
 
 /* Place all ships */
