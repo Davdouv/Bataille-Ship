@@ -83,7 +83,7 @@ void displayMap(char **map) {
     water = image("water","","jpg");
 
     // Hide the previous display
-	MLV_draw_filled_rectangle(0, 0, WIDTH, HEIGHT, MLV_COLOR_BLACK);
+	MLV_clear_window(MLV_COLOR_BLACK);
 
 	for (i = 0; i < NDIM; i++) {
 		for (j = 0; j < NDIM; j++) {
@@ -219,10 +219,6 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
     int i, j;
     int select = 0;
     int o = 0;
-    MLV_Event keyboard, mouse;
-    MLV_Keyboard_button key;
-    MLV_Button_state key_state;
-    MLV_Button_state mouse_state;
 
     *l = 1; // Reset line cursor
     *c = 1; // Reset column cursor
@@ -235,26 +231,21 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
          MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
     );
     MLV_actualise_window();
-
-    // Keyboard & Mouse management
+    printf("Avant select = %d\n",select);
+    // Keyboard & Mouse management // DO NOT PUT PRINTF INSIDE THIS LOOP
     do {
-        printf("JE RENTRE\n");
-        keyboard = MLV_get_event(&key, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &key_state);
-        mouse = MLV_get_event(NULL, NULL, NULL, NULL, NULL, x, y, NULL, &mouse_state);
+        MLV_get_mouse_position(x,y);
         // If space bar pressed
-        if (keyboard == MLV_KEY) {
-            if (key_state == MLV_PRESSED && key == MLV_KEYBOARD_SPACE) {
-                if (o == 0)
-                    o = 1;                                              // Change orientation
-                else if (o == 1)
-                    o = 0;
+        if (MLV_get_keyboard_state(MLV_KEYBOARD_SPACE)==MLV_PRESSED) {
+            if (o == 0)
+                o = 1;                                       // Change orientation
+            else if (o == 1)
+                 o = 0;
 
-                //MLV_actualise_window();
-                printf("orientation = %d\n", o);
-            }
+            //MLV_actualise_window();
         }
-        // If mouse pressed
-        if (mouse == MLV_MOUSE_BUTTON && mouse_state == MLV_PRESSED) {                          
+        // If left click
+        if (MLV_get_mouse_button_state(MLV_BUTTON_LEFT)==MLV_PRESSED) {                          
             if ((*x>=(x_corner+cel_dim) && *x <= x_corner+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
                 for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {          // Lines
                     for (j=(x_corner+2*cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {      // Columns
@@ -274,8 +265,8 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
                 }
             }
         }
-    } while(select != 1 && mouse != MLV_MOUSE_BUTTON);
-            //printf("SELECT = %d\n",select);
+    } while(select != 1);
+    printf("Apres SELECT = %d\n",select);
 
     return o;
 }
