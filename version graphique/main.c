@@ -3,6 +3,7 @@
 /*       par David Nasr      */
 /*       et Daphné Rose      */
 /* * * * * * * * * * * * * * */
+
 #define _CRT_SECURE_NO_WARNINGS
 #define WIDTH 1280
 #define HEIGHT 720
@@ -59,7 +60,8 @@ int main( int argc, char *argv[] ){
     MLV_create_window( "nom_du_jeu", "jeu", WIDTH, HEIGHT);
     
     /* Player 1 : Fleet placement */
-    displayMap(p1_def);
+    //displayMap(p1_def);
+    displayMaps();
     printf("Player 1 has to place their fleet.\n");
     if (f == 1) {
         placeFleet(p1_def, &line, &column, p1_fleet, &x, &y);

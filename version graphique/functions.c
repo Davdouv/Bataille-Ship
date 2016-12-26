@@ -14,6 +14,8 @@
 #define NSHIPS 5    // Number of ships MUST NOT EXCEED 5!
 
 #define x_corner WIDTH/3        // x coordinate of the top/left corner of the grid
+#define x_corner_def WIDTH/5
+#define x_corner_att WIDTH/1.8
 #define y_corner HEIGHT/4       // y coordinate of the top/left corner of the grid
 #define tab_dim HEIGHT/2        // Grid size (it's a square)
 #define cel_dim tab_dim/NDIM    // Cel size (square too)
@@ -116,6 +118,78 @@ void displayMap(char **map) {
     MLV_free_image(water);
 }
 
+/* Display a single map */
+void displayOneMap(int map, int x_corner_map) {
+    int i, j;
+    char num[2];
+    char letter[2]="A ";
+    MLV_Image *water;
+
+    if (map == 0) {
+        water = image("water","","jpg");
+    } else {
+        water = image("water_att","","jpg");
+    }
+
+    for (i = 0; i < NDIM; i++) {
+		for (j = 0; j < NDIM; j++) {
+			if (i == 0 && j == 0) {         // First slot
+				//map[i][j] = ' ';            
+                MLV_draw_filled_rectangle(x_corner_map, y_corner, cel_dim, cel_dim, MLV_COLOR_RED);
+			}
+			else if (i == 0 && j > 0) {     // Columns
+                sprintf(num,"%d",j);            
+				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
+                MLV_draw_text_box(x_corner_map+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, num, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+			}
+			else if (i > 0 && j == 0) {     // Lines
+                letter[0]= 'A'+i-1; 
+                printf("%c\n", letter[0]);      
+				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
+                MLV_draw_text_box(x_corner_map+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, letter, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+			}
+			else {                          // Slots            
+			    //MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_BLUE);
+                //MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, ".", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+                MLV_draw_image (water, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim));
+            }
+            MLV_draw_line(x_corner_map+(j*cel_dim), y_corner, x_corner_map+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
+		}
+        MLV_draw_line(x_corner_map+(j*cel_dim), y_corner, x_corner_map+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
+        MLV_draw_line(x_corner_map, y_corner+(i*cel_dim), x_corner_map+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
+	}
+    MLV_draw_line(x_corner_map, y_corner+(i*cel_dim), x_corner_map+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
+
+    MLV_free_image(water);
+}
+
+/* Display the 2 maps */
+void displayMaps() {
+
+    // Hide the previous display
+	MLV_clear_window(MLV_COLOR_BLACK);
+
+    // Defensive Map
+    MLV_draw_text_box(
+         x_corner_def, y_corner-20, tab_dim, 20,
+        "Defensive Map", 9,
+         MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_COLOR_WHITE,
+         MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+    );
+	displayOneMap(0, x_corner_def);
+
+    // Offensive Map
+    MLV_draw_text_box(
+         x_corner_att, y_corner-20, tab_dim, 20,
+        "Offensive Map", 9,
+         MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_COLOR_WHITE,
+         MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+    );
+	displayOneMap(1, x_corner_att);
+
+    MLV_actualise_window();
+}
+
 /* FLEET FUNCTIONS */
 /* INIT */
 /* Return the fleet or NULL if malloc failed */
@@ -166,9 +240,9 @@ int selectSlot(char **map, int *l, int *c, int *x, int *y) {
     *l = 1; // Reset line cursor
     *c = 1; // Reset column cursor
     MLV_wait_mouse(x, y);
-    if ((*x>=(x_corner+cel_dim) && *x <= x_corner+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
+    if ((*x>=(x_corner_def+cel_dim) && *x <= x_corner_def+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
         for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
-             for (j=(x_corner+2*cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {
+             for (j=(x_corner_def+2*cel_dim); j<=(x_corner_def+tab_dim); j=j+cel_dim) {
                 if (*y<=i && *x<=j) {     // If it's inside the last cel
                     *x=j-cel_dim;
                     *y=i-cel_dim;
@@ -246,9 +320,9 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
         }
         // If left click
         if (MLV_get_mouse_button_state(MLV_BUTTON_LEFT)==MLV_PRESSED) {                          
-            if ((*x>=(x_corner+cel_dim) && *x <= x_corner+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
+            if ((*x>=(x_corner_def+cel_dim) && *x <= x_corner_def+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
                 for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {          // Lines
-                    for (j=(x_corner+2*cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {      // Columns
+                    for (j=(x_corner_def+2*cel_dim); j<=(x_corner_def+tab_dim); j=j+cel_dim) {      // Columns
                         if (*y<=i && *x<=j) {     // If it's inside the last cel
                             *x=j-cel_dim;         // x = corner of that cel
                             *y=i-cel_dim;
