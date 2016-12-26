@@ -231,7 +231,7 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
          MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
     );
     MLV_actualise_window();
-    printf("Avant select = %d\n",select);
+    
     // Keyboard & Mouse management // DO NOT PUT PRINTF INSIDE THIS LOOP
     do {
         MLV_get_mouse_position(x,y);
@@ -266,7 +266,6 @@ int putShip(char **map, int *l, int *c, int *x, int *y) {
             }
         }
     } while(select != 1);
-    printf("Apres SELECT = %d\n",select);
 
     return o;
 }
