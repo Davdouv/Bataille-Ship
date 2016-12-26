@@ -33,16 +33,17 @@ Fleet* initFleet();
 void createFleet(Fleet* pt_fleet);
 int selectSlot(char **map, int *l, int *c, int *x, int *y);
 int checkPlacement(char **map, int *l, int *c, int o, int ship_length);
-int putShip(char **map, int *l, int *c, int *x, int *y);
-void placeShip(char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y);
+int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, int *l, int *c, int *x, int *y);
+void placeShip(Fleet *p_fleet, char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y);
 void placeFleet(char **map, int *l, int *c, Fleet *p_fleet, int *x, int *y);
 int checkHit(char **map, char **map_def, int *l, int *c);
 Ship* detectShip(int *l, int *c, Fleet *p_fleet);
 void shipDmg(Ship *damaged_ship);
 void attackFleet(char **map_atk, char **map_def, int *l, int *c, Fleet *p_fleet, int *adversary_life);
 void freeGame(char **p_att, char **p_def, Fleet *p_fleet);
-void displayMaps();
+void displayMaps(Fleet *p_fleet);
 void displayOneMap(int map, int x_corner_map);
+int division(int a, int b);
 
 MLV_Image* image(char* img_name, char* img_num, char* format);
 

@@ -60,8 +60,7 @@ int main( int argc, char *argv[] ){
     MLV_create_window( "nom_du_jeu", "jeu", WIDTH, HEIGHT);
     
     /* Player 1 : Fleet placement */
-    //displayMap(p1_def);
-    displayMaps();
+    displayMaps(p1_fleet);
     printf("Player 1 has to place their fleet.\n");
     if (f == 1) {
         placeFleet(p1_def, &line, &column, p1_fleet, &x, &y);
