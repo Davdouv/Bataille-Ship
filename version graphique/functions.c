@@ -61,7 +61,7 @@ void createMap(char **map) {
 
 /* Make declaration of image of the size of a cell easier */
 MLV_Image* image(char* img_name, char* img_num, char* format) {
-    char file[40];
+    char *file = malloc(40 * sizeof(char));
     MLV_Image *my_image;
 
     strcpy(file, "img/");
@@ -71,58 +71,16 @@ MLV_Image* image(char* img_name, char* img_num, char* format) {
     strcat(file, format);
 
     my_image = MLV_load_image(file);
+    free(file);
     MLV_resize_image_with_proportions(my_image, cel_dim, cel_dim);
     return my_image;
-}
-
-/* Display the map */
-void displayMap(char **map) {
-    int i, j;
-    char num[2];
-    char letter[2]="A ";
-
-    MLV_Image *water;
-    water = image("water","","jpg");
-
-    // Hide the previous display
-	MLV_clear_window(MLV_COLOR_BLACK);
-
-	for (i = 0; i < NDIM; i++) {
-		for (j = 0; j < NDIM; j++) {
-			if (i == 0 && j == 0) {         // First slot
-				//map[i][j] = ' ';            
-                MLV_draw_filled_rectangle(x_corner, y_corner, cel_dim, cel_dim, MLV_COLOR_RED);
-			}
-			else if (i == 0 && j > 0) {     // Columns
-                sprintf(num,"%d",j);            
-				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
-                MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, num, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
-			}
-			else if (i > 0 && j == 0) {     // Lines
-                letter[0]= 'A'+i-1;       
-				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
-                MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, letter, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
-			}
-			else {                          // Slots            
-			    //MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_BLUE);
-                //MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, ".", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
-                MLV_draw_image (water, x_corner+(j*cel_dim), y_corner+(i*cel_dim));
-            }
-            MLV_draw_line(x_corner+(j*cel_dim), y_corner, x_corner+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
-		}
-        MLV_draw_line(x_corner+(j*cel_dim), y_corner, x_corner+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
-        MLV_draw_line(x_corner, y_corner+(i*cel_dim), x_corner+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
-	}
-    MLV_draw_line(x_corner, y_corner+(i*cel_dim), x_corner+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
-    MLV_actualise_window();
-    MLV_free_image(water);
 }
 
 /* Display a single map */
 void displayOneMap(int map, int x_corner_map) {
     int i, j;
-    char num[2];
-    char letter[2];
+    char *num = malloc(3 * sizeof(char));
+    char *letter = malloc(3 * sizeof(char));
     MLV_Image *water;
 
     if (map == 0) {
@@ -162,6 +120,8 @@ void displayOneMap(int map, int x_corner_map) {
     MLV_draw_line(x_corner_map, y_corner+(i*cel_dim), x_corner_map+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
 
     MLV_free_image(water);
+    free(num);
+    free(letter);
 }
 
 /* Display the 2 maps */
@@ -170,9 +130,8 @@ void displayMaps(Fleet *p_fleet) {
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     MLV_Image *ship_img[5];
-    char folder_name[16] = ""; // Ne pas enlever cette ligne même si elle sert à rien
-    char file_name[16];
-    char num[2];
+    char *file_name = malloc(16 * sizeof(char));
+    char *num = malloc(3 * sizeof(char));
 
     // Hide the previous display
 	MLV_clear_window(MLV_COLOR_BLACK);
@@ -229,9 +188,10 @@ void displayMaps(Fleet *p_fleet) {
         
         current_ship += 1; // the pointer changes to the next ship
     }
-
-    
     MLV_actualise_window();
+
+    free(file_name);
+    free(num);
 }
 
 /* FLEET FUNCTIONS */
@@ -422,11 +382,13 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, int *l, i
 void placeShip(Fleet *p_fleet, char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y) {
     int i , o;
     int checkposition;
-    char file_name[16] = "fleet/";
-    char num[2];
+    char *file_name = malloc(16 * sizeof(char));
+    char *num = malloc(3 * sizeof(char));
     MLV_Image *ship_img[5];
 
+    strncpy(file_name, "fleet/", 7);
     strcat(file_name, p_ship->name);
+
     for (i = 0; i < p_ship->length; i++)
     {
         sprintf(num,"%d",i+1);
@@ -465,6 +427,8 @@ void placeShip(Fleet *p_fleet, char **map, int *l, int *c, Ship *p_ship, int num
 
     MLV_actualise_window();
 
+    free(file_name);
+    free(num);
     for (i = 0; i < p_ship->length; i++) {
             MLV_free_image(ship_img[i]);
     }
