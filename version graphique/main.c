@@ -72,7 +72,7 @@ int main( int argc, char *argv[] ){
     MLV_wait_seconds(2);
 
     // Player 2 : Fleet placement //
-    displayMap(p2_def);
+    displayMaps(p2_fleet);
     printf("Player 2 has to place their fleet.\n");
     if (f == 1) {
         placeFleet(p2_def, &line, &column, p2_fleet, &x, &y);

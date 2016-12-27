@@ -170,7 +170,7 @@ void displayMaps(Fleet *p_fleet) {
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     MLV_Image *ship_img[5];
-    char folder_name[16] = "fleet/";
+    char folder_name[16] = ""; // Ne pas enlever cette ligne même si elle sert à rien
     char file_name[16];
     char num[2];
 
@@ -198,15 +198,11 @@ void displayMaps(Fleet *p_fleet) {
     // Display player's ships
 
     for (i = 0; i<NSHIPS; i++) {
-        printf("Tour %d\n", i);
         if(current_ship->slot.line != -1 && current_ship->slot.column != -1) { // if position had been defined
-        printf("Ligne = %d - Colonne = %d\n", current_ship->slot.line, current_ship->slot.column);
 
             // Load the image files
-            printf("folder name = %s\n", folder_name);
             strcpy(file_name, "fleet/");
-            strcat(file_name, current_ship->name);
-            printf("file_name 2 = %s\n", file_name);          
+            strcat(file_name, current_ship->name);         
             for (j = 0; j < current_ship->length; j++) {
                 sprintf(num,"%d",j+1);
                 ship_img[j] = image(file_name,num,"png");       // Load each img of the actual ship
@@ -214,13 +210,12 @@ void displayMaps(Fleet *p_fleet) {
 
             if (current_ship->orientation == 0) {
                 for (k = 0; k < current_ship->length; k++) {
-                    MLV_draw_image (ship_img[k], x_corner_def+(current_ship->slot.line)*cel_dim+k*cel_dim, y_corner+(current_ship->slot.column)*cel_dim);
-                    printf("Je pose le bateau %s\n",current_ship->name);
+                    MLV_draw_image (ship_img[k], x_corner_def+(current_ship->slot.column)*cel_dim+k*cel_dim, y_corner+(current_ship->slot.line)*cel_dim);
                 }
             }
             else if (current_ship->orientation == 1) {
                 for (k = 0; k < current_ship->length; k++) {
-                    MLV_draw_image (ship_img[k], x_corner_def+(current_ship->slot.line)*cel_dim, y_corner+(current_ship->slot.column)*cel_dim+k*cel_dim);
+                    MLV_draw_image (ship_img[k], x_corner_def+(current_ship->slot.column)*cel_dim, y_corner+(current_ship->slot.line)*cel_dim+k*cel_dim);
                 }
             }
 
