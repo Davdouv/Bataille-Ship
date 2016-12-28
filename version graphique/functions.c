@@ -79,8 +79,14 @@ MLV_Image* image(char* img_name, char* img_num, char* format) {
 /* Display a single map */
 void displayOneMap(int map, int x_corner_map) {
     int i, j;
+<<<<<<< HEAD
     char *num = malloc(3 * sizeof(char));
     char *letter = malloc(3 * sizeof(char));
+=======
+    char num[2] = "1 ";
+    char bug[2];         // Ne pas supprimer sinon ça fait buggué l'affichage
+    char let[2] = "A ";
+>>>>>>> ea5e68c2f1117bc0a714826d7c39f321382cec14
     MLV_Image *water;
 
     if (map == 0) {
@@ -89,7 +95,7 @@ void displayOneMap(int map, int x_corner_map) {
         water = image("water_att","","jpg");
     }
 
-    strncpy(letter, "A ", 2);
+    //strncpy(letter, "A ", 2);
 
     for (i = 0; i < NDIM; i++) {
 		for (j = 0; j < NDIM; j++) {
@@ -98,14 +104,14 @@ void displayOneMap(int map, int x_corner_map) {
                 MLV_draw_filled_rectangle(x_corner_map, y_corner, cel_dim, cel_dim, MLV_COLOR_RED);
 			}
 			else if (i == 0 && j > 0) {     // Columns
-                sprintf(num,"%d",j);            
+                sprintf(num,"%d",j);          
 				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
                 MLV_draw_text_box(x_corner_map+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, num, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 			}
 			else if (i > 0 && j == 0) {     // Lines
-                letter[0]= 'A'+i-1;     
+                let[0]= 'A'+i-1;
 				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
-                MLV_draw_text_box(x_corner_map+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, letter, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+                MLV_draw_text_box(x_corner_map+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, let, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 			}
 			else {                          // Slots            
 			    //MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_BLUE);
