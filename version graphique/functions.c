@@ -165,6 +165,7 @@ void displayMaps(Fleet *p_fleet) {
             for (j = 0; j < current_ship->length; j++) {
                 sprintf(num,"%d",j+1);
                 ship_img[j] = image(file_name,num,"png");       // Load each img of the actual ship
+                MLV_rotate_image(ship_img[j], current_ship->orientation*(-90));
             }
 
             if (current_ship->orientation == 0) {
@@ -249,6 +250,14 @@ int division(int a, int b) {
     return a/b;
 }
 
+void rotationImg(MLV_Image *img, int orientation) {
+    if (orientation == 0) {
+        MLV_rotate_image(img, 90);
+    } else {
+         MLV_rotate_image(img, -90);
+    }
+}
+
 /* Select a slot | put the line & the column values in variables l and c and coordinates in x and y */
 // Return 1 if succeed, 0 if not
 int selectSlot(char **map, int *l, int *c, int *x, int *y) {
@@ -278,7 +287,6 @@ int selectSlot(char **map, int *l, int *c, int *x, int *y) {
 /* Check if slots are free. Return 1 if it is, 0 if it's not */
 int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
     int i;
-    printf("Check : l = %d c = %d\n", *l, *c);
     if (o == 0) {                                   // If it's horizontal
         for (i = 0; i<ship_length; i++) {
             if (*c + i < NDIM) {
@@ -307,10 +315,9 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
 }
 
 // Give Orientation + selected slot
-int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, int *l, int *c, int *x, int *y) {
-    int i, j;
+int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, int *l, int *c, int *x, int *y, int *o) {
+    int i, j, k;
     int select = 0;
-    int o = 0;
     int m_x, m_y;
     int p_x = 0, p_y = 0;
 
@@ -318,13 +325,13 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, int *l, i
     *c = 1; // Reset column cursor
 
     // Instructions
-    MLV_draw_text_box(
-         WIDTH/4, y_corner-100, tab_dim*2, 50,
-        "Cliquer sur un bateau pour le sélectionner et le positionner sur la grille.\nAppuyer sur espace pour changer sa rotation.", 9,
-         MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_COLOR_WHITE,
-         MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-    );
-    MLV_actualise_window();
+        // MLV_draw_text_box(
+        //     WIDTH/4, y_corner-100, tab_dim*2, 50,
+        //     "Cliquer sur un bateau pour le sélectionner et le positionner sur la grille.\nAppuyer sur espace pour changer sa rotation.", 9,
+        //     MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_COLOR_WHITE,
+        //     MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+        // );
+        // MLV_actualise_window();
     
     // Keyboard & Mouse management // DO NOT PUT PRINTF INSIDE THIS LOOP
     do {
@@ -335,21 +342,29 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, int *l, i
         MLV_get_mouse_position(&m_x,&m_y);
         if ((m_x>=(x_corner_def+cel_dim) && m_x <= x_corner_def+tab_dim) && (m_y>=(y_corner+cel_dim) && m_y<=y_corner+tab_dim)) { // If mouse inside the grid
             for (i = 0; i < length; i++) {
+                if( *o == 0 ) {
                     p_x = division(m_x,cel_dim)*cel_dim+(cel_dim*i)-6; // calculate the nearest X position for a ship from mouse position
                     p_y = (division(m_y,cel_dim)*cel_dim)-0.5*cel_dim; // calculate the nearest Y position for a ship from mouse position
-                    MLV_draw_image (ship[i], p_x, p_y); // draw the ship
+                } else {
+                    p_x = division(m_x,cel_dim)*cel_dim-6; // calculate the nearest X position for a ship from mouse position
+                    p_y = (division(m_y,cel_dim)*cel_dim)-0.5*cel_dim+(cel_dim*i); // calculate the nearest Y position for a ship from mouse position
+                }
+                MLV_draw_image (ship[i], p_x, p_y); // draw the ship
             }
         }
         MLV_actualise_window();
 
         // If space bar pressed
         if (MLV_get_keyboard_state(MLV_KEYBOARD_SPACE)==MLV_PRESSED) {
-            if (o == 0)
-                o = 1;                                       // Change orientation
-            else if (o == 1)
-                 o = 0;
+            if (*o == 0)
+                *o = 1;                                       // Change orientation
+            else if (*o == 1)
+                 *o = 0;
 
-            //MLV_actualise_window();
+            for(k = 0; k < length; k++) {
+               rotationImg(ship[k], *o);
+            }
+            MLV_actualise_window();
         }
         // If left click
         if (MLV_get_mouse_button_state(MLV_BUTTON_LEFT)==MLV_PRESSED) {                          
@@ -375,41 +390,51 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, int *l, i
         //MLV_wait_seconds(2);
     } while(select != 1);
 
-    return o;
+    return *o;
 }
 
 /* Players place their ships */
 void placeShip(Fleet *p_fleet, char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y) {
-    int i , o;
+    int i, j;
+    int o = 0;
     int checkposition;
     char *file_name = malloc(16 * sizeof(char));
     char *num = malloc(3 * sizeof(char));
     MLV_Image *ship_img[5];
 
-    strncpy(file_name, "fleet/", 7);
-    strcat(file_name, p_ship->name);
-
-    for (i = 0; i < p_ship->length; i++)
-    {
-        sprintf(num,"%d",i+1);
-        ship_img[i] = image(file_name,num,"png");       // Load each img of the actual ship
+    // Load the image files
+    strcpy(file_name, "fleet/");
+    strcat(file_name, p_ship->name);         
+    for (j = 0; j < p_ship->length; j++) {
+        sprintf(num,"%d",j+1);
+        ship_img[j] = image(file_name,num,"png");       // Load each img of the actual ship
     }
 
     // Select a valid Position
     do {
-        o = putShip(p_fleet, ship_img, p_ship->length, map, l, c, x, y);
+        o = putShip(p_fleet, ship_img, p_ship->length, map, l, c, x, y, &o);
         printf("l = %d c = %d\n",*l, *c);
         checkposition = checkPlacement(map, l, c, o, p_ship->length);
         if (checkposition == 0) {
-            MLV_draw_text_box(
-                80, y_corner+(tab_dim/2), 250, 70,
-                "You ship can not be placed here.\nPlease put it somewhere else", 9,
-                MLV_COLOR_RED, MLV_COLOR_RED, MLV_COLOR_WHITE,
-                MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-            );
-            MLV_actualise_window();
+            // MLV_draw_text_box(
+            //     80, y_corner+(tab_dim/2), 250, 70,
+            //     "You ship can not be placed here.\nPlease put it somewhere else", 9,
+            //     MLV_COLOR_RED, MLV_COLOR_RED, MLV_COLOR_WHITE,
+            //     MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+            // );
+            // MLV_actualise_window();
+            printf("bateau mal placé \n o = %d\n", o);
         }
     } while(checkposition==0);
+
+    // Load the image files
+    strcpy(file_name, "fleet/");
+    strcat(file_name, p_ship->name);         
+    for (j = 0; j < p_ship->length; j++) {
+        sprintf(num,"%d",j+1);
+        ship_img[j] = image(file_name,num,"png");       // Load each img of the actual ship
+        MLV_rotate_image(ship_img[j], o*(-90));
+    }
 
     if (checkposition == 1) {
 
