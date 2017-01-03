@@ -60,25 +60,25 @@ int main( int argc, char *argv[] ){
     MLV_create_window( "nom_du_jeu", "jeu", WIDTH, HEIGHT);
     
     /* Player 1 : Fleet placement */
-    displayMaps(p1_fleet);
+    displayMaps(p1_fleet, p1_def, p1_att);
     printf("Player 1 has to place their fleet.\n");
     if (f == 1) {
-        placeFleet(p1_def, &line, &column, p1_fleet, &x, &y);
+        placeFleet(p1_def, p1_att, &line, &column, p1_fleet, &x, &y);
     }
     else {
-        flemme(p1_def, &line, &column, p1_fleet, &x, &y);
+        flemme(p1_def, p1_att, &line, &column, p1_fleet, &x, &y);
     }
 
     MLV_wait_seconds(2);
 
     // Player 2 : Fleet placement //
-    displayMaps(p2_fleet);
+    displayMaps(p2_fleet, p2_def, p2_att);
     printf("Player 2 has to place their fleet.\n");
     if (f == 1) {
-        placeFleet(p2_def, &line, &column, p2_fleet, &x, &y);
+        placeFleet(p2_def, p2_att, &line, &column, p2_fleet, &x, &y);
     }
     else {
-        flemme(p2_def, &line, &column, p2_fleet, &x, &y);
+        flemme(p2_def, p2_att, &line, &column, p2_fleet, &x, &y);
     }
 
 /*    // GAME ON //

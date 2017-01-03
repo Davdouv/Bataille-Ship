@@ -125,13 +125,16 @@ void displayOneMap(int map, int x_corner_map) {
 }
 
 /* Display the 2 maps */
-void displayMaps(Fleet *p_fleet) {
+void displayMaps(Fleet *p_fleet, char **map_def, char **map_att) {
     int i, j, k, l;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     MLV_Image *ship_img[5];
+    MLV_Image *flamme;
     char *file_name = malloc(16 * sizeof(char));
     char *num = malloc(3 * sizeof(char));
+
+    flamme = image("flamme","","png");
 
     // Hide the previous display
 	MLV_clear_window(MLV_COLOR_BLACK);
@@ -185,11 +188,33 @@ void displayMaps(Fleet *p_fleet) {
             }
 
         }
-
         
         current_ship += 1; // the pointer changes to the next ship
     }
+
+            // Display damages in defensive map
+            i = j = 0;
+            for (i = 0; i < NDIM; i++) {
+                for (j = 0; j < NDIM; j++) {
+                    if (map_def[i][j] == 'X') {
+                        MLV_draw_image (flamme, x_corner_def+j*cel_dim, y_corner+i*cel_dim);
+                    }
+                }
+            }
+
+            // Display damages in offensive map
+            i = j = 0;
+            for (i = 0; i < NDIM; i++) {
+                for (j = 0; j < NDIM; j++) {
+                    if (map_att[i][j] == 'X') {
+                        MLV_draw_image (flamme, x_corner_att+j*cel_dim, y_corner+i*cel_dim);
+                    }
+                }
+            }
+    
     MLV_actualise_window();
+
+    MLV_free_image(flamme);
 
     free(file_name);
     free(num);
@@ -315,7 +340,7 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
 }
 
 // Give Orientation + selected slot
-int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, int *l, int *c, int *x, int *y, int *o) {
+int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **map_att, int *l, int *c, int *x, int *y, int *o) {
     int i, j, k;
     int select = 0;
     int m_x, m_y;
@@ -338,7 +363,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, int *l, i
         MLV_get_mouse_position(x,y);
 
         // Display a ship
-        displayMaps(p_fleet);
+        displayMaps(p_fleet, map, map_att);
         MLV_get_mouse_position(&m_x,&m_y);
         if ((m_x>=(x_corner_def+cel_dim) && m_x <= x_corner_def+tab_dim) && (m_y>=(y_corner+cel_dim) && m_y<=y_corner+tab_dim)) { // If mouse inside the grid
             for (i = 0; i < length; i++) {
@@ -394,7 +419,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, int *l, i
 }
 
 /* Players place their ships */
-void placeShip(Fleet *p_fleet, char **map, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y) {
+void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y) {
     int i, j;
     int o = 0;
     int checkposition;
@@ -412,7 +437,7 @@ void placeShip(Fleet *p_fleet, char **map, int *l, int *c, Ship *p_ship, int num
 
     // Select a valid Position
     do {
-        o = putShip(p_fleet, ship_img, p_ship->length, map, l, c, x, y, &o);
+        o = putShip(p_fleet, ship_img, p_ship->length, map, map_att, l, c, x, y, &o);
         printf("l = %d c = %d\n",*l, *c);
         checkposition = checkPlacement(map, l, c, o, p_ship->length);
         if (checkposition == 0) {
@@ -481,24 +506,24 @@ void placeShip(Fleet *p_fleet, char **map, int *l, int *c, Ship *p_ship, int num
 }
 
 /* Place all ships */
-void placeFleet(char **map, int *l, int *c, Fleet *p_fleet, int *x, int *y) {
+void placeFleet(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, int *y) {
     int i;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     for (i = 0; i<NSHIPS; i++) {
         printf("Set %s (%d)\n", current_ship->name, current_ship->length);
-        placeShip(p_fleet, map, l, c, current_ship, i, x, y);
+        placeShip(p_fleet, map, map_att, l, c, current_ship, i, x, y);
         MLV_actualise_window();
         //displayMap(map);
         current_ship += 1; // the pointer changes to the next ship
     }
 }
 
-void flemme(char **map, int *l, int *c, Fleet *p_fleet, int *x, int *y) { // pour placer qu'un bateau parce que sinon c'est relou
+void flemme(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, int *y) { // pour placer qu'un bateau parce que sinon c'est relou
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     printf("Set %s (%d)\n", current_ship->name, current_ship->length);
-    placeShip(p_fleet, map, l, c, current_ship, 0, x, y);
+    placeShip(p_fleet, map, map_att, l, c, current_ship, 0, x, y);
     //displayMap(map);
 }
 
