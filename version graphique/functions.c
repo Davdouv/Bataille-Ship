@@ -409,6 +409,8 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
     char *file_name = malloc(16 * sizeof(char));
     char *num = malloc(3 * sizeof(char));
     MLV_Image *ship_img[5];
+    MLV_init_audio();
+    MLV_Music* error = MLV_load_music("sound/error.mp3");
 
     // Load the image files
     strcpy(file_name, "fleet/");
@@ -432,8 +434,14 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
             // );
             // MLV_actualise_window();
             printf("bateau mal placé \n o = %d\n", o);
+
+            MLV_play_music(error, 1.0, 1); // (music, volume, nb of plays)
         }
     } while(checkposition==0);
+
+    // Free music
+    MLV_free_music(error);
+    MLV_free_audio();
 
     // Load the image files
     strcpy(file_name, "fleet/");
@@ -650,4 +658,3 @@ void freeGame(char **p_att,char **p_def, Fleet *p_fleet) {
     free(p_def);
     free(p_fleet);
 }
-
