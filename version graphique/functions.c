@@ -194,25 +194,27 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att) {
         current_ship += 1; // the pointer changes to the next ship
     }
 
-            // Display damages in defensive map
+            // Display shots in defensive map
             for (i = 0; i < NDIM; i++) {
                 for (j = 0; j < NDIM; j++) {
                     if (map_def[i][j] == 'X') {
                         MLV_draw_image (flamme, x_corner_def+j*cel_dim, y_corner+i*cel_dim);
                     }
-                    else if (map_def[i][j] == 'O') {
+                    if (map_def[i][j] == 'O') {
+                        MLV_draw_filled_rectangle(x_corner_def+j*cel_dim, y_corner+i*cel_dim, cel_dim, cel_dim, MLV_COLOR_BLUE);
                         MLV_draw_image (splash, x_corner_def+j*cel_dim, y_corner+i*cel_dim);
                     }
                 }
             }
 
-            // Display damages in offensive map
+            // Display shots in offensive map
             for (i = 0; i < NDIM; i++) {
                 for (j = 0; j < NDIM; j++) {
                     if (map_att[i][j] == 'X') {
                         MLV_draw_image (flamme, x_corner_att+j*cel_dim, y_corner+i*cel_dim);
                     }
-                    else if (map_def[i][j] == 'O') {
+                    if (map_att[i][j] == 'O') {
+                         MLV_draw_filled_rectangle(x_corner_att+j*cel_dim, y_corner+i*cel_dim, cel_dim, cel_dim, MLV_COLOR_BLUE);
                          MLV_draw_image (splash, x_corner_att+j*cel_dim, y_corner+i*cel_dim);
                     }
                 }
@@ -539,10 +541,6 @@ int selectSlot(char **map, int *l, int *c, int *x, int *y) {
 }
 
 /* TURN */
-/* Player gets the damages on his map (except for the first turn) */
-void getDamages(char **map_def, int *l, int *c) {
-
-}
 
 /* Player attacks */
 
@@ -624,19 +622,21 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
 
         if (check == 1) {           // If hit
             map_att[*l][*c] = 'X';
+            map_def[*l][*c] = 'X';
             shipDmg(detectShip(l, c, p_fleet));
             *adversary_life -= 1;
             if (*adversary_life != 0) {
                 printf("You can shoot again !\n");
             }
             else {
-                //displayOneMap(0, x_corner);
+                displayMaps(p_fleet, map_def, map_att);
                 break;
             }
         }
 
         else if (check == 0) {           // If miss
             map_att[*l][*c] = 'O';
+            map_def[*l][*c] = 'O';
         }
 
         displayMaps(my_fleet, my_map_def, map_att);
