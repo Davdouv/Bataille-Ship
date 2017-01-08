@@ -2,13 +2,13 @@
 # Battleship 
 # (il faut que dans OBJECTS il y ait au moins un objet de même nom que TARGET.
 #
-TARGET= main functions
+TARGET= main
 
 #
 # Mettre ici l'ensemble des fichiers objets nécessaires aux programmes 
 # (les fichiers peuvent être situés dans des répertoires)
 #
-OBJECTS=  main.o functions.o
+OBJECTS=  main.o functions.o menu.o
 
 #
 # Mettre ici vos options de compilation.

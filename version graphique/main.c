@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include "menu.h"
 #include "functions.h"
 
 int main( int argc, char *argv[] ){
@@ -58,6 +59,9 @@ int main( int argc, char *argv[] ){
 
     /* Window creation and display */
     MLV_create_window( "nom_du_jeu", "jeu", WIDTH, HEIGHT);
+
+    // MENU
+    displayMenu();
     
     /* Player 1 : Fleet placement */
     displayMaps(p1_fleet, p1_def, p1_att);
