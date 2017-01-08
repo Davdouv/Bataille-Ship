@@ -18,7 +18,7 @@
 int main( int argc, char *argv[] ){
     int line, column;
     int x, y;
-   // int p1_life, p2_life;
+    int p1_life, p2_life;
     char **p1_att, **p1_def;
     char **p2_att, **p2_def;
     Fleet *p1_fleet;
@@ -26,16 +26,16 @@ int main( int argc, char *argv[] ){
 
     /* MODE FLEMME */
     /* 0 pour oui, 1 pour non */
-    int f = 1;
+    int f = 0;
 
     /* Life initialisation */
-    /*if (f == 1) {
+    if (f == 1) {
         p1_life = p2_life = 17;
     }
     else {
         p1_life = p2_life = 2;
     }
-*/
+
     /* Maps Initialisation */
     p1_att = initMap();
     p1_def = initMap();
@@ -81,13 +81,21 @@ int main( int argc, char *argv[] ){
         flemme(p2_def, p2_att, &line, &column, p2_fleet, &x, &y);
     }
 
-/*    // GAME ON //
+    // GAME ON //
     while (p1_life != 0) {
+
         printf("* Player 1 *\n\n");
-        attackFleet(p1_att, p2_def, &line, &column, p2_fleet, &p2_life);
+        attackFleet(p1_def, p1_att, p2_def, &line, &column, p1_fleet, p2_fleet, &p2_life, &x, &y);
         if (p2_life == 0) { break; }
+
+        MLV_draw_text_box(
+                 80, 80, 250, 70,
+                 "PLAYER 2 ATTACKS !", 9,
+                 MLV_COLOR_RED, MLV_COLOR_RED, MLV_COLOR_WHITE,
+                 MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+             );
         printf("* Player 2 *\n\n");
-        attackFleet(p2_att, p1_def, &line, &column, p1_fleet, &p1_life);
+        attackFleet(p2_def, p2_att, p1_def, &line, &column, p2_fleet, p1_fleet, &p1_life, &x, &y);
     }
 
     // End of the game //
@@ -97,7 +105,7 @@ int main( int argc, char *argv[] ){
     else {
         printf("\n***\nThe winner is player 1.\nCongratulations!\n***\n");
     }
-    */
+    
     // Wait 5 secondes
     MLV_wait_seconds(5);
 

@@ -39,7 +39,7 @@ void placeFleet(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int 
 int checkHit(char **map, char **map_def, int *l, int *c);
 Ship* detectShip(int *l, int *c, Fleet *p_fleet);
 void shipDmg(Ship *damaged_ship);
-void attackFleet(char **map_atk, char **map_def, int *l, int *c, Fleet *p_fleet, int *adversary_life);
+void attackFleet(char **my_map_def, char **map_atk, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *x, int *y);
 void freeGame(char **p_att, char **p_def, Fleet *p_fleet);
 void displayMaps(Fleet *p_fleet, char **map_def, char **map_att);
 void displayOneMap(int map, int x_corner_map);

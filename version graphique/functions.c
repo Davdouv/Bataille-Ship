@@ -130,11 +130,12 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att) {
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     MLV_Image *ship_img[5];
-    MLV_Image *flamme;
+    MLV_Image *flamme, *splash;
     char *file_name = malloc(16 * sizeof(char));
     char *num = malloc(3 * sizeof(char));
 
     flamme = image("flamme","","png");
+    splash = image("splash","","png");
 
     // Hide the previous display
 	MLV_clear_window(MLV_COLOR_BLACK);
@@ -162,7 +163,7 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att) {
     for (i = 0; i<NSHIPS; i++) {
         if(current_ship->slot.line != -1 && current_ship->slot.column != -1) { // if position had been defined
 
-            // Load the image files
+            // Load the image files of the ship
             strcpy(file_name, "fleet/");
             strcat(file_name, current_ship->name);         
             for (j = 0; j < current_ship->length; j++) {
@@ -171,6 +172,7 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att) {
                 MLV_rotate_image(ship_img[j], current_ship->orientation*(-90));
             }
 
+            // Draw the ship in the good orientation
             if (current_ship->orientation == 0) {
                 for (k = 0; k < current_ship->length; k++) {
                     MLV_draw_image (ship_img[k], x_corner_def+(current_ship->slot.column)*cel_dim+k*cel_dim, y_corner+(current_ship->slot.line)*cel_dim);
@@ -193,21 +195,25 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att) {
     }
 
             // Display damages in defensive map
-            i = j = 0;
             for (i = 0; i < NDIM; i++) {
                 for (j = 0; j < NDIM; j++) {
                     if (map_def[i][j] == 'X') {
                         MLV_draw_image (flamme, x_corner_def+j*cel_dim, y_corner+i*cel_dim);
                     }
+                    else if (map_def[i][j] == 'O') {
+                        MLV_draw_image (splash, x_corner_def+j*cel_dim, y_corner+i*cel_dim);
+                    }
                 }
             }
 
             // Display damages in offensive map
-            i = j = 0;
             for (i = 0; i < NDIM; i++) {
                 for (j = 0; j < NDIM; j++) {
                     if (map_att[i][j] == 'X') {
                         MLV_draw_image (flamme, x_corner_att+j*cel_dim, y_corner+i*cel_dim);
+                    }
+                    else if (map_def[i][j] == 'O') {
+                         MLV_draw_image (splash, x_corner_att+j*cel_dim, y_corner+i*cel_dim);
                     }
                 }
             }
@@ -215,6 +221,7 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att) {
     MLV_actualise_window();
 
     MLV_free_image(flamme);
+    MLV_free_image(splash);
 
     free(file_name);
     free(num);
@@ -283,67 +290,11 @@ void rotationImg(MLV_Image *img, int orientation) {
     }
 }
 
-/* Select a slot | put the line & the column values in variables l and c and coordinates in x and y */
-// Return 1 if succeed, 0 if not
-int selectSlot(char **map, int *l, int *c, int *x, int *y) {
-    int i, j;
-    int b = 0;
-
-    *l = 1; // Reset line cursor
-    *c = 1; // Reset column cursor
-    MLV_wait_mouse(x, y);
-    if ((*x>=(x_corner_def+cel_dim) && *x <= x_corner_def+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
-        for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
-             for (j=(x_corner_def+2*cel_dim); j<=(x_corner_def+tab_dim); j=j+cel_dim) {
-                if (*y<=i && *x<=j) {     // If it's inside the last cel
-                    *x=j-cel_dim;
-                    *y=i-cel_dim;
-                    return b = 1;
-                }
-                *c = *c+1;
-            }
-            *c=1;
-            *l = *l+1;
-        }
-    }
-    return b;       // If mouse pressed outside
-}
-
-/* Check if slots are free. Return 1 if it is, 0 if it's not */
-int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
-    int i;
-    if (o == 0) {                                   // If it's horizontal
-        for (i = 0; i<ship_length; i++) {
-            if (*c + i < NDIM) {
-                if (map[*l][*c + i] != '.') {         // If it's not an empty space
-                    return 0;
-                }
-            }
-            else   {                // If it's out of the grid
-                return 0;
-            }                                     
-        }
-    }
-    else {                                          // If it's vertical
-        for (i = 0; i<ship_length; i++)
-        {
-            if (*l + i < NDIM) {
-                if (map[*l + i][*c] != '.') {         // If it's not an empty space
-                    return 0;
-                }
-            }
-            else                                    // If it's out of the grid
-                return 0;
-        }
-    }
-    return 1;                                       // If no problem
-}
-
 // Give Orientation + selected slot
 int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **map_att, int *l, int *c, int *x, int *y, int *o) {
     int i, j, k;
     int select = 0;
-    int m_x, m_y;
+    //int m_x, m_y;
     int p_x = 0, p_y = 0;
 
     *l = 1; // Reset line cursor
@@ -364,15 +315,15 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
 
         // Display a ship
         displayMaps(p_fleet, map, map_att);
-        MLV_get_mouse_position(&m_x,&m_y);
-        if ((m_x>=(x_corner_def+cel_dim) && m_x <= x_corner_def+tab_dim) && (m_y>=(y_corner+cel_dim) && m_y<=y_corner+tab_dim)) { // If mouse inside the grid
+        //MLV_get_mouse_position(&m_x,&m_y);
+        if ((*x>=(x_corner_def+cel_dim) && *x <= x_corner_def+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) { // If mouse inside the grid
             for (i = 0; i < length; i++) {
                 if( *o == 0 ) {
-                    p_x = division(m_x,cel_dim)*cel_dim+(cel_dim*i)-6; // calculate the nearest X position for a ship from mouse position
-                    p_y = (division(m_y,cel_dim)*cel_dim)-0.5*cel_dim; // calculate the nearest Y position for a ship from mouse position
+                    p_x = division(*x,cel_dim)*cel_dim+(cel_dim*i)-6; // calculate the nearest X position for a ship from mouse position
+                    p_y = (division(*y,cel_dim)*cel_dim)-0.5*cel_dim; // calculate the nearest Y position for a ship from mouse position
                 } else {
-                    p_x = division(m_x,cel_dim)*cel_dim-6; // calculate the nearest X position for a ship from mouse position
-                    p_y = (division(m_y,cel_dim)*cel_dim)-0.5*cel_dim+(cel_dim*i); // calculate the nearest Y position for a ship from mouse position
+                    p_x = division(*x,cel_dim)*cel_dim-6; // calculate the nearest X position for a ship from mouse position
+                    p_y = (division(*y,cel_dim)*cel_dim)-0.5*cel_dim+(cel_dim*i); // calculate the nearest Y position for a ship from mouse position
                 }
                 MLV_draw_image (ship[i], p_x, p_y); // draw the ship
             }
@@ -416,6 +367,36 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
     } while(select != 1);
 
     return *o;
+}
+
+/* Check if slots are free. Return 1 if it is, 0 if it's not */
+int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
+    int i;
+    if (o == 0) {                                   // If it's horizontal
+        for (i = 0; i<ship_length; i++) {
+            if (*c + i < NDIM) {
+                if (map[*l][*c + i] != '.') {         // If it's not an empty space
+                    return 0;
+                }
+            }
+            else   {                // If it's out of the grid
+                return 0;
+            }                                     
+        }
+    }
+    else {                                          // If it's vertical
+        for (i = 0; i<ship_length; i++)
+        {
+            if (*l + i < NDIM) {
+                if (map[*l + i][*c] != '.') {         // If it's not an empty space
+                    return 0;
+                }
+            }
+            else                                    // If it's out of the grid
+                return 0;
+        }
+    }
+    return 1;                                       // If no problem
 }
 
 /* Players place their ships */
@@ -527,6 +508,36 @@ void flemme(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, 
     //displayMap(map);
 }
 
+// ----------- ENDING OF FLEET POSITIONNING FUNCTIONS -------------- //
+
+// ----------- START OF FLEET ATTACKING FUNCTIONS -------------- //
+
+/* Select a slot | put the line & the column values in variables l and c and coordinates in x and y */
+// Return 1 if succeed, 0 if not
+int selectSlot(char **map, int *l, int *c, int *x, int *y) {
+    int i, j;
+    int b = 0;
+
+    *l = 1; // Reset line cursor
+    *c = 1; // Reset column cursor
+    MLV_wait_mouse(x, y);
+    if ((*x>=(x_corner_att+cel_dim) && *x <= x_corner_att+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
+        for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
+             for (j=(x_corner_att+2*cel_dim); j<=(x_corner_att+tab_dim); j=j+cel_dim) {
+                if (*y<=i && *x<=j) {     // If it's inside the last cel
+                    *x=j-cel_dim;
+                    *y=i-cel_dim;
+                    return b = 1;
+                }
+                *c = *c+1;
+            }
+            *c=1;
+            *l = *l+1;
+        }
+    }
+    return b;       // If mouse pressed outside
+}
+
 /* TURN */
 /* Player gets the damages on his map (except for the first turn) */
 void getDamages(char **map_def, int *l, int *c) {
@@ -589,15 +600,25 @@ void shipDmg(Ship *damaged_ship) {
 
 /* Manage attacks */
 /* Attacker's att map - Adversary's def map - l - c - adversary's fleet - adversary's life */
-void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet, int *adversary_life) {
-    /*int check = 1;
+void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *x, int *y) {
+    int check = 1;
+    int select = 0;
 
-    displayMap(map_att);
+    displayMaps(my_fleet, my_map_def, map_att);
     
+        MLV_draw_text_box(
+                 80, 80, 250, 70,
+                 "PLAYER 1 ATTACKS !", 9,
+                 MLV_COLOR_RED, MLV_COLOR_RED, MLV_COLOR_WHITE,
+                 MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+             );
+
     printf("It's your time to attack !\n");
     do {
         do {
-            selectSlot(map_att, l, c);
+            do {
+                select = selectSlot(map_att, l, c, x, y);
+            } while(select == 0);
             check = checkHit(map_att, map_def, l, c);
         } while (check == -1);
 
@@ -609,7 +630,7 @@ void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet,
                 printf("You can shoot again !\n");
             }
             else {
-                displayMap(map_def);
+                //displayOneMap(0, x_corner);
                 break;
             }
         }
@@ -618,9 +639,9 @@ void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet,
             map_att[*l][*c] = 'O';
         }
 
-        displayMap(map_att);
+        displayMaps(my_fleet, my_map_def, map_att);
     } while (check == 1);            // Attack while success
-    */
+    
 }
 
 /* Free memory */
