@@ -3,7 +3,7 @@
 
 /* MENU.H */
 
-void displayMenu();
+int displayMenu(int *x, int *y);
 
 
 #endif

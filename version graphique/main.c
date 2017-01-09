@@ -17,6 +17,7 @@
 #include "functions.h"
 
 int main( int argc, char *argv[] ){
+    int game;
     int line, column;
     int x, y;
     int p1_life, p2_life;
@@ -61,7 +62,16 @@ int main( int argc, char *argv[] ){
     MLV_create_window( "nom_du_jeu", "jeu", WIDTH, HEIGHT);
 
     // MENU
-    displayMenu();
+    game = displayMenu(&x, &y);
+    if (game == 1) {
+
+    }
+    else if (game == 2) {
+
+    }
+    else if (game == 3) {
+        
+    }
     
     /* Player 1 : Fleet placement */
     displayMaps(p1_fleet, p1_def, p1_att);
