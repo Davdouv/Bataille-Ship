@@ -70,7 +70,7 @@ int main( int argc, char *argv[] ){
 
     }
     else if (game == 3) {
-        
+
     }
     
     /* Player 1 : Fleet placement */

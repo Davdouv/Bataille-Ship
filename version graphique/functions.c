@@ -298,6 +298,9 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
     int select = 0;
     //int m_x, m_y;
     int p_x = 0, p_y = 0;
+    MLV_Music* rotate = MLV_load_music("sound/rotate.mp3");
+
+    MLV_init_audio();
 
     *l = 1; // Reset line cursor
     *c = 1; // Reset column cursor
@@ -342,6 +345,9 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
             for(k = 0; k < length; k++) {
                rotationImg(ship[k], *o);
             }
+
+            MLV_play_music(rotate, 1.0, 1);
+
             MLV_actualise_window();
         }
         // If left click
@@ -367,6 +373,9 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
         }
         //MLV_wait_seconds(2);
     } while(select != 1);
+
+    MLV_free_music(rotate);
+    MLV_free_audio();
 
     return *o;
 }
@@ -409,8 +418,10 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
     char *file_name = malloc(16 * sizeof(char));
     char *num = malloc(3 * sizeof(char));
     MLV_Image *ship_img[5];
-    MLV_init_audio();
     MLV_Music* error = MLV_load_music("sound/error.mp3");
+    MLV_Music* place = MLV_load_music("sound/place.mp3");
+
+    MLV_init_audio();
 
     // Load the image files
     strcpy(file_name, "fleet/");
@@ -437,10 +448,15 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
 
             MLV_play_music(error, 1.0, 1); // (music, volume, nb of plays)
         }
+        else {
+            MLV_play_music(place, 1.0, 1);
+            MLV_wait_seconds(1);
+        }
     } while(checkposition==0);
 
     // Free music
     MLV_free_music(error);
+    MLV_free_music(place);
     MLV_free_audio();
 
     // Load the image files
@@ -609,6 +625,10 @@ void shipDmg(Ship *damaged_ship) {
 void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *x, int *y) {
     int check = 1;
     int select = 0;
+    MLV_Music* miss = MLV_load_music("sound/splash.mp3");
+    MLV_Music* hit  = MLV_load_music("sound/hit.wav");
+
+    MLV_init_audio();
 
     displayMaps(my_fleet, my_map_def, map_att);
     
@@ -633,6 +653,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
             map_def[*l][*c] = 'X';
             shipDmg(detectShip(l, c, p_fleet));
             *adversary_life -= 1;
+            MLV_play_music(hit, 1.0, 1);
             if (*adversary_life != 0) {
                 printf("You can shoot again !\n");
             }
@@ -645,10 +666,16 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
         else if (check == 0) {           // If miss
             map_att[*l][*c] = 'O';
             map_def[*l][*c] = 'O';
+            MLV_play_music(miss, 1.0, 1);
         }
 
         displayMaps(my_fleet, my_map_def, map_att);
     } while (check == 1);            // Attack while success
+
+    MLV_wait_seconds(2);
+    MLV_free_music(hit);
+    MLV_free_music(miss);
+    MLV_free_audio();
     
 }
 

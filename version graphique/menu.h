@@ -3,6 +3,7 @@
 
 /* MENU.H */
 
+void splashScreen();
 int displayMenu(int *x, int *y);
 
 
