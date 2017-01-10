@@ -27,12 +27,12 @@ int main( int argc, char *argv[] ){
     Fleet *p1_fleet;
     Fleet *p2_fleet;
     int *alert_tab = malloc(10 * sizeof(int));
-    int player = 1;
 
     /* Initalisation alert_tab */
     for (i = 0; i < 10; i++) {
         alert_tab[i] = 0;
     }
+    alert_tab[0] = 1;
 
     /* MODE FLEMME */
     /* 0 pour oui, 1 pour non */
@@ -82,38 +82,42 @@ int main( int argc, char *argv[] ){
     }
     
     /* Player 1 : Fleet placement */
-    alert_tab[0] = 1;
-    displayMaps(p1_fleet, p1_def, p1_att, player, alert_tab);
+    displayMaps(p1_fleet, p1_def, p1_att, alert_tab);
     printf("Player 1 has to place their fleet.\n");
     if (f == 1) {
-        placeFleet(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, player, alert_tab);
+        placeFleet(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, alert_tab);
     }
     else {
-        flemme(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, player, alert_tab);
+        flemme(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, alert_tab);
     }
 
     MLV_wait_seconds(2);
     
+    transitionScreen(alert_tab);
 
     // Player 2 : Fleet placement //
-    player = 2;
-    alert_tab[0] = 0;
-    alert_tab[1] = 1;
-    displayMaps(p2_fleet, p2_def, p2_att, player, alert_tab);
+    changePlayer(alert_tab);
+    displayMaps(p2_fleet, p2_def, p2_att, alert_tab);
     printf("Player 2 has to place their fleet.\n");
     if (f == 1) {
-        placeFleet(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, player, alert_tab);
+        placeFleet(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, alert_tab);
     }
     else {
-        flemme(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, player, alert_tab);
+        flemme(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, alert_tab);
     }
+
+    
 
     // GAME ON //
     while (p1_life != 0) {
 
+        transitionScreen(alert_tab);
+        
+        changePlayer(alert_tab);
         printf("* Player 1 *\n\n");
-        player = 1;
-        attackFleet(p1_def, p1_att, p2_def, &line, &column, p1_fleet, p2_fleet, &p2_life, &x, &y, player, alert_tab);
+        alert_tab[0] = 1;
+        alert_tab[1] = 0;
+        attackFleet(p1_def, p1_att, p2_def, &line, &column, p1_fleet, p2_fleet, &p2_life, &x, &y, alert_tab);
         if (p2_life == 0) { break; }
 
         MLV_draw_text_box(
@@ -122,10 +126,12 @@ int main( int argc, char *argv[] ){
                  MLV_COLOR_RED, MLV_COLOR_RED, MLV_COLOR_WHITE,
                  MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
              );
+
+        transitionScreen(alert_tab);
         
+        changePlayer(alert_tab);
         printf("* Player 2 *\n\n");
-        player = 2;
-        attackFleet(p2_def, p2_att, p1_def, &line, &column, p2_fleet, p1_fleet, &p1_life, &x, &y, player, alert_tab);
+        attackFleet(p2_def, p2_att, p1_def, &line, &column, p2_fleet, p1_fleet, &p1_life, &x, &y, alert_tab);
     }
 
     // End of the game //
