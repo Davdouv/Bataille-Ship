@@ -125,7 +125,7 @@ void displayOneMap(int map, int x_corner_map) {
 }
 
 /* Display the 2 maps */
-void displayMaps(Fleet *p_fleet, char **map_def, char **map_att) {
+void displayMaps(Fleet *p_fleet, char **map_def, char **map_att, int player, int *alert_tab) {
     int i, j, k, l;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
@@ -172,7 +172,7 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att) {
                 MLV_rotate_image(ship_img[j], current_ship->orientation*(-90));
             }
 
-            // Draw the ship in the good orientation
+            // Draw the ship in the right orientation
             if (current_ship->orientation == 0) {
                 for (k = 0; k < current_ship->length; k++) {
                     MLV_draw_image (ship_img[k], x_corner_def+(current_ship->slot.column)*cel_dim+k*cel_dim, y_corner+(current_ship->slot.line)*cel_dim);
@@ -219,6 +219,10 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att) {
                     }
                 }
             }
+
+            // DISPLAY ALERTS
+                // Player
+                whatPlayer(player);
     
     MLV_actualise_window();
 
@@ -293,7 +297,7 @@ void rotationImg(MLV_Image *img, int orientation) {
 }
 
 // Give Orientation + selected slot
-int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **map_att, int *l, int *c, int *x, int *y, int *o) {
+int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **map_att, int *l, int *c, int *x, int *y, int *o, int player, int *alert_tab) {
     int i, j, k;
     int select = 0;
     //int m_x, m_y;
@@ -319,7 +323,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
         MLV_get_mouse_position(x,y);
 
         // Display a ship
-        displayMaps(p_fleet, map, map_att);
+        displayMaps(p_fleet, map, map_att, player, alert_tab);
         //MLV_get_mouse_position(&m_x,&m_y);
         if ((*x>=(x_corner_def+cel_dim) && *x <= x_corner_def+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) { // If mouse inside the grid
             for (i = 0; i < length; i++) {
@@ -411,7 +415,7 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
 }
 
 /* Players place their ships */
-void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y) {
+void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y, int player, int *alert_tab) {
     int i, j;
     int o = 0;
     int checkposition;
@@ -433,7 +437,7 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
 
     // Select a valid Position
     do {
-        o = putShip(p_fleet, ship_img, p_ship->length, map, map_att, l, c, x, y, &o);
+        o = putShip(p_fleet, ship_img, p_ship->length, map, map_att, l, c, x, y, &o, player, alert_tab);
         printf("l = %d c = %d\n",*l, *c);
         checkposition = checkPlacement(map, l, c, o, p_ship->length);
         if (checkposition == 0) {
@@ -513,24 +517,24 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
 }
 
 /* Place all ships */
-void placeFleet(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, int *y) {
+void placeFleet(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, int *y, int player, int *alert_tab) {
     int i;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     for (i = 0; i<NSHIPS; i++) {
         printf("Set %s (%d)\n", current_ship->name, current_ship->length);
-        placeShip(p_fleet, map, map_att, l, c, current_ship, i, x, y);
+        placeShip(p_fleet, map, map_att, l, c, current_ship, i, x, y, player, alert_tab);
         MLV_actualise_window();
         //displayMap(map);
         current_ship += 1; // the pointer changes to the next ship
     }
 }
 
-void flemme(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, int *y) { // pour placer qu'un bateau parce que sinon c'est relou
+void flemme(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, int *y, int player, int *alert_tab) { // pour placer qu'un bateau parce que sinon c'est relou
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     printf("Set %s (%d)\n", current_ship->name, current_ship->length);
-    placeShip(p_fleet, map, map_att, l, c, current_ship, 0, x, y);
+    placeShip(p_fleet, map, map_att, l, c, current_ship, 0, x, y, player, alert_tab);
     //displayMap(map);
 }
 
@@ -622,7 +626,7 @@ void shipDmg(Ship *damaged_ship) {
 
 /* Manage attacks */
 /* Attacker's att map - Adversary's def map - l - c - adversary's fleet - adversary's life */
-void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *x, int *y) {
+void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *x, int *y, int player, int *alert_tab) {
     int check = 1;
     int select = 0;
     MLV_Music* miss = MLV_load_music("sound/splash.mp3");
@@ -630,7 +634,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
 
     MLV_init_audio();
 
-    displayMaps(my_fleet, my_map_def, map_att);
+    displayMaps(my_fleet, my_map_def, map_att, player, alert_tab);
     
         MLV_draw_text_box(
                  80, 80, 250, 70,
@@ -658,7 +662,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
                 printf("You can shoot again !\n");
             }
             else {
-                displayMaps(p_fleet, map_def, map_att);
+                displayMaps(p_fleet, map_def, map_att, player, alert_tab);
                 break;
             }
         }
@@ -669,7 +673,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
             MLV_play_music(miss, 1.0, 1);
         }
 
-        displayMaps(my_fleet, my_map_def, map_att);
+        displayMaps(my_fleet, my_map_def, map_att, player, alert_tab);
     } while (check == 1);            // Attack while success
 
     MLV_wait_seconds(2);
@@ -684,4 +688,18 @@ void freeGame(char **p_att,char **p_def, Fleet *p_fleet) {
     free(p_att);
     free(p_def);
     free(p_fleet);
+}
+
+// ALERT FUNCTIONS
+
+void whatPlayer(char no) {
+    char alert = "PLAYER ";
+    strcat(&alert, &no);
+    strcat(&alert, " ATTACKS!");
+     MLV_draw_text_box(
+                 80, 80, 250, 70,
+                 &alert, 9,
+                 MLV_COLOR_RED, MLV_COLOR_RED, MLV_COLOR_WHITE,
+                 MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+             );
 }
