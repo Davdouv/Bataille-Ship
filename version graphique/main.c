@@ -36,7 +36,7 @@ int main( int argc, char *argv[] ){
 
     /* MODE FLEMME */
     /* 0 pour oui, 1 pour non */
-    int f = 0;
+    int f = 1;
 
     /* Life initialisation */
     if (f == 1) {
