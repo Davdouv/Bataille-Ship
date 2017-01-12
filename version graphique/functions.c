@@ -13,7 +13,7 @@
 #define NDIM 11     // Grid dimensions
 #define NSHIPS 5    // Number of ships MUST NOT EXCEED 5!
 
-#define x_corner WIDTH/3        // x coordinate of the top/left corner of the grid
+#define x_corner_center WIDTH/3        // x coordinate of the top/left corner of the grid
 #define x_corner_def WIDTH/5
 #define x_corner_att WIDTH/1.8
 #define y_corner HEIGHT/4       // y coordinate of the top/left corner of the grid
@@ -91,8 +91,20 @@ void displayOneMap(int map, int x_corner_map) {
 
     if (map == 0) {
         water = image("water","","jpg");
+        MLV_draw_text_box(
+            x_corner_map, y_corner-20, tab_dim, 20,
+            "Defensive Map", 9,
+            MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_COLOR_WHITE,
+            MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+        );
     } else {
         water = image("water_att","","jpg");
+        MLV_draw_text_box(
+            x_corner_att, y_corner-20, tab_dim, 20,
+            "Offensive Map", 9,
+            MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_COLOR_WHITE,
+            MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+        );
     }
 
     for (i = 0; i < NDIM; i++) {
@@ -130,7 +142,7 @@ void displayOneMap(int map, int x_corner_map) {
 
 
 // Display fleet on defense map
-void displayFleet(Fleet *p_fleet, char **map_def) {
+void displayFleet(Fleet *p_fleet, char **map_def, int x_corner) {
     int i, j, k, l;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
@@ -153,12 +165,12 @@ void displayFleet(Fleet *p_fleet, char **map_def) {
             // Draw the ship in the right orientation
             if (current_ship->orientation == 0) {
                 for (k = 0; k < current_ship->length; k++) {
-                    MLV_draw_image (ship_img[k], x_corner_def+(current_ship->slot.column)*cel_dim+k*cel_dim, y_corner+(current_ship->slot.line)*cel_dim);
+                    MLV_draw_image (ship_img[k], x_corner+(current_ship->slot.column)*cel_dim+k*cel_dim, y_corner+(current_ship->slot.line)*cel_dim);
                 }
             }
             else if (current_ship->orientation == 1) {
                 for (k = 0; k < current_ship->length; k++) {
-                    MLV_draw_image (ship_img[k], x_corner_def+(current_ship->slot.column)*cel_dim, y_corner+(current_ship->slot.line)*cel_dim+k*cel_dim);
+                    MLV_draw_image (ship_img[k], x_corner+(current_ship->slot.column)*cel_dim, y_corner+(current_ship->slot.line)*cel_dim+k*cel_dim);
                 }
             }
 
@@ -214,6 +226,13 @@ void displayShots(char **map_def, char **map_att) {
     MLV_free_image(splash);
 }
 
+// Display the map where you can place your fleet
+void displaySettableMap (char **map, Fleet *p_fleet) {
+    MLV_clear_window(MLV_COLOR_BLACK);
+    displayOneMap(0, x_corner_center);
+    displayFleet(p_fleet, map, x_corner_center);
+}
+
 // Display the 2 maps
 void displayMaps(Fleet *p_fleet, char **map_def, char **map_att, int *alert_tab) {
     int i;
@@ -222,45 +241,31 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att, int *alert_tab)
 	MLV_clear_window(MLV_COLOR_BLACK);
 
     // Defensive Map
-    MLV_draw_text_box(
-         x_corner_def, y_corner-20, tab_dim, 20,
-        "Defensive Map", 9,
-         MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_COLOR_WHITE,
-         MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-    );
 	displayOneMap(0, x_corner_def);
 
     // Offensive Map
-    MLV_draw_text_box(
-         x_corner_att, y_corner-20, tab_dim, 20,
-        "Offensive Map", 9,
-         MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_COLOR_WHITE,
-         MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-    );
 	displayOneMap(1, x_corner_att);
 
-
-    displayFleet(p_fleet, map_def);
+    displayFleet(p_fleet, map_def, x_corner_def);
     
     displayShots(map_def, map_att);
 
-            // DISPLAY ALERTS
-            i = 0;
-            for (i = 0; i < 10; i++) {
-                switch(i) {
-                    case 0: // Player 1
-                    if(alert_tab[i] == 1) {
-                        whatPlayer("1");
-                    }
-                    break;
-
-                    case 1: // Player 2
-                    if(alert_tab[i] == 1) {
-                        whatPlayer("2");
-                    }
-                    break;
-                }
+    // DISPLAY ALERTS
+    for (i = 0; i < 10; i++) {
+        switch(i) {
+            case 0: // Player 1
+            if(alert_tab[i] == 1) {
+                whatPlayer("1");
             }
+            break;
+
+            case 1: // Player 2
+            if(alert_tab[i] == 1) {
+                whatPlayer("2");
+            }
+            break;
+        }
+    }
     
     MLV_actualise_window();
 }
@@ -343,6 +348,13 @@ void shipPosition (int *x, int *y, int *p_x, int *p_y, int o, int num) {
     }
 }
 
+int mouseInsideGrid (int *x, int *y, int x_corner) {
+    if ((*x>=(x_corner+cel_dim) && *x <= x_corner+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim))
+        return 1;
+    else
+        return 0;
+}
+
 // Give Orientation + selected slot
 int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **map_att, int *l, int *c, int *x, int *y, int *o, int *alert_tab) {
     int i, j, k;
@@ -358,15 +370,6 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
 
     *l = 1; // Reset line cursor
     *c = 1; // Reset column cursor
-
-    // Instructions
-        // MLV_draw_text_box(
-        //     WIDTH/4, y_corner-100, tab_dim*2, 50,
-        //     "Cliquer sur un bateau pour le sélectionner et le positionner sur la grille.\nAppuyer sur espace pour changer sa rotation.", 9,
-        //     MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_COLOR_WHITE,
-        //     MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-        // );
-        // MLV_actualise_window();
     
     // Keyboard & Mouse management // DO NOT PUT PRINTF INSIDE THIS LOOP
     do {
@@ -380,7 +383,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
                  *o = 0;
             
             temp_o = *o;
-            displayMaps(p_fleet, map, map_att, alert_tab);
+            displaySettableMap (map, p_fleet);
 
             for(k = 0; k < length; k++) {
                rotationImg(ship[k], *o);
@@ -392,8 +395,8 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
         }
 
 
-        // Display a ship
-        if ((*x>=(x_corner_def+cel_dim) && *x <= x_corner_def+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) { // If mouse inside the grid
+        // Display a ship on the map
+        if (mouseInsideGrid(x, y, x_corner_center)) {
             for (i = 0; i < length; i++) {
                 shipPosition(x, y, &p_x, &p_y, *o, i);
 
@@ -402,10 +405,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
                     if (draw == 1 && i == 0) {
                         temp_x = p_x;
                         temp_y = p_y;
-                        displayMaps(p_fleet, map, map_att, alert_tab);
-                        //MLV_draw_filled_rectangle(x_corner_def, y_corner, tab_dim+)
-                        //displayOneMap(0, x_corner_def);
-                        //displayFleet(p_fleet, map);
+                        displaySettableMap (map, p_fleet);
                     }
                     MLV_draw_image (ship[i], p_x, p_y); // draw the ship
                 }
@@ -421,9 +421,9 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
 
         // If left click
         if (MLV_get_mouse_button_state(MLV_BUTTON_LEFT)==MLV_PRESSED) {                          
-            if ((*x>=(x_corner_def+cel_dim) && *x <= x_corner_def+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
+             if (mouseInsideGrid(x, y, x_corner_center)) {   // If mouse pressed inside the grid
                 for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {          // Lines
-                    for (j=(x_corner_def+2*cel_dim); j<=(x_corner_def+tab_dim); j=j+cel_dim) {      // Columns
+                    for (j=(x_corner_center+2*cel_dim); j<=(x_corner_center+tab_dim); j=j+cel_dim) {      // Columns
                         if (*y<=i && *x<=j) {     // If it's inside the last cel
                             *x=j-cel_dim;         // x = corner of that cel
                             *y=i-cel_dim;
@@ -616,7 +616,7 @@ int selectSlot(char **map, int *l, int *c, int *x, int *y) {
     *l = 1; // Reset line cursor
     *c = 1; // Reset column cursor
     MLV_wait_mouse(x, y);
-    if ((*x>=(x_corner_att+cel_dim) && *x <= x_corner_att+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim)) {   // If mouse pressed inside the grid
+    if (mouseInsideGrid(x, y, x_corner_att)) {   // If mouse pressed inside the grid
         for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
              for (j=(x_corner_att+2*cel_dim); j<=(x_corner_att+tab_dim); j=j+cel_dim) {
                 if (*y<=i && *x<=j) {     // If it's inside the last cel
@@ -802,7 +802,7 @@ void whatPlayer(char *no) {
     strcat(&alert, "PLAYER ");
     strcat(&alert, no);
     strcat(&alert, "\0");
-     MLV_draw_text_box(
+    MLV_draw_text_box(
                  537, 20, 250, 70,
                  &alert, 9,
                  MLV_COLOR_RED, MLV_COLOR_RED, MLV_COLOR_WHITE,

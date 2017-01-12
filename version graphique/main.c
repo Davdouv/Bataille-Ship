@@ -82,7 +82,7 @@ int main( int argc, char *argv[] ){
     }
     
     /* Player 1 : Fleet placement */
-    displayMaps(p1_fleet, p1_def, p1_att, alert_tab);
+    //displayMaps(p1_fleet, p1_def, p1_att, alert_tab);
     printf("Player 1 has to place their fleet.\n");
     if (f == 1) {
         placeFleet(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, alert_tab);

@@ -43,11 +43,13 @@ void attackFleet(char **my_map_def, char **map_atk, char **map_def, int *l, int 
 void freeGame(char **p_att, char **p_def, Fleet *p_fleet);
 void displayMaps(Fleet *p_fleet, char **map_def, char **map_att, int *alert_tab);
 void displayOneMap(int map, int x_corner_map);
-void displayFleet(Fleet *p_fleet, char **map_def);
+void displaySettableMap (char **map, Fleet *p_fleet);
+void displayFleet(Fleet *p_fleet, char **map_def, int x_corner);
 void displayShots(char **map_def, char **map_att);
 int division(int a, int b);
 void rotationImg(MLV_Image *img, int orientation);
 void shipPosition (int *x, int *y, int *p_x, int *p_y, int o, int num);
+int mouseInsideGrid (int *x, int *y, int x_corner);
 void changePlayer( int *alert_tab);
 void transitionScreen(int *alert_tab);
 
