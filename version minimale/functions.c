@@ -118,8 +118,33 @@ void purge(void)
 
 /* Select a slot | put the line & the column values in variables l and c */
 void selectSlot(char **map, int *l, int *c) {
+    int i;
+    char letter = ' ';
+    char *line = &letter;
 
-    
+    do {
+        printf("Which line?\n");
+        scanf(" %c", line);
+        purge();
+        *line = toupper(*line);
+        if (*line<'A' || *line>('A' + NDIM - 2)) {
+            printf("Please choose a correct line letter.\n");
+        }
+    } while (*line<'A' || *line>('A' + NDIM - 2));          // Repeat until player choose a correct line
+ 
+    do {
+        printf("Which column?\n");
+        scanf("%d", c);
+        purge();
+        if (*c<1 || *c >= NDIM) {
+            printf("Please choose a correct column number.\n");
+        }
+    } while (*c<1 || *c >= NDIM);                       // Repeat until player choose a correct column
+
+    for (i = 0; i < NDIM; i++) {
+        if (map[i][0] == *line)                      // Find the line number which countains the letter
+            *l = i;
+    }
 }
 
 /* Check if orientation is set correctly and return 0 or 1 */
@@ -234,6 +259,7 @@ void getDamages(char **map_def, int *l, int *c) {
 
 /* Check what contains the selected slot */
 int checkHit(char **map_att, char **map_def, int *l, int *c) {
+    system("clear");
     if (map_att[*l][*c] != '.') {
         printf("You already shot here. Choose again\n");
         return -1;                  // Already shot here
@@ -313,6 +339,7 @@ void attackFleet(char **map_att, char **map_def, int *l, int *c, Fleet *p_fleet,
         }
 
         displayMap(map_att);
+
     } while (check == 1);            // Attack while success
 }
 

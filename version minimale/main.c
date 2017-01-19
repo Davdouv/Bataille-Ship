@@ -51,6 +51,7 @@ int main() {
     createFleet(p2_fleet);
 
     /* Player 1 : Fleet placement */
+    system("clear");
     displayMap(p1_def);
     printf("Player 1 has to place their fleet.\n");
     if (f == 1) {
@@ -59,7 +60,7 @@ int main() {
     else {
         flemme(p1_def, &line, &column, p1_fleet);
     }
-
+    system("clear");
 
     /* Player 2 : Fleet placement */
     displayMap(p2_def);
@@ -70,14 +71,17 @@ int main() {
     else {
         flemme(p2_def, &line, &column, p2_fleet);
     }
+    system("clear");
 
     /* GAME ON */
     while (p1_life != 0) {
         printf("* Player 1 *\n\n");
         attackFleet(p1_att, p2_def, &line, &column, p2_fleet, &p2_life);
         if (p2_life == 0) { break; }
+
         printf("* Player 2 *\n\n");
         attackFleet(p2_att, p1_def, &line, &column, p1_fleet, &p1_life);
+
     }
 
     /* End of the game */
