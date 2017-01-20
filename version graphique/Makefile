@@ -8,7 +8,7 @@ TARGET= main
 # Mettre ici l'ensemble des fichiers objets nécessaires aux programmes 
 # (les fichiers peuvent être situés dans des répertoires)
 #
-OBJECTS=  main.o functions.o menu.o
+OBJECTS=  main.o functions.o menu.o init.o attack.o
 
 #
 # Mettre ici vos options de compilation.

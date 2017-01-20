@@ -14,7 +14,10 @@
 #include <math.h>
 #include <string.h>
 #include "menu.h"
+#include "struct.h"
+#include "init.h"
 #include "functions.h"
+#include "attack.h"
 
 int main( int argc, char *argv[] ){
     int i;
@@ -36,7 +39,7 @@ int main( int argc, char *argv[] ){
 
     /* MODE FLEMME */
     /* 0 pour oui, 1 pour non */
-    int f = 1;
+    int f = 0;
 
     /* Life initialisation */
     if (f == 1) {

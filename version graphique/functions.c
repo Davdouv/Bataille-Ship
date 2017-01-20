@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include "struct.h"
 #include "functions.h"
 
 #define NDIM 11     // Grid dimensions
@@ -20,47 +21,7 @@
 #define tab_dim HEIGHT/2        // Grid size (it's a square)
 #define cel_dim tab_dim/NDIM    // Cel size (square too)
 
-/* MAP FUNCTIONS */
-/* INIT */
-
-// Creates the maps | Return the map or NULL if malloc failed 
-char** initMap() {
-    int i;
-    char **map = malloc(NDIM * sizeof(char*));
-    if (map == NULL) {
-        return NULL;
-    }
-    for (i = 0; i < NDIM; i++) {
-        map[i] = malloc(NDIM * sizeof(char));
-        if (map[i] == NULL) {
-            return NULL;
-        }
-    }
-    return map;
-}
-
-
-// Give a value to each slots 
-void createMap(char **map) {
-	int i, j;
-	for (i = 0; i < NDIM; i++) {
-		for (j = 0; j < NDIM; j++) {
-			if (i == 0 && j == 0) {
-				map[i][j] = ' ';            // First slot
-			}
-			else if (i == 0 && j > 0) {
-				map[i][j] = '0' + j;            // Columns
-			}
-			else if (i > 0 && j == 0) {
-				map[i][j] = 'A' + (i - 1);        // Lines
-			}
-			else {
-				map[i][j] = '.';            // Slots				
-			}
-		}
-	}
-}
-
+/* DISPLAY MAP FUNCTIONS */
 
 // Make declaration of image of the size of a cell easier 
 MLV_Image* image(char* img_name, char* img_num, char* format) {
@@ -78,7 +39,6 @@ MLV_Image* image(char* img_name, char* img_num, char* format) {
     MLV_resize_image_with_proportions(my_image, cel_dim, cel_dim);
     return my_image;
 }
-
 
 // Display a single map 
 void displayOneMap(int map, int x_corner_map) {
@@ -271,55 +231,6 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att, int *alert_tab)
 }
 
 
-// FLEET FUNCTIONS //
-// INIT //
-// Return the fleet or NULL if malloc failed
-Fleet* initFleet() {
-    Fleet *fleet = malloc(sizeof(Fleet));
-    if (fleet == NULL) {
-        return NULL;
-    }
-
-    return fleet;
-}
-
-// Creates the fleet | Return fleet
-void createFleet(Fleet* pt_fleet) {
-    Fleet my_fleet;
-
-    strncpy(my_fleet.carrier.name, "Carrier", 11);
-    my_fleet.carrier.length = 2;
-    my_fleet.carrier.life = 2;
-    my_fleet.carrier.slot.line = -1;
-    my_fleet.carrier.slot.column = -1;
-
-    strncpy(my_fleet.battleship.name, "Battleship", 11);
-    my_fleet.battleship.length = 3;
-    my_fleet.battleship.life = 3;
-    my_fleet.battleship.slot.line = -1;
-    my_fleet.battleship.slot.column = -1;
-
-    strncpy(my_fleet.cruiser.name, "Cruiser", 11);
-    my_fleet.cruiser.length = 3;
-    my_fleet.cruiser.life = 3;
-    my_fleet.cruiser.slot.line = -1;
-    my_fleet.cruiser.slot.column = -1;
-
-    strncpy(my_fleet.submarine.name, "Submarine", 11);
-    my_fleet.submarine.length = 4;
-    my_fleet.submarine.life = 4;
-    my_fleet.submarine.slot.line = -1;
-    my_fleet.submarine.slot.column = -1;
-
-    strncpy(my_fleet.destroyer.name, "Destroyer", 11);
-    my_fleet.destroyer.length = 5;
-    my_fleet.destroyer.life = 5;
-    my_fleet.destroyer.slot.line = -1;
-    my_fleet.destroyer.slot.column = -1;
-
-    *pt_fleet = my_fleet;
-}
-
 // START //
 
 int division(int a, int b) {
@@ -407,6 +318,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
                         temp_y = p_y;
                         displaySettableMap (map, p_fleet);
                     }
+                    p_x+=6;
                     MLV_draw_image (ship[i], p_x, p_y); // draw the ship
                 }
             }
@@ -634,118 +546,6 @@ int selectSlot(char **map, int *l, int *c, int *x, int *y) {
 }
 
 // TURN
-
-// Player attacks
-
-// Check what contains the selected slot
-int checkHit(char **map_att, char **map_def, int *l, int *c) {
-    if (map_att[*l][*c] != '.') {
-        printf("You already shot here. Choose again\n");
-        return -1;                  // Already shot here
-    }
-    if (map_def[*l][*c] >= '1' && map_def[*l][*c] <= '5') {
-        printf("Hit !\n");
-        return 1;                   // Ship
-    }
-
-    else if (map_def[*l][*c] == '.') {
-        printf("Miss !\n");
-        return 0;                   // Water
-    }
-
-    return -1;
-}
-
-// Check all ships coordinates to find which one has the same as the attack
-Ship* detectShip(int *l, int *c, Fleet *p_fleet) {
-    int ship, i;
-    Ship *damaged_ship;
-    damaged_ship = &(p_fleet->carrier);                 // pointer initialized to the first ship Carrier
-    for (ship = 0; ship<NSHIPS; ship++) {                      // check all ships
-        for (i = 0; i<damaged_ship->length; i++) {         // check the whole length of the ship
-            if (damaged_ship->orientation == 0) {       // if the ship is displayed horizontably
-                if ((&(damaged_ship->slot))->line == *l && ((&(damaged_ship->slot))->column + i) == *c) {   // check all ship coordinates
-                    return damaged_ship;
-                }
-            }
-            else {
-                if (((&(damaged_ship->slot))->line + i) == *l && (&(damaged_ship->slot))->column == *c) {   // check all ship coordinates
-                    return damaged_ship;
-                }
-            }
-        }
-        damaged_ship += 1;
-    }
-    return NULL;        // if the function failed
-}
-
-// Manage ships life
-void shipDmg(Ship *damaged_ship) {
-    // Manage life
-    damaged_ship->life--;
-    if (damaged_ship->life == 0)
-        printf("%s destroyed !\n", damaged_ship->name);
-    else
-        printf("%s hit ! Life = %d\n", damaged_ship->name, damaged_ship->life);
-}
-
-// Manage attacks
-// Attacker's def map - Attacker's att map - Adversary's def map - l - c - adversary's fleet - adversary's life
-void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *x, int *y, int *alert_tab) {
-    int check = 1;
-    int select = 0;
-    MLV_Music* miss = MLV_load_music("sound/splash.mp3");
-    MLV_Music* hit  = MLV_load_music("sound/hit.wav");
-
-    MLV_init_audio();
-
-    displayMaps(my_fleet, my_map_def, map_att, alert_tab);
-    
-        MLV_draw_text_box(
-                 80, 80, 250, 70,
-                 "PLAYER 1 ATTACKS !", 9,
-                 MLV_COLOR_RED, MLV_COLOR_RED, MLV_COLOR_WHITE,
-                 MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-             );
-
-    printf("It's your time to attack !\n");
-    do {
-        do {
-            do {
-                select = selectSlot(map_att, l, c, x, y);
-            } while(select == 0);
-            check = checkHit(map_att, map_def, l, c);
-        } while (check == -1);
-
-        if (check == 1) {           // If hit
-            map_att[*l][*c] = 'X';
-            map_def[*l][*c] = 'X';
-            shipDmg(detectShip(l, c, p_fleet));
-            *adversary_life -= 1;
-            MLV_play_music(hit, 1.0, 1);
-            if (*adversary_life != 0) {
-                printf("You can shoot again !\n");
-            }
-            else {
-                displayMaps(p_fleet, my_map_def, map_att, alert_tab);
-                break;
-            }
-        }
-
-        else if (check == 0) {           // If miss
-            map_att[*l][*c] = 'O';
-            map_def[*l][*c] = 'O';
-            MLV_play_music(miss, 1.0, 1);
-        }
-
-        displayMaps(my_fleet, my_map_def, map_att, alert_tab);
-    } while (check == 1);            // Attack while success
-
-    MLV_wait_seconds(2);
-    MLV_free_music(hit);
-    MLV_free_music(miss);
-    MLV_free_audio();
-}
 
 // Free memory
 void freeGame(char **p_att,char **p_def, Fleet *p_fleet) {
