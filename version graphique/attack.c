@@ -135,7 +135,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
                 printf("You can shoot again !\n");
             }
             else {
-                displayMaps(p_fleet, my_map_def, map_att, alert_tab, gameSize, fleetSize);
+                displayMaps(p_fleet, map_def, map_att, alert_tab, gameSize, fleetSize);
                 break;
             }
         }
@@ -157,7 +157,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
 }
 
 // Solo Attack function
-void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet, int *life, int *x, int *y, int gameSize) {
+void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet, int *life, int *x, int *y, int gameSize, int fleetSize) {
     int check = 1;
     int select = 0;
     MLV_Music* miss = MLV_load_music("sound/splash.mp3");
@@ -186,7 +186,7 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
                 printf("You can shoot again !\n");
             }
             else {
-                displayAttackMap(map_att, gameSize);
+                displayMaps(p_fleet, map_def, map_att, alert_tab, gameSize, fleetSize);
                 break;
             }
         }
@@ -207,7 +207,7 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
 }
 
 // AI Attacks
-void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *alert_tab, int gameSize) {
+void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *alert_tab, int gameSize, int fleetSize) {
     int check = 1;
     MLV_Music* miss = MLV_load_music("sound/splash.mp3");
     MLV_Music* hit  = MLV_load_music("sound/hit.wav");
@@ -237,8 +237,7 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
                 printf("You can shoot again !\n");
             }
             else {
-                //displayMaps(p_fleet, my_map_def, map_att, alert_tab);
-                displayAttackMap(map_att, gameSize);
+                displayMaps(p_fleet, map_def, map_att, alert_tab, gameSize, fleetSize);
                 break;
             }
         }

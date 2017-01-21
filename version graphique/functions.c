@@ -312,3 +312,9 @@ void whatPlayer(char *no) {
 int randomNumber(int a, int b){
     return rand()%(b-a)+a;
 }
+
+/*
+int replay(int *x, int *y) {
+
+}
+*/
