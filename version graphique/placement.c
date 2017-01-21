@@ -6,6 +6,7 @@
 #include <MLV/MLV_all.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <math.h>
 #include <string.h>
 #include "struct.h"
@@ -306,6 +307,41 @@ void placeFleet(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int 
         printf("Set %s (%d)\n", current_ship->name, current_ship->length);
         placeShip(p_fleet, map, map_att, l, c, current_ship, i, x, y, alert_tab);
         MLV_actualise_window();
+        current_ship += 1; // the pointer changes to the next ship
+    }
+}
+
+void placeRandomFleet(char **map, int *l, int *c, Fleet *ai_fleet, int fleet_size) {
+    int i, j;
+    int orientation;
+    int check = 0;
+    Ship *current_ship; // pointer to the ship that is placed
+
+    srand(time(NULL));
+    current_ship = &(ai_fleet->carrier); // pointer initialized to the first ship Carrier
+    for (i = 0; i<fleet_size; i++) {
+        do {
+            *l = randomNumber(1, NDIM);
+            *c = randomNumber(1, NDIM);
+            orientation = rand()%1;
+            check = checkPlacement(map, l, c, orientation, current_ship->length);
+        } while(check == 0);
+
+        current_ship->orientation = orientation;
+        current_ship->slot.line = *l;
+        current_ship->slot.column = *c;
+
+        if (orientation == 0) {
+            for (j = 0; j< current_ship->length; j++) {
+                map[*l][*c + j] = '1'+i;
+            }
+        }
+        else {
+            for (j = 0; j< current_ship->length; j++) {
+                map[*l + j][*c] = '1'+i;
+            }
+        }
+
         current_ship += 1; // the pointer changes to the next ship
     }
 }

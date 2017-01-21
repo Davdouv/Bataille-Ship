@@ -8,6 +8,7 @@
 #include <MLV/MLV_all.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <math.h>
 #include <string.h>
 #include "struct.h"
@@ -240,7 +241,7 @@ int mouseInsideGrid (int *x, int *y, int x_corner) {
 }
 
 // Free memory
-void freeGame(char **p_att,char **p_def, Fleet *p_fleet) {
+void freeGame(char **p_att, char **p_def, Fleet *p_fleet) {
     free(p_att);
     free(p_def);
     free(p_fleet);
@@ -300,4 +301,8 @@ void whatPlayer(char *no) {
                  MLV_COLOR_RED, MLV_COLOR_RED, MLV_COLOR_WHITE,
                  MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
              );
+}
+
+int randomNumber(int a, int b){
+    return rand()%(b-a)+a;
 }

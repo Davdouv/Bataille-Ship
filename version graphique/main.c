@@ -11,6 +11,7 @@
 #include <MLV/MLV_all.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <math.h>
 #include <string.h>
 #include "menu.h"
@@ -32,7 +33,7 @@ int main( int argc, char *argv[] ){
     Fleet *p2_fleet;
     int *alert_tab = malloc(10 * sizeof(int));
 
-    int fleet_size = 1;
+    int fleet_size = 5;
 
     /* INITIALISATION */
     /* Maps Initialisation */
@@ -71,12 +72,17 @@ int main( int argc, char *argv[] ){
     MLV_wait_seconds(1);
     
     // Player 2 : Fleet placement //
-    if (game != 1) {    // If not solo
+    if (game == 2) {    // If not solo
         changePlayer(alert_tab);
         transitionScreen(alert_tab);
         changePlayer(alert_tab);
         printf("Player 2 has to place his fleet.\n");
         placeFleet(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, alert_tab, fleet_size);
+    }
+
+    // AI : Fleet placement //
+    if (game == 3) {
+        placeRandomFleet(p2_def, &line, &column, p2_fleet, fleet_size);
     }
     
     // GAME ON //
@@ -87,7 +93,7 @@ int main( int argc, char *argv[] ){
         }
     }
 
-    if (game != 1) {
+    else {
         while (p1_life != 0) {
             transitionScreen(alert_tab);
             changePlayer(alert_tab);
@@ -102,7 +108,10 @@ int main( int argc, char *argv[] ){
                 
             changePlayer(alert_tab);
             printf("* Player 2 *\n\n");
-            attackFleet(p2_def, p2_att, p1_def, &line, &column, p2_fleet, p1_fleet, &p1_life, &x, &y, alert_tab);
+            if (game == 2)
+                attackFleet(p2_def, p2_att, p1_def, &line, &column, p2_fleet, p1_fleet, &p1_life, &x, &y, alert_tab);
+            else if (game == 3)
+                attackRandomFleet(p2_def, p2_att, p1_def, &line, &column, p2_fleet, p1_fleet, &p1_life, alert_tab);
         }
     }
 

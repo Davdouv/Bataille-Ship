@@ -146,9 +146,10 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
         }
 
         displayMaps(my_fleet, my_map_def, map_att, alert_tab);
+        MLV_wait_seconds(1);
     } while (check == 1);            // Attack while success
 
-    MLV_wait_seconds(2);
+    MLV_wait_seconds(1);
     MLV_free_music(hit);
     MLV_free_music(miss);
     MLV_free_audio();
@@ -196,6 +197,60 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
         }
 
         displayAttackMap(map_att);
+    } while (check == 1);            // Attack while success
+
+    MLV_wait_seconds(2);
+    MLV_free_music(hit);
+    MLV_free_music(miss);
+    MLV_free_audio();
+}
+
+// AI Attacks
+void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *alert_tab) {
+    int check = 1;
+    MLV_Music* miss = MLV_load_music("sound/splash.mp3");
+    MLV_Music* hit  = MLV_load_music("sound/hit.wav");
+
+    MLV_init_audio();
+
+    //displayMaps(my_fleet, my_map_def, map_att, alert_tab);
+    displayAttackMap(map_att);
+
+    printf("It's your time to attack !\n");
+    do {
+        do {
+            *l = randomNumber(1, NDIM);
+            *c = randomNumber(1, NDIM);
+            
+            check = checkHit(map_att, map_def, l, c);
+
+        } while (check == -1);
+
+        if (check == 1) {           // If hit
+            map_att[*l][*c] = 'X';
+            map_def[*l][*c] = 'X';
+            shipDmg(detectShip(l, c, p_fleet));
+            *adversary_life -= 1;
+            MLV_play_music(hit, 1.0, 1);
+            if (*adversary_life != 0) {
+                printf("You can shoot again !\n");
+            }
+            else {
+                //displayMaps(p_fleet, my_map_def, map_att, alert_tab);
+                displayAttackMap(map_att);
+                break;
+            }
+        }
+
+        else if (check == 0) {           // If miss
+            map_att[*l][*c] = 'O';
+            map_def[*l][*c] = 'O';
+            MLV_play_music(miss, 1.0, 1);
+        }
+
+        //displayMaps(my_fleet, my_map_def, map_att, alert_tab);
+        displayAttackMap(map_att);
+        MLV_wait_seconds(1);
     } while (check == 1);            // Attack while success
 
     MLV_wait_seconds(2);

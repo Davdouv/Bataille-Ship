@@ -10,6 +10,6 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length);
 int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **map_att, int *l, int *c, int *x, int *y, int *o, int *alert_tab);
 void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y, int *alert_tab);
 void placeFleet(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, int *y, int *alert_tab, int fleet_size);
-
+void placeRandomFleet(char **map, int *l, int *c, Fleet *ai_fleet, int fleet_size);
 
 #endif

@@ -16,6 +16,6 @@ int mouseInsideGrid (int *x, int *y, int x_corner);
 void changePlayer(int *alert_tab);
 void transitionScreen(int *alert_tab);
 void whatPlayer(char *no);
-
+int randomNumber(int a, int b);
 
 #endif
