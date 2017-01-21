@@ -298,25 +298,16 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
 }
 
 // Place all ships
-void placeFleet(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, int *y, int *alert_tab) {
+void placeFleet(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, int *y, int *alert_tab, int fleet_size) {
     int i;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
-    for (i = 0; i<NSHIPS; i++) {
+    for (i = 0; i<fleet_size; i++) {
         printf("Set %s (%d)\n", current_ship->name, current_ship->length);
         placeShip(p_fleet, map, map_att, l, c, current_ship, i, x, y, alert_tab);
         MLV_actualise_window();
-        //displayMap(map);
         current_ship += 1; // the pointer changes to the next ship
     }
-}
-
-void flemme(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, int *y, int *alert_tab) { // pour placer qu'un bateau parce que sinon c'est relou
-    Ship *current_ship; // pointer to the ship that is placed
-    current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
-    printf("Set %s (%d)\n", current_ship->name, current_ship->length);
-    placeShip(p_fleet, map, map_att, l, c, current_ship, 0, x, y, alert_tab);
-    //displayMap(map);
 }
 
 // ----------- ENDING OF FLEET POSITIONNING FUNCTIONS -------------- //

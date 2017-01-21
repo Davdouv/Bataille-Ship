@@ -92,3 +92,18 @@ void createFleet(Fleet* pt_fleet) {
 
     *pt_fleet = my_fleet;
 }
+
+void createPlayer(int* life, char** def_map, char** att_map, Fleet* fleet, int fleet_size) {
+    Ship *current_ship; // pointer to the ship that is placed
+    int i;
+
+    createMap(att_map);
+    createMap(def_map);
+    createFleet(fleet);
+
+    current_ship = &(fleet->carrier); // pointer initialized to the first ship Carrier
+    for (i = 0; i<fleet_size; i++) {
+        *life += current_ship->life;
+        current_ship += 1; // the pointer changes to the next ship
+    }
+}

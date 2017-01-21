@@ -25,7 +25,7 @@ int main( int argc, char *argv[] ){
     int game;
     int line, column;
     int x, y;
-    int p1_life, p2_life;
+    int p1_life = 0, p2_life = 0;
     char **p1_att, **p1_def;
     char **p2_att, **p2_def;
     Fleet *p1_fleet;
@@ -38,62 +38,36 @@ int main( int argc, char *argv[] ){
     }
     alert_tab[0] = 1;
 
-    /* MODE FLEMME */
-    /* 0 pour oui, 1 pour non */
-    int f = 0;
+    
+    int fleet_size = 1;
 
-    /* Life initialisation */
-    if (f == 1) {
-        p1_life = p2_life = 17;
-    }
-    else {
-        p1_life = p2_life = 2;
-    }
-
+    /* INITIALISATION */
     /* Maps Initialisation */
     p1_att = initMap();
     p1_def = initMap();
     p2_att = initMap();
     p2_def = initMap();
 
-    /* Maps Creation */
-    createMap(p1_att);
-    createMap(p1_def);
-    createMap(p2_att);
-    createMap(p2_def);
-
     /* Fleets Initialisation */
     p1_fleet = initFleet();
     p2_fleet = initFleet();
 
-    /* Fleets Creation */
-    createFleet(p1_fleet);
-    createFleet(p2_fleet);
-
     /* Window creation and display */
-    MLV_create_window( "nom_du_jeu", "jeu", WIDTH, HEIGHT);
+    MLV_create_window( "Fire in the hole !", "jeu", WIDTH, HEIGHT);
 
     // MENU
     game = displayMenu(&x, &y);
-    if (game == 1) {
 
-    }
-    else if (game == 2) {
+    /* Creating players */
+    createPlayer(&p1_life, p1_def, p1_att, p1_fleet, fleet_size);
 
-    }
-    else if (game == 3) {
-
+    if (game != 1) {    // If not solo
+        createPlayer(&p2_life, p2_def, p2_att, p2_fleet, fleet_size);
     }
     
     /* Player 1 : Fleet placement */
-    //displayMaps(p1_fleet, p1_def, p1_att, alert_tab);
-    printf("Player 1 has to place their fleet.\n");
-    if (f == 1) {
-        placeFleet(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, alert_tab);
-    }
-    else {
-        flemme(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, alert_tab);
-    }
+    printf("Player 1 has to place his fleet.\n");
+    placeFleet(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, alert_tab, fleet_size);
 
     MLV_wait_seconds(1);
     
@@ -101,14 +75,9 @@ int main( int argc, char *argv[] ){
 
     // Player 2 : Fleet placement //
     changePlayer(alert_tab);
-    //displayMaps(p2_fleet, p2_def, p2_att, alert_tab);
-    printf("Player 2 has to place their fleet.\n");
-    if (f == 1) {
-        placeFleet(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, alert_tab);
-    }
-    else {
-        flemme(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, alert_tab);
-    }
+    printf("Player 2 has to place his fleet.\n");
+    placeFleet(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, alert_tab, fleet_size);
+    
 
     // GAME ON //
     while (p1_life != 0) {
