@@ -38,9 +38,30 @@ void rotationImg(MLV_Image *img, int orientation) {
 
 // Give a position to each img of the ship
 void shipPosition (int *x, int *y, int *p_x, int *p_y, int o, int num) {
+    float i, j;
+    int b = 0;
+    for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {          // Lines
+        for (j=(x_corner_center+2*cel_dim); j<=(x_corner_center+tab_dim); j=j+cel_dim) {      // Columns
+            if (*y<=i && *x<=j) {     // If it's inside the last cel
+                if (o==0)
+                {
+                    *p_x=j-cel_dim+(cel_dim*num)+(i*0.01);      // calculate the nearest X position from mouse position and adjust
+                    *p_y=i-cel_dim+(i*0.01);
+                }
+                else {
+                    *p_x=j-cel_dim+(i*0.01);
+                    *p_y=i-cel_dim+(cel_dim*num)+(i*0.01);
+                }
+                b = 1;
+            }
+            if (b==1) break;
+        }
+        if (b==1) break;
+    }
+/*
     if( o == 0 )
     {
-        *p_x = division(*x,cel_dim)*(int)cel_dim+((int)cel_dim*num); // calculate the nearest X position for a ship from mouse position
+        *p_x = division(*x,cel_dim)*cel_dim+(cel_dim*num); // calculate the nearest X position for a ship from mouse position
         *p_y = (division(*y,cel_dim)*cel_dim)-0.5*cel_dim; // calculate the nearest Y position for a ship from mouse position
     }
     else
@@ -48,6 +69,7 @@ void shipPosition (int *x, int *y, int *p_x, int *p_y, int o, int num) {
        *p_x = division(*x,cel_dim)*cel_dim; // calculate the nearest X position for a ship from mouse position
        *p_y = (division(*y,cel_dim)*cel_dim)-0.5*cel_dim+(cel_dim*num); // calculate the nearest Y position for a ship from mouse position
     }
+*/
 }
 
 // Give Orientation + selected slot
@@ -89,13 +111,12 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
             MLV_actualise_window();
         }
 
-
         // Display a ship on the map
         if (mouseInsideGrid(x, y, x_corner_center)) {
             for (i = 0; i < length; i++) {
                 shipPosition(x, y, &p_x, &p_y, *o, i);
 
-                if(!(temp_x == p_x && temp_y == p_y) || temp_o == *o) {     // If ship position have changed
+                if(!(temp_x == p_x && temp_y == p_y) || temp_o == *o) {     // If ship position have changed (p_x or p_y or orientation)
                     draw ++;
                     if (draw == 1 && i == 0) {
                         temp_x = p_x;

@@ -95,13 +95,13 @@ int main( int argc, char *argv[] ){
         flemme(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, alert_tab);
     }
 
-    MLV_wait_seconds(2);
+    MLV_wait_seconds(1);
     
     transitionScreen(alert_tab);
 
     // Player 2 : Fleet placement //
     changePlayer(alert_tab);
-    displayMaps(p2_fleet, p2_def, p2_att, alert_tab);
+    //displayMaps(p2_fleet, p2_def, p2_att, alert_tab);
     printf("Player 2 has to place their fleet.\n");
     if (f == 1) {
         placeFleet(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, alert_tab);
@@ -109,8 +109,6 @@ int main( int argc, char *argv[] ){
     else {
         flemme(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, alert_tab);
     }
-
-    
 
     // GAME ON //
     while (p1_life != 0) {
