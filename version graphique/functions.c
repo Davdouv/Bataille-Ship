@@ -63,7 +63,7 @@ void displayOneMap(int map, int x_corner_map) {
     } else {
         water = image("water_att","","jpg");
         MLV_draw_text_box(
-            x_corner_att, y_corner-20, tab_dim, 20,
+            x_corner_map, y_corner-20, tab_dim, 20,
             "Offensive Map", 9,
             MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_COLOR_WHITE,
             MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
@@ -152,7 +152,7 @@ void displayFleet(Fleet *p_fleet, char **map_def, int x_corner) {
 }
 
 // Display shots
-void displayShots(char **map_def, char **map_att) {
+void displayShots(char **map, int x_corner) {
     int i, j;
     MLV_Image *flamme, *splash;
 
@@ -162,25 +162,12 @@ void displayShots(char **map_def, char **map_att) {
     // Display shots in defensive map
     for (i = 0; i < NDIM; i++) {
         for (j = 0; j < NDIM; j++) {
-            if (map_def[i][j] == 'X') {
-                MLV_draw_image (flamme, x_corner_def+j*cel_dim, y_corner+i*cel_dim);
+            if (map[i][j] == 'X') {
+                MLV_draw_image (flamme, x_corner+j*cel_dim, y_corner+i*cel_dim);
             }
-            if (map_def[i][j] == 'O') {
-                MLV_draw_filled_rectangle(x_corner_def+j*cel_dim, y_corner+i*cel_dim, cel_dim, cel_dim, MLV_COLOR_BLUE);
-                MLV_draw_image (splash, x_corner_def+j*cel_dim, y_corner+i*cel_dim);
-            }
-        }
-    }
-
-    // Display shots in offensive map
-    for (i = 0; i < NDIM; i++) {
-        for (j = 0; j < NDIM; j++) {
-            if (map_att[i][j] == 'X') {
-                MLV_draw_image (flamme, x_corner_att+j*cel_dim, y_corner+i*cel_dim);
-            }
-            if (map_att[i][j] == 'O') {
-                MLV_draw_filled_rectangle(x_corner_att+j*cel_dim, y_corner+i*cel_dim, cel_dim, cel_dim, MLV_COLOR_BLUE);
-                MLV_draw_image (splash, x_corner_att+j*cel_dim, y_corner+i*cel_dim);
+            if (map[i][j] == 'O') {
+                MLV_draw_filled_rectangle(x_corner+j*cel_dim, y_corner+i*cel_dim, cel_dim, cel_dim, MLV_COLOR_BLUE);
+                MLV_draw_image (splash, x_corner+j*cel_dim, y_corner+i*cel_dim);
             }
         }
     }
@@ -194,6 +181,16 @@ void displaySettableMap (char **map, Fleet *p_fleet) {
     MLV_clear_window(MLV_COLOR_BLACK);
     displayOneMap(0, x_corner_center);
     displayFleet(p_fleet, map, x_corner_center);
+    MLV_actualise_window();
+}
+
+// Display the attacking map for solo only
+void displayAttackMap (char **map_att) {
+    // Hide the previous display
+	MLV_clear_window(MLV_COLOR_BLACK);
+    displayOneMap(1, x_corner_center);
+    displayShots(map_att, x_corner_center);
+    MLV_actualise_window();
 }
 
 // Display the 2 maps
@@ -211,7 +208,8 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att, int *alert_tab)
 
     displayFleet(p_fleet, map_def, x_corner_def);
     
-    displayShots(map_def, map_att);
+    displayShots(map_def, x_corner_def);
+    displayShots(map_att, x_corner_att);
 
     // DISPLAY ALERTS
     for (i = 0; i < 10; i++) {

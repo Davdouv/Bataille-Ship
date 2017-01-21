@@ -27,16 +27,16 @@
 
 // Select a slot | put the line & the column values in variables l and c and coordinates in x and y
 // Return 1 if succeed, 0 if not
-int selectSlot(char **map, int *l, int *c, int *x, int *y) {
+int selectSlot(char **map, int *l, int *c, int *x, int *y, int x_corner) {
     int i, j;
     int b = 0;
 
     *l = 1; // Reset line cursor
     *c = 1; // Reset column cursor
     MLV_wait_mouse(x, y);
-    if (mouseInsideGrid(x, y, x_corner_att)) {   // If mouse pressed inside the grid
+    if (mouseInsideGrid(x, y, x_corner)) {   // If mouse pressed inside the grid
         for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
-             for (j=(x_corner_att+2*cel_dim); j<=(x_corner_att+tab_dim); j=j+cel_dim) {
+             for (j=(x_corner+2*cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {
                 if (*y<=i && *x<=j) {     // If it's inside the last cel
                     *x=j-cel_dim;
                     *y=i-cel_dim;
@@ -114,19 +114,12 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
     MLV_init_audio();
 
     displayMaps(my_fleet, my_map_def, map_att, alert_tab);
-    
-        MLV_draw_text_box(
-                 80, 80, 250, 70,
-                 "PLAYER 1 ATTACKS !", 9,
-                 MLV_COLOR_RED, MLV_COLOR_RED, MLV_COLOR_WHITE,
-                 MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-             );
 
     printf("It's your time to attack !\n");
     do {
         do {
             do {
-                select = selectSlot(map_att, l, c, x, y);
+                select = selectSlot(map_att, l, c, x, y, x_corner_att);
             } while(select == 0);
             check = checkHit(map_att, map_def, l, c);
         } while (check == -1);
@@ -153,6 +146,56 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
         }
 
         displayMaps(my_fleet, my_map_def, map_att, alert_tab);
+    } while (check == 1);            // Attack while success
+
+    MLV_wait_seconds(2);
+    MLV_free_music(hit);
+    MLV_free_music(miss);
+    MLV_free_audio();
+}
+
+// Solo Attack function
+void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet, int *life, int *x, int *y) {
+    int check = 1;
+    int select = 0;
+    MLV_Music* miss = MLV_load_music("sound/splash.mp3");
+    MLV_Music* hit  = MLV_load_music("sound/hit.wav");
+
+    MLV_init_audio();
+
+    displayAttackMap(map_att);
+
+    printf("It's your time to attack !\n");
+    do {
+        do {
+            do {
+                select = selectSlot(map_att, l, c, x, y, x_corner_center);
+            } while(select == 0);
+            check = checkHit(map_att, map_def, l, c);
+        } while (check == -1);
+
+        if (check == 1) {           // If hit
+            map_att[*l][*c] = 'X';
+            map_def[*l][*c] = 'X';
+            shipDmg(detectShip(l, c, my_fleet));
+            *life -= 1;
+            MLV_play_music(hit, 1.0, 1);
+            if (*life != 0) {
+                printf("You can shoot again !\n");
+            }
+            else {
+                displayAttackMap(map_att);
+                break;
+            }
+        }
+
+        else if (check == 0) {           // If miss
+            map_att[*l][*c] = 'O';
+            map_def[*l][*c] = 'O';
+            MLV_play_music(miss, 1.0, 1);
+        }
+
+        displayAttackMap(map_att);
     } while (check == 1);            // Attack while success
 
     MLV_wait_seconds(2);
