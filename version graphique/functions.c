@@ -22,15 +22,16 @@
 #define x_corner_att WIDTH/1.8
 #define y_corner HEIGHT/4       // y coordinate of the top/left corner of the grid
 #define tab_dim HEIGHT/2        // Grid size (it's a square)
-#define cel_dim tab_dim/NDIM    // Cel size (square too)
+//#define cel_dim tab_dim/NDIM    // Cel size (square too)
 
 
 /* DISPLAY MAP FUNCTIONS */
 
 // Make declaration of image of the size of a cell easier 
-MLV_Image* image(char* img_name, char* img_num, char* format) {
+MLV_Image* image(char* img_name, char* img_num, char* format, int gameSize) {
     char *file = malloc(40 * sizeof(char));
     MLV_Image *my_image;
+    int cel_dim = tab_dim/gameSize;
 
     strcpy(file, "img/");
     strcat(file, img_name);
@@ -52,9 +53,10 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
     strncpy(num, "1 \0", 3);
     strncpy(letter, "A \0", 3);
     MLV_Image *water;
+    int cel_dim = tab_dim/gameSize;
 
     if (map == 0) {
-        water = image("water","","jpg");
+        water = image("water","","jpg", gameSize);
         MLV_draw_text_box(
             x_corner_map, y_corner-20, tab_dim, 20,
             "Defensive Map", 9,
@@ -62,7 +64,7 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
             MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
         );
     } else {
-        water = image("water_att","","jpg");
+        water = image("water_att","","jpg", gameSize);
         MLV_draw_text_box(
             x_corner_map, y_corner-20, tab_dim, 20,
             "Offensive Map", 9,
@@ -106,13 +108,14 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
 
 
 // Display fleet on defense map
-void displayFleet(Fleet *p_fleet, char **map_def, int x_corner, int fleetSize) {
+void displayFleet(Fleet *p_fleet, char **map_def, int x_corner, int fleetSize, int gameSize) {
     int i, j, k, l;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     MLV_Image *ship_img[5];
     char *file_name = malloc(16 * sizeof(char));
     char *num = malloc(3 * sizeof(char));
+    int cel_dim = tab_dim/gameSize;
 
     for (i = 0; i<fleetSize; i++) {
         if(current_ship->slot.line != -1 && current_ship->slot.column != -1) { // if position had been defined
@@ -122,7 +125,7 @@ void displayFleet(Fleet *p_fleet, char **map_def, int x_corner, int fleetSize) {
             strcat(file_name, current_ship->name);         
             for (j = 0; j < current_ship->length; j++) {
                 sprintf(num,"%d",j+1);
-                ship_img[j] = image(file_name,num,"png");       // Load each img of the actual ship
+                ship_img[j] = image(file_name,num,"png", gameSize);       // Load each img of the actual ship
                 MLV_rotate_image(ship_img[j], current_ship->orientation*(-90));
             }
 
@@ -156,9 +159,10 @@ void displayFleet(Fleet *p_fleet, char **map_def, int x_corner, int fleetSize) {
 void displayShots(char **map, int x_corner, int gameSize) {
     int i, j;
     MLV_Image *flamme, *splash;
+    int cel_dim=tab_dim/gameSize;
 
-    flamme = image("flamme","","png");
-    splash = image("splash","","png");
+    flamme = image("flamme","","png", gameSize);
+    splash = image("splash","","png", gameSize);
 
     // Display shots in defensive map
     for (i = 0; i < gameSize; i++) {
@@ -181,7 +185,7 @@ void displayShots(char **map, int x_corner, int gameSize) {
 void displaySettableMap (char **map, Fleet *p_fleet, int gameSize, int fleetSize) {
     MLV_clear_window(MLV_COLOR_BLACK);
     displayOneMap(0, x_corner_center, gameSize);
-    displayFleet(p_fleet, map, x_corner_center, fleetSize);
+    displayFleet(p_fleet, map, x_corner_center, fleetSize, gameSize);
     MLV_actualise_window();
 }
 
@@ -207,7 +211,7 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att, int *alert_tab,
     // Offensive Map
 	displayOneMap(1, x_corner_att, gameSize);
 
-    displayFleet(p_fleet, map_def, x_corner_def, fleetSize);
+    displayFleet(p_fleet, map_def, x_corner_def, fleetSize, gameSize);
     
     displayShots(map_def, x_corner_def, gameSize);
     displayShots(map_att, x_corner_att, gameSize);
@@ -233,7 +237,9 @@ void displayMaps(Fleet *p_fleet, char **map_def, char **map_att, int *alert_tab,
 }
 
 // Check if mouse is inside of grid YES = 1  NO = 0
-int mouseInsideGrid (int *x, int *y, int x_corner) {
+int mouseInsideGrid (int *x, int *y, int x_corner, int gameSize) {
+    int cel_dim = tab_dim/gameSize;
+
     if ((*x>=(x_corner+cel_dim) && *x <= x_corner+tab_dim) && (*y>=(y_corner+cel_dim) && *y<=y_corner+tab_dim))
         return 1;
     else

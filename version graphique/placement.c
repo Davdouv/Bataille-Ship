@@ -21,7 +21,7 @@
 #define x_corner_att WIDTH/1.8
 #define y_corner HEIGHT/4       // y coordinate of the top/left corner of the grid
 #define tab_dim HEIGHT/2        // Grid size (it's a square)
-#define cel_dim tab_dim/NDIM    // Cel size (square too)
+//#define cel_dim tab_dim/NDIM    // Cel size (square too)
 
 // START //
 
@@ -38,20 +38,22 @@ void rotationImg(MLV_Image *img, int orientation) {
 }
 
 // Give a position to each img of the ship
-void shipPosition (int *x, int *y, int *p_x, int *p_y, int o, int num) {
+void shipPosition (int *x, int *y, int *p_x, int *p_y, int o, int num, int gameSize) {
     float i, j;
     int b = 0;
+    int cel_dim = tab_dim/gameSize;
+
     for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {          // Lines
         for (j=(x_corner_center+2*cel_dim); j<=(x_corner_center+tab_dim); j=j+cel_dim) {      // Columns
             if (*y<=i && *x<=j) {     // If it's inside the last cel
                 if (o==0)
                 {
-                    *p_x=j-cel_dim+(cel_dim*num)+(i*0.01);      // calculate the nearest X position from mouse position and adjust
-                    *p_y=i-cel_dim+(i*0.01);
+                    *p_x=j-cel_dim+(cel_dim*num);      // calculate the nearest X position from mouse position and adjust
+                    *p_y=i-cel_dim;
                 }
                 else {
-                    *p_x=j-cel_dim+(i*0.01);
-                    *p_y=i-cel_dim+(cel_dim*num)+(i*0.01);
+                    *p_x=j-cel_dim;
+                    *p_y=i-cel_dim+(cel_dim*num);
                 }
                 b = 1;
             }
@@ -83,6 +85,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
     int temp_o = 2;
     int draw = 0;
     MLV_Music* rotate = MLV_load_music("sound/rotate.mp3");
+    int cel_dim = tab_dim/gameSize;
 
     MLV_init_audio();
 
@@ -113,9 +116,9 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
         }
 
         // Display a ship on the map
-        if (mouseInsideGrid(x, y, x_corner_center)) {
+        if (mouseInsideGrid(x, y, x_corner_center, gameSize)) {
             for (i = 0; i < length; i++) {
-                shipPosition(x, y, &p_x, &p_y, *o, i);
+                shipPosition(x, y, &p_x, &p_y, *o, i, gameSize);
 
                 if(!(temp_x == p_x && temp_y == p_y) || temp_o == *o) {     // If ship position have changed (p_x or p_y or orientation)
                     draw ++;
@@ -138,7 +141,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
 
         // If left click
         if (MLV_get_mouse_button_state(MLV_BUTTON_LEFT)==MLV_PRESSED) {                          
-             if (mouseInsideGrid(x, y, x_corner_center)) {   // If mouse pressed inside the grid
+             if (mouseInsideGrid(x, y, x_corner_center, gameSize)) {   // If mouse pressed inside the grid
                 for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {          // Lines
                     for (j=(x_corner_center+2*cel_dim); j<=(x_corner_center+tab_dim); j=j+cel_dim) {      // Columns
                         if (*y<=i && *x<=j) {     // If it's inside the last cel
@@ -206,6 +209,7 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
     MLV_Image *ship_img[5];
     MLV_Music* error = MLV_load_music("sound/error.mp3");
     MLV_Music* place = MLV_load_music("sound/place.mp3");
+    int cel_dim = tab_dim/gameSize;
 
     MLV_init_audio();
 
@@ -214,7 +218,7 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
     strcat(file_name, p_ship->name);         
     for (j = 0; j < p_ship->length; j++) {
         sprintf(num,"%d",j+1);
-        ship_img[j] = image(file_name,num,"png");       // Load each img of the actual ship
+        ship_img[j] = image(file_name,num,"png", gameSize);       // Load each img of the actual ship
     }
 
     // Select a valid Position
@@ -250,7 +254,7 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
     strcat(file_name, p_ship->name);         
     for (j = 0; j < p_ship->length; j++) {
         sprintf(num,"%d",j+1);
-        ship_img[j] = image(file_name,num,"png");       // Load each img of the actual ship
+        ship_img[j] = image(file_name,num,"png", gameSize);       // Load each img of the actual ship
         MLV_rotate_image(ship_img[j], o*(-90));
     }
 

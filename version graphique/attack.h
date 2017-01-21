@@ -3,7 +3,7 @@
 
 /* ATTACK.H */
 
-int selectSlot(char **map, int *l, int *c, int *x, int *y, int x_corner);
+int selectSlot(char **map, int *l, int *c, int *x, int *y, int x_corner, int gameSize);
 int checkHit(char **map, char **map_def, int *l, int *c);
 Ship* detectShip(int *l, int *c, Fleet *p_fleet);
 void shipDmg(Ship *damaged_ship);

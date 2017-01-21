@@ -20,21 +20,22 @@
 #define x_corner_att WIDTH/1.8
 #define y_corner HEIGHT/4       // y coordinate of the top/left corner of the grid
 #define tab_dim HEIGHT/2        // Grid size (it's a square)
-#define cel_dim tab_dim/NDIM    // Cel size (square too)
+//#define cel_dim tab_dim/NDIM    // Cel size (square too)
 
 
 // ----------- START OF FLEET ATTACKING FUNCTIONS -------------- //
 
 // Select a slot | put the line & the column values in variables l and c and coordinates in x and y
 // Return 1 if succeed, 0 if not
-int selectSlot(char **map, int *l, int *c, int *x, int *y, int x_corner) {
+int selectSlot(char **map, int *l, int *c, int *x, int *y, int x_corner, int gameSize) {
     int i, j;
     int b = 0;
+    int cel_dim = tab_dim/gameSize;
 
     *l = 1; // Reset line cursor
     *c = 1; // Reset column cursor
     MLV_wait_mouse(x, y);
-    if (mouseInsideGrid(x, y, x_corner)) {   // If mouse pressed inside the grid
+    if (mouseInsideGrid(x, y, x_corner, gameSize)) {   // If mouse pressed inside the grid
         for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
              for (j=(x_corner+2*cel_dim); j<=(x_corner+tab_dim); j=j+cel_dim) {
                 if (*y<=i && *x<=j) {     // If it's inside the last cel
@@ -119,7 +120,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
     do {
         do {
             do {
-                select = selectSlot(map_att, l, c, x, y, x_corner_att);
+                select = selectSlot(map_att, l, c, x, y, x_corner_att, gameSize);
             } while(select == 0);
             check = checkHit(map_att, map_def, l, c);
         } while (check == -1);
@@ -170,7 +171,7 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
     do {
         do {
             do {
-                select = selectSlot(map_att, l, c, x, y, x_corner_center);
+                select = selectSlot(map_att, l, c, x, y, x_corner_center, gameSize);
             } while(select == 0);
             check = checkHit(map_att, map_def, l, c);
         } while (check == -1);
