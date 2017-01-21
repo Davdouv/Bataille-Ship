@@ -17,6 +17,7 @@
 #include "struct.h"
 #include "init.h"
 #include "functions.h"
+#include "placement.h"
 #include "attack.h"
 
 int main( int argc, char *argv[] ){

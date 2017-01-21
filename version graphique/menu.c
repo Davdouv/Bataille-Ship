@@ -6,8 +6,6 @@
 #include <MLV/MLV_all.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <string.h>
 #include "menu.h"
 
 void splashScreen() {

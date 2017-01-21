@@ -1,4 +1,4 @@
-/* FUNCTIONS.C */
+/* ATTACK.C */
 #define _CRT_SECURE_NO_WARNINGS
 #define WIDTH 1280
 #define HEIGHT 720
@@ -22,7 +22,34 @@
 #define tab_dim HEIGHT/2        // Grid size (it's a square)
 #define cel_dim tab_dim/NDIM    // Cel size (square too)
 
-// Player attacks
+
+// ----------- START OF FLEET ATTACKING FUNCTIONS -------------- //
+
+// Select a slot | put the line & the column values in variables l and c and coordinates in x and y
+// Return 1 if succeed, 0 if not
+int selectSlot(char **map, int *l, int *c, int *x, int *y) {
+    int i, j;
+    int b = 0;
+
+    *l = 1; // Reset line cursor
+    *c = 1; // Reset column cursor
+    MLV_wait_mouse(x, y);
+    if (mouseInsideGrid(x, y, x_corner_att)) {   // If mouse pressed inside the grid
+        for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {
+             for (j=(x_corner_att+2*cel_dim); j<=(x_corner_att+tab_dim); j=j+cel_dim) {
+                if (*y<=i && *x<=j) {     // If it's inside the last cel
+                    *x=j-cel_dim;
+                    *y=i-cel_dim;
+                    return b = 1;
+                }
+                *c = *c+1;
+            }
+            *c=1;
+            *l = *l+1;
+        }
+    }
+    return b;       // If mouse pressed outside
+}
 
 // Check what contains the selected slot
 int checkHit(char **map_att, char **map_def, int *l, int *c) {

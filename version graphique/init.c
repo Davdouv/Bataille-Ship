@@ -1,3 +1,4 @@
+/* INIT.C */
 #define NDIM 11     // Grid dimensions
 #define NSHIPS 5    // Number of ships MUST NOT EXCEED 5!
 
