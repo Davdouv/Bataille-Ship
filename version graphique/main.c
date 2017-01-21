@@ -24,6 +24,7 @@
 int main( int argc, char *argv[] ){
     int i;
     int game;
+    int fleetSize = 3;
     int line, column;
     int x, y;
     int p1_life = 0, p2_life = 0;
@@ -33,7 +34,6 @@ int main( int argc, char *argv[] ){
     Fleet *p2_fleet;
     int *alert_tab = malloc(10 * sizeof(int));
 
-    int fleet_size = 5;
 
     /* INITIALISATION */
     /* Maps Initialisation */
@@ -56,18 +56,18 @@ int main( int argc, char *argv[] ){
     MLV_create_window( "Fire in the hole !", "jeu", WIDTH, HEIGHT);
 
     // MENU
-    game = displayMenu(&x, &y);
+    game = menuManager(&x, &y, &fleetSize);
 
     /* Creating players */
-    createPlayer(&p1_life, p1_def, p1_att, p1_fleet, fleet_size);
+    createPlayer(&p1_life, p1_def, p1_att, p1_fleet, fleetSize);
     if (game != 1) {    // If not solo
-        createPlayer(&p2_life, p2_def, p2_att, p2_fleet, fleet_size);
+        createPlayer(&p2_life, p2_def, p2_att, p2_fleet, fleetSize);
     }
     
     /* Player 1 : Fleet placement */
     printf("Player 1 has to place his fleet.\n");
     transitionScreen(alert_tab);
-    placeFleet(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, alert_tab, fleet_size);
+    placeFleet(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, alert_tab, fleetSize);
 
     MLV_wait_seconds(1);
     
@@ -77,12 +77,12 @@ int main( int argc, char *argv[] ){
         transitionScreen(alert_tab);
         changePlayer(alert_tab);
         printf("Player 2 has to place his fleet.\n");
-        placeFleet(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, alert_tab, fleet_size);
+        placeFleet(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, alert_tab, fleetSize);
     }
 
     // AI : Fleet placement //
     if (game == 3) {
-        placeRandomFleet(p2_def, &line, &column, p2_fleet, fleet_size);
+        placeRandomFleet(p2_def, &line, &column, p2_fleet, fleetSize);
     }
     
     // GAME ON //
