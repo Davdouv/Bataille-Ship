@@ -45,7 +45,7 @@ MLV_Image* image(char* img_name, char* img_num, char* format) {
 }
 
 // Display a single map 
-void displayOneMap(int map, int x_corner_map) {
+void displayOneMap(int map, int x_corner_map, int gameSize) {
     int i, j;
     char *num = malloc(3 * sizeof(char));
     char *letter = malloc(3 * sizeof(char));
@@ -71,8 +71,8 @@ void displayOneMap(int map, int x_corner_map) {
         );
     }
 
-    for (i = 0; i < NDIM; i++) {
-		for (j = 0; j < NDIM; j++) {
+    for (i = 0; i < gameSize; i++) {
+		for (j = 0; j < gameSize; j++) {
 			if (i == 0 && j == 0) {         // First slot
 				//map[i][j] = ' ';            
                 MLV_draw_filled_rectangle(x_corner_map, y_corner, cel_dim, cel_dim, MLV_COLOR_RED);
@@ -106,7 +106,7 @@ void displayOneMap(int map, int x_corner_map) {
 
 
 // Display fleet on defense map
-void displayFleet(Fleet *p_fleet, char **map_def, int x_corner) {
+void displayFleet(Fleet *p_fleet, char **map_def, int x_corner, int fleetSize) {
     int i, j, k, l;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
@@ -114,7 +114,7 @@ void displayFleet(Fleet *p_fleet, char **map_def, int x_corner) {
     char *file_name = malloc(16 * sizeof(char));
     char *num = malloc(3 * sizeof(char));
 
-    for (i = 0; i<NSHIPS; i++) {
+    for (i = 0; i<fleetSize; i++) {
         if(current_ship->slot.line != -1 && current_ship->slot.column != -1) { // if position had been defined
 
             // Load the image files of the ship
@@ -153,7 +153,7 @@ void displayFleet(Fleet *p_fleet, char **map_def, int x_corner) {
 }
 
 // Display shots
-void displayShots(char **map, int x_corner) {
+void displayShots(char **map, int x_corner, int gameSize) {
     int i, j;
     MLV_Image *flamme, *splash;
 
@@ -161,8 +161,8 @@ void displayShots(char **map, int x_corner) {
     splash = image("splash","","png");
 
     // Display shots in defensive map
-    for (i = 0; i < NDIM; i++) {
-        for (j = 0; j < NDIM; j++) {
+    for (i = 0; i < gameSize; i++) {
+        for (j = 0; j < gameSize; j++) {
             if (map[i][j] == 'X') {
                 MLV_draw_image (flamme, x_corner+j*cel_dim, y_corner+i*cel_dim);
             }
@@ -178,39 +178,39 @@ void displayShots(char **map, int x_corner) {
 }
 
 // Display the map where you can place your fleet
-void displaySettableMap (char **map, Fleet *p_fleet) {
+void displaySettableMap (char **map, Fleet *p_fleet, int gameSize, int fleetSize) {
     MLV_clear_window(MLV_COLOR_BLACK);
-    displayOneMap(0, x_corner_center);
-    displayFleet(p_fleet, map, x_corner_center);
+    displayOneMap(0, x_corner_center, gameSize);
+    displayFleet(p_fleet, map, x_corner_center, fleetSize);
     MLV_actualise_window();
 }
 
 // Display the attacking map for solo only
-void displayAttackMap (char **map_att) {
+void displayAttackMap (char **map_att, int gameSize) {
     // Hide the previous display
 	MLV_clear_window(MLV_COLOR_BLACK);
-    displayOneMap(1, x_corner_center);
-    displayShots(map_att, x_corner_center);
+    displayOneMap(1, x_corner_center, gameSize);
+    displayShots(map_att, x_corner_center, gameSize);
     MLV_actualise_window();
 }
 
 // Display the 2 maps
-void displayMaps(Fleet *p_fleet, char **map_def, char **map_att, int *alert_tab) {
+void displayMaps(Fleet *p_fleet, char **map_def, char **map_att, int *alert_tab, int gameSize, int fleetSize) {
     int i;
 
     // Hide the previous display
 	MLV_clear_window(MLV_COLOR_BLACK);
 
     // Defensive Map
-	displayOneMap(0, x_corner_def);
+	displayOneMap(0, x_corner_def, gameSize);
 
     // Offensive Map
-	displayOneMap(1, x_corner_att);
+	displayOneMap(1, x_corner_att, gameSize);
 
-    displayFleet(p_fleet, map_def, x_corner_def);
+    displayFleet(p_fleet, map_def, x_corner_def, fleetSize);
     
-    displayShots(map_def, x_corner_def);
-    displayShots(map_att, x_corner_att);
+    displayShots(map_def, x_corner_def, gameSize);
+    displayShots(map_att, x_corner_att, gameSize);
 
     // DISPLAY ALERTS
     for (i = 0; i < 10; i++) {

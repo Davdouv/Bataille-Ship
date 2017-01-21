@@ -24,6 +24,7 @@
 int main( int argc, char *argv[] ){
     int i;
     int game;
+    int gameSize = 11;
     int fleetSize = 3;
     int line, column;
     int x, y;
@@ -33,7 +34,6 @@ int main( int argc, char *argv[] ){
     Fleet *p1_fleet;
     Fleet *p2_fleet;
     int *alert_tab = malloc(10 * sizeof(int));
-
 
     /* INITIALISATION */
     /* Maps Initialisation */
@@ -56,18 +56,18 @@ int main( int argc, char *argv[] ){
     MLV_create_window( "Fire in the hole !", "jeu", WIDTH, HEIGHT);
 
     // MENU
-    game = menuManager(&x, &y, &fleetSize);
+    game = menuManager(&x, &y, &fleetSize, &gameSize);
 
     /* Creating players */
-    createPlayer(&p1_life, p1_def, p1_att, p1_fleet, fleetSize);
+    createPlayer(&p1_life, p1_def, p1_att, p1_fleet, fleetSize, gameSize);
     if (game != 1) {    // If not solo
-        createPlayer(&p2_life, p2_def, p2_att, p2_fleet, fleetSize);
+        createPlayer(&p2_life, p2_def, p2_att, p2_fleet, fleetSize, gameSize);
     }
     
     /* Player 1 : Fleet placement */
     printf("Player 1 has to place his fleet.\n");
     transitionScreen(alert_tab);
-    placeFleet(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, alert_tab, fleetSize);
+    placeFleet(p1_def, p1_att, &line, &column, p1_fleet, &x, &y, alert_tab, fleetSize, gameSize);
 
     MLV_wait_seconds(1);
     
@@ -77,19 +77,19 @@ int main( int argc, char *argv[] ){
         transitionScreen(alert_tab);
         changePlayer(alert_tab);
         printf("Player 2 has to place his fleet.\n");
-        placeFleet(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, alert_tab, fleetSize);
+        placeFleet(p2_def, p2_att, &line, &column, p2_fleet, &x, &y, alert_tab, fleetSize, gameSize);
     }
 
     // AI : Fleet placement //
     if (game == 3) {
-        placeRandomFleet(p2_def, &line, &column, p2_fleet, fleetSize);
+        placeRandomFleet(p2_def, &line, &column, p2_fleet, fleetSize, gameSize);
     }
     
     // GAME ON //
     if (game == 1) {
         transitionScreen(alert_tab);
         while (p1_life != 0) {
-            attackSolo(p1_def, p1_att, &line, &column, p1_fleet, &p1_life, &x, &y);
+            attackSolo(p1_def, p1_att, &line, &column, p1_fleet, &p1_life, &x, &y, gameSize);
         }
     }
 
@@ -100,7 +100,7 @@ int main( int argc, char *argv[] ){
             printf("* Player 1 *\n\n");
             alert_tab[0] = 1;
             alert_tab[1] = 0;
-            attackFleet(p1_def, p1_att, p2_def, &line, &column, p1_fleet, p2_fleet, &p2_life, &x, &y, alert_tab);
+            attackFleet(p1_def, p1_att, p2_def, &line, &column, p1_fleet, p2_fleet, &p2_life, &x, &y, alert_tab, gameSize, fleetSize);
 
             if (p2_life == 0) { break; }
 
@@ -109,9 +109,9 @@ int main( int argc, char *argv[] ){
             changePlayer(alert_tab);
             printf("* Player 2 *\n\n");
             if (game == 2)
-                attackFleet(p2_def, p2_att, p1_def, &line, &column, p2_fleet, p1_fleet, &p1_life, &x, &y, alert_tab);
+                attackFleet(p2_def, p2_att, p1_def, &line, &column, p2_fleet, p1_fleet, &p1_life, &x, &y, alert_tab, gameSize, fleetSize);
             else if (game == 3)
-                attackRandomFleet(p2_def, p2_att, p1_def, &line, &column, p2_fleet, p1_fleet, &p1_life, alert_tab);
+                attackRandomFleet(p2_def, p2_att, p1_def, &line, &column, p2_fleet, p1_fleet, &p1_life, alert_tab, gameSize);
         }
     }
 

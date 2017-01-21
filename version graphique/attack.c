@@ -105,7 +105,7 @@ void shipDmg(Ship *damaged_ship) {
 
 // Manage attacks
 // Attacker's def map - Attacker's att map - Adversary's def map - l - c - adversary's fleet - adversary's life
-void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *x, int *y, int *alert_tab) {
+void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *x, int *y, int *alert_tab, int gameSize, int fleetSize) {
     int check = 1;
     int select = 0;
     MLV_Music* miss = MLV_load_music("sound/splash.mp3");
@@ -113,7 +113,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
 
     MLV_init_audio();
 
-    displayMaps(my_fleet, my_map_def, map_att, alert_tab);
+    displayMaps(my_fleet, my_map_def, map_att, alert_tab, gameSize, fleetSize);
 
     printf("It's your time to attack !\n");
     do {
@@ -134,7 +134,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
                 printf("You can shoot again !\n");
             }
             else {
-                displayMaps(p_fleet, my_map_def, map_att, alert_tab);
+                displayMaps(p_fleet, my_map_def, map_att, alert_tab, gameSize, fleetSize);
                 break;
             }
         }
@@ -145,7 +145,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
             MLV_play_music(miss, 1.0, 1);
         }
 
-        displayMaps(my_fleet, my_map_def, map_att, alert_tab);
+        displayMaps(my_fleet, my_map_def, map_att, alert_tab, gameSize, fleetSize);
         MLV_wait_seconds(1);
     } while (check == 1);            // Attack while success
 
@@ -156,7 +156,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
 }
 
 // Solo Attack function
-void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet, int *life, int *x, int *y) {
+void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet, int *life, int *x, int *y, int gameSize) {
     int check = 1;
     int select = 0;
     MLV_Music* miss = MLV_load_music("sound/splash.mp3");
@@ -164,7 +164,7 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
 
     MLV_init_audio();
 
-    displayAttackMap(map_att);
+    displayAttackMap(map_att, gameSize);
 
     printf("It's your time to attack !\n");
     do {
@@ -185,7 +185,7 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
                 printf("You can shoot again !\n");
             }
             else {
-                displayAttackMap(map_att);
+                displayAttackMap(map_att, gameSize);
                 break;
             }
         }
@@ -196,7 +196,7 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
             MLV_play_music(miss, 1.0, 1);
         }
 
-        displayAttackMap(map_att);
+        displayAttackMap(map_att, gameSize);
     } while (check == 1);            // Attack while success
 
     MLV_wait_seconds(2);
@@ -206,7 +206,7 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
 }
 
 // AI Attacks
-void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *alert_tab) {
+void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *alert_tab, int gameSize) {
     int check = 1;
     MLV_Music* miss = MLV_load_music("sound/splash.mp3");
     MLV_Music* hit  = MLV_load_music("sound/hit.wav");
@@ -214,13 +214,13 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
     MLV_init_audio();
 
     //displayMaps(my_fleet, my_map_def, map_att, alert_tab);
-    displayAttackMap(map_att);
+    displayAttackMap(map_att, gameSize);
 
     printf("It's your time to attack !\n");
     do {
         do {
-            *l = randomNumber(1, NDIM);
-            *c = randomNumber(1, NDIM);
+            *l = randomNumber(1, gameSize);
+            *c = randomNumber(1, gameSize);
             
             check = checkHit(map_att, map_def, l, c);
 
@@ -237,7 +237,7 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
             }
             else {
                 //displayMaps(p_fleet, my_map_def, map_att, alert_tab);
-                displayAttackMap(map_att);
+                displayAttackMap(map_att, gameSize);
                 break;
             }
         }
@@ -249,7 +249,7 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
         }
 
         //displayMaps(my_fleet, my_map_def, map_att, alert_tab);
-        displayAttackMap(map_att);
+        displayAttackMap(map_att, gameSize);
         MLV_wait_seconds(1);
     } while (check == 1);            // Attack while success
 

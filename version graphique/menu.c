@@ -32,7 +32,7 @@ void splashScreen() {
     MLV_free_image(splash_screen);
 }
 
-void displayMenu(int fleetSize) {
+void displayMenu(int fleetSize, int gameSize) {
     int i;
     char* num = malloc(3 * sizeof(char));
 
@@ -70,7 +70,7 @@ void displayMenu(int fleetSize) {
     MLV_draw_text_box(
          1100, 100, 
          100, 80, 
-         "SHIPS", 10, 
+         "FLEET SIZE", 10, 
          MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
          MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
          MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
@@ -101,12 +101,47 @@ void displayMenu(int fleetSize) {
         }
     }
 
+    // GAME SIZE
+    MLV_draw_text_box(
+         1100, 500, 
+         100, 80, 
+         "GAME SIZE", 10, 
+         MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
+         MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+         MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+    );
+
+    for (i = 1; i <= 5; i++)
+    {
+        sprintf(num,"%d",(i+5)); 
+        if((i+5)==gameSize-1) {
+            MLV_draw_text_box(
+                1080+i*20, 580, 
+                20, 20, 
+                num, 10, 
+                MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
+                MLV_COLOR_RED, MLV_TEXT_CENTER, 
+                MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+            );
+        }
+        else {
+            MLV_draw_text_box(
+                1080+i*20, 580, 
+                20, 20, 
+                num, 10, 
+                MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
+                MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+                MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+            );
+        }
+    }
+
     free(num);
 
     MLV_actualise_window();
 }
 
-int menuManager(int *x, int *y, int *fleetSize){
+int menuManager(int *x, int *y, int *fleetSize, int *gameSize){
     int game = 0;
     int i;
     MLV_Sound* select;
@@ -116,10 +151,10 @@ int menuManager(int *x, int *y, int *fleetSize){
 
     splashScreen();
 
-    displayMenu(*fleetSize);
+    displayMenu(*fleetSize, *gameSize);
     // MENU SELECTION
     do {
-            displayMenu(*fleetSize);
+            displayMenu(*fleetSize, *gameSize);
             MLV_wait_mouse(x, y);
             printf("X = %d Y = %d\n", *x, *y);
             MLV_play_sound(select, 1.0);
@@ -143,7 +178,12 @@ int menuManager(int *x, int *y, int *fleetSize){
                 if(*x >= 1080+i*20 && *x<=1100+i*20 && *y >= 180 && *y <= 200)
                 {
                     *fleetSize = i;
-                        printf("FleetSize = %d\n", *fleetSize);
+                    printf("FleetSize = %d\n", *fleetSize);
+                }
+                if(*x >= 1080+i*20 && *x<=1100+i*20 && *y >= 580 && *y <= 600)
+                {
+                    *gameSize= (i+6);
+                    printf("GameSize = %d\n", *gameSize);
                 }
             }
     } while(game == 0);

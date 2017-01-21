@@ -24,10 +24,10 @@ char** initMap() {
 }
 
 // Give a value to each slots 
-void createMap(char **map) {
+void createMap(char **map, int gameSize) {
 	int i, j;
-	for (i = 0; i < NDIM; i++) {
-		for (j = 0; j < NDIM; j++) {
+	for (i = 0; i < gameSize; i++) {
+		for (j = 0; j < gameSize; j++) {
 			if (i == 0 && j == 0) {
 				map[i][j] = ' ';            // First slot
 			}
@@ -93,12 +93,12 @@ void createFleet(Fleet* pt_fleet) {
     *pt_fleet = my_fleet;
 }
 
-void createPlayer(int* life, char** def_map, char** att_map, Fleet* fleet, int fleet_size) {
+void createPlayer(int* life, char** def_map, char** att_map, Fleet* fleet, int fleet_size, int gameSize) {
     Ship *current_ship; // pointer to the ship that is placed
     int i;
 
-    createMap(att_map);
-    createMap(def_map);
+    createMap(att_map, gameSize);
+    createMap(def_map, gameSize);
     createFleet(fleet);
 
     current_ship = &(fleet->carrier); // pointer initialized to the first ship Carrier

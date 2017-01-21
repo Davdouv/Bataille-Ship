@@ -4,7 +4,7 @@
 /* MENU.H */
 
 void splashScreen();
-void displayMenu(int fleetSize);
-int menuManager(int *x, int *y, int *fleetSize);
+void displayMenu(int fleetSize, int gameSize);
+int menuManager(int *x, int *y, int *fleetSize, int *gameSize);
 
 #endif

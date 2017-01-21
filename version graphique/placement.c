@@ -74,7 +74,7 @@ void shipPosition (int *x, int *y, int *p_x, int *p_y, int o, int num) {
 }
 
 // Give Orientation + selected slot
-int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **map_att, int *l, int *c, int *x, int *y, int *o, int *alert_tab) {
+int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **map_att, int *l, int *c, int *x, int *y, int *o, int *alert_tab, int gameSize, int fleetSize) {
     int i, j, k;
     int select = 0;
     int p_x = 0, p_y = 0;
@@ -101,7 +101,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
                  *o = 0;
             
             temp_o = *o;
-            displaySettableMap (map, p_fleet);
+            displaySettableMap (map, p_fleet, gameSize, fleetSize);
 
             for(k = 0; k < length; k++) {
                rotationImg(ship[k], *o);
@@ -122,7 +122,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
                     if (draw == 1 && i == 0) {
                         temp_x = p_x;
                         temp_y = p_y;
-                        displaySettableMap (map, p_fleet);
+                        displaySettableMap (map, p_fleet, gameSize, fleetSize);
                     }
                     MLV_draw_image (ship[i], p_x, p_y); // draw the ship
                 }
@@ -167,11 +167,11 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
 }
 
 // Check if slots are free. Return 1 if it is, 0 if it's not
-int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
+int checkPlacement(char **map, int *l, int *c, int o, int ship_length, int gameSize) {
     int i;
     if (o == 0) {                                   // If it's horizontal
         for (i = 0; i<ship_length; i++) {
-            if (*c + i < NDIM) {
+            if (*c + i < gameSize) {
                 if (map[*l][*c + i] != '.') {         // If it's not an empty space
                     return 0;
                 }
@@ -184,7 +184,7 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
     else {                                          // If it's vertical
         for (i = 0; i<ship_length; i++)
         {
-            if (*l + i < NDIM) {
+            if (*l + i < gameSize) {
                 if (map[*l + i][*c] != '.') {         // If it's not an empty space
                     return 0;
                 }
@@ -197,7 +197,7 @@ int checkPlacement(char **map, int *l, int *c, int o, int ship_length) {
 }
 
 // Players place their ships
-void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y, int *alert_tab) {
+void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship *p_ship, int num_ship, int *x, int *y, int *alert_tab, int gameSize, int fleetSize) {
     int i, j;
     int o = 0;
     int checkposition;
@@ -219,9 +219,9 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
 
     // Select a valid Position
     do {
-        o = putShip(p_fleet, ship_img, p_ship->length, map, map_att, l, c, x, y, &o, alert_tab);
+        o = putShip(p_fleet, ship_img, p_ship->length, map, map_att, l, c, x, y, &o, alert_tab, gameSize, fleetSize);
         printf("l = %d c = %d\n",*l, *c);
-        checkposition = checkPlacement(map, l, c, o, p_ship->length);
+        checkposition = checkPlacement(map, l, c, o, p_ship->length, gameSize);
         if (checkposition == 0) {
             // MLV_draw_text_box(
             //     80, y_corner+(tab_dim/2), 250, 70,
@@ -299,19 +299,19 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
 }
 
 // Place all ships
-void placeFleet(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, int *y, int *alert_tab, int fleet_size) {
+void placeFleet(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int *x, int *y, int *alert_tab, int fleetSize, int gameSize) {
     int i;
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
-    for (i = 0; i<fleet_size; i++) {
+    for (i = 0; i<fleetSize; i++) {
         printf("Set %s (%d)\n", current_ship->name, current_ship->length);
-        placeShip(p_fleet, map, map_att, l, c, current_ship, i, x, y, alert_tab);
+        placeShip(p_fleet, map, map_att, l, c, current_ship, i, x, y, alert_tab, gameSize, fleetSize);
         MLV_actualise_window();
         current_ship += 1; // the pointer changes to the next ship
     }
 }
 
-void placeRandomFleet(char **map, int *l, int *c, Fleet *ai_fleet, int fleet_size) {
+void placeRandomFleet(char **map, int *l, int *c, Fleet *ai_fleet, int fleetSize, int gameSize) {
     int i, j;
     int orientation;
     int check = 0;
@@ -319,12 +319,12 @@ void placeRandomFleet(char **map, int *l, int *c, Fleet *ai_fleet, int fleet_siz
 
     srand(time(NULL));
     current_ship = &(ai_fleet->carrier); // pointer initialized to the first ship Carrier
-    for (i = 0; i<fleet_size; i++) {
+    for (i = 0; i<fleetSize; i++) {
         do {
-            *l = randomNumber(1, NDIM);
-            *c = randomNumber(1, NDIM);
+            *l = randomNumber(1, gameSize);
+            *c = randomNumber(1, gameSize);
             orientation = rand()%1;
-            check = checkPlacement(map, l, c, orientation, current_ship->length);
+            check = checkPlacement(map, l, c, orientation, current_ship->length, gameSize);
         } while(check == 0);
 
         current_ship->orientation = orientation;
