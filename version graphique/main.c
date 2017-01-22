@@ -93,7 +93,7 @@ int main( int argc, char *argv[] ){
         if (game == 1) {
             transitionScreen(alert_tab);
             while (p1_life != 0) {
-                attackSolo(p1_def, p1_att, &line, &column, p1_fleet, &p1_life, &x, &y, gameSize, fleetSize);
+                attackSolo(p1_def, p1_att, &line, &column, p1_fleet, &p1_life, &x, &y, alert_tab, gameSize, fleetSize);
             }
         }
 
@@ -123,7 +123,7 @@ int main( int argc, char *argv[] ){
         if (game == 1) {
             printf("\n***\nCongratulations! You Destroyed all your fleet\n***\n");
         }
-        if (game != 1) {
+        else if (game == 2) {
             if (p1_life == 0) {
             printf("\n***\nThe winner is player 2.\nCongratulations!\n***\n");
             }
@@ -131,10 +131,19 @@ int main( int argc, char *argv[] ){
                 printf("\n***\nThe winner is player 1.\nCongratulations!\n***\n");
             }
         }
+        else if (game == 3) {
+            if (p1_life == 0) {
+            printf("\n***\nYou lose !\n***\n");
+            }
+            else {
+                printf("\n***\nYou won.\nCongratulations!\n***\n");
+            }
+        }
+        play = restart(&x, &y);
     }
 
     // Wait 5 secondes
-    MLV_wait_seconds(5);
+    MLV_wait_seconds(1);
 
     // Free Memory //
     freeGame(p1_att, p1_def, p1_fleet);

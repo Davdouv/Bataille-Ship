@@ -313,8 +313,52 @@ int randomNumber(int a, int b){
     return rand()%(b-a)+a;
 }
 
-/*
-int replay(int *x, int *y) {
+// Return 0 if NO, 1 if YES
+int restart(int *x, int *y) {
+    int restart = -1;
 
+    MLV_clear_window(MLV_COLOR_BLACK);
+    MLV_draw_text_box(
+            WIDTH/4, 250, 
+            WIDTH/2, 100, 
+            "RESTART ?", 10, 
+            MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
+            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+        );
+    MLV_draw_text_box(
+            WIDTH/4, 350, 
+            WIDTH/4, 50, 
+            "YES", 10, 
+            MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
+            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+        );
+    MLV_draw_text_box(
+            WIDTH/2, 350, 
+            WIDTH/4, 50, 
+            "NO", 10, 
+            MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
+            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+        );
+    MLV_actualise_window();
+    do {
+            MLV_wait_mouse(x, y);
+            printf("X = %d Y = %d\n", *x, *y);
+            if (*x >= WIDTH/4 && *x <= WIDTH/2 && *y >= 350 && *y <=400)
+            {
+                restart = 1;           // YES
+            }
+            else if (*x >= WIDTH/2 && *x <= WIDTH/4+WIDTH/2 && *y >= 350 && *y <=400)
+            {
+                restart = 0;           // NO
+            }
+            else
+            {
+                restart = -1;
+            }
+    } while(restart == -1);
+
+    return restart;
 }
-*/
