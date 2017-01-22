@@ -38,28 +38,23 @@ void rotationImg(MLV_Image *img, int orientation) {
 }
 
 // Give a position to each img of the ship
-void shipPosition (int *x, int *y, int *p_x, int *p_y, int o, int num, int gameSize) {
+void shipPosition (int *x, int *y, int *p_x, int *p_y, int orientation, int num, int gameSize) {
     float i, j;
-    int b = 0;
+    //int ligne, column;
+    //int temp, new_X, new_Y;
     int cel_dim = tab_dim/gameSize;
-
-    for (i=(y_corner+2*cel_dim); i<=(y_corner+tab_dim); i=i+cel_dim) {          // Lines
+    
+    for (i = (y_corner + 2*cel_dim); i <= (y_corner+tab_dim); i = i + cel_dim) {          // Lines
         for (j=(x_corner_center+2*cel_dim); j<=(x_corner_center+tab_dim); j=j+cel_dim) {      // Columns
-            if (*y<=i && *x<=j) {     // If it's inside the last cel
-                if (o==0)
-                {
-                    *p_x=j-cel_dim+(cel_dim*num);      // calculate the nearest X position from mouse position and adjust
-                    *p_y=i-cel_dim;
-                }
-                else {
-                    *p_x=j-cel_dim;
-                    *p_y=i-cel_dim+(cel_dim*num);
-                }
-                b = 1;
+            // If it's inside the last cel
+            if (*y<=i && *x<=j)
+            {     
+                // calculate the nearest X position from mouse position and adjust
+                *p_x=j-cel_dim + (cel_dim*num) * (1 - orientation);
+                *p_y=i-cel_dim + (cel_dim*num) * orientation;
+                return;
             }
-            if (b==1) break;
         }
-        if (b==1) break;
     }
 /*
     if( o == 0 )
@@ -72,6 +67,17 @@ void shipPosition (int *x, int *y, int *p_x, int *p_y, int o, int num, int gameS
        *p_x = division(*x,cel_dim)*cel_dim; // calculate the nearest X position for a ship from mouse position
        *p_y = (division(*y,cel_dim)*cel_dim)-0.5*cel_dim+(cel_dim*num); // calculate the nearest Y position for a ship from mouse position
     }
+
+
+        temp = *x * tab_dim;
+        new_X = division(temp, WIDTH);
+        ligne = division(new_X, cel_dim); // calculate the nearest X position for a ship from mouse position
+        *p_x = (x_corner_center+2*cel_dim) + ligne*cel_dim + (cel_dim*num) * orientation;
+
+        temp = *y * tab_dim;
+        new_Y = division(temp, HEIGHT);
+        column = division(new_Y, cel_dim); // calculate the nearest Y position for a ship from mouse position
+        *p_y = (y_corner + 2*cel_dim) + column*cel_dim + (cel_dim*num) * orientation;
 */
 }
 
