@@ -55,6 +55,7 @@ int main( int argc, char *argv[] ){
         play = 0;
         // MENU
         game = menuManager(&x, &y, &fleetSize, &gameSize);
+        howTo();
 
         /* Creating players */
         createPlayer(&p1_life, p1_def, p1_att, p1_fleet, fleetSize, gameSize);
@@ -120,25 +121,7 @@ int main( int argc, char *argv[] ){
         }
 
         // End of the game //
-        if (game == 1) {
-            printf("\n***\nCongratulations! You Destroyed all your fleet\n***\n");
-        }
-        else if (game == 2) {
-            if (p1_life == 0) {
-            printf("\n***\nThe winner is player 2.\nCongratulations!\n***\n");
-            }
-            else {
-                printf("\n***\nThe winner is player 1.\nCongratulations!\n***\n");
-            }
-        }
-        else if (game == 3) {
-            if (p1_life == 0) {
-            printf("\n***\nYou lose !\n***\n");
-            }
-            else {
-                printf("\n***\nYou won.\nCongratulations!\n***\n");
-            }
-        }
+        winner(game, &p1_life);
         play = restart(&x, &y);
     }
 

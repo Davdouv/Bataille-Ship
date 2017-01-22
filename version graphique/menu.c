@@ -199,3 +199,30 @@ int menuManager(int *x, int *y, int *fleetSize, int *gameSize){
 
     return game;
 }
+
+// Display how to play message
+void howTo() {
+    MLV_clear_window(MLV_COLOR_BLACK);
+
+    MLV_draw_text_box(
+            WIDTH/4, 250, 
+            WIDTH/2, 100, 
+            "Press left click to select a slot\nPress space to change ship orientation", 10, 
+            MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
+            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+        );
+
+    MLV_draw_text_box(
+            WIDTH/3, 550, 
+            WIDTH/3, 50, 
+            "Press any key to continue", 10, 
+            MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
+            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+        );
+    MLV_actualise_window();
+    MLV_wait_seconds(1);
+    //MLV_wait_mouse(NULL, NULL);
+    MLV_wait_keyboard(NULL, NULL, NULL);    
+}

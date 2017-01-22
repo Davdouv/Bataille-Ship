@@ -289,8 +289,9 @@ void transitionScreen(int *alert_tab) {
     
 
         MLV_actualise_window();
-
-        MLV_wait_keyboard (NULL, NULL, NULL);
+        MLV_wait_keyboard(NULL, NULL, NULL);
+       // MLV_wait_mouse (NULL, NULL);
+       // MLV_wait_seconds(0.5);
 
         MLV_clear_window(MLV_COLOR_BLACK);
 }
@@ -311,6 +312,41 @@ void whatPlayer(char *no) {
 
 int randomNumber(int a, int b){
     return rand()%(b-a)+a;
+}
+
+// Display message for the winner
+void winner(int game, int *p1_life) {
+    char* txt = malloc(50 * sizeof(char));
+    MLV_clear_window(MLV_COLOR_BLACK);
+
+    if(game == 1) {
+        strcpy(txt, "Congratulations!\nYou Destroyed all your fleet !");
+    }
+    else if(game == 2) {
+        if(*p1_life == 0)
+            strcpy(txt, "The winner is player 2.\nCongratulations !");
+        else
+            strcpy(txt, "The winner is player 1.\nCongratulations !");
+    }
+    else {
+        if(*p1_life == 0)
+            strcpy(txt, "You lose !");
+        else
+            strcpy(txt, "You won !\nCongratulations !");
+    }
+
+    MLV_draw_text_box(
+            WIDTH/4, 250, 
+            WIDTH/2, 100, 
+            txt, 10, 
+            MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
+            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+        );
+    MLV_actualise_window();
+    MLV_wait_seconds(2);
+
+    free(txt);
 }
 
 // Return 0 if NO, 1 if YES

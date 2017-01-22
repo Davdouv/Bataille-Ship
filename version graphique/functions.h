@@ -17,6 +17,7 @@ void changePlayer(int *alert_tab);
 void transitionScreen(int *alert_tab);
 void whatPlayer(char *no);
 int randomNumber(int a, int b);
+void winner(int game, int *p1_life);
 int restart(int *x, int *y);
 
 #endif

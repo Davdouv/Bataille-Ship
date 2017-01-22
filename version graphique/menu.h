@@ -6,5 +6,6 @@
 void splashScreen();
 void displayMenu(int fleetSize, int gameSize);
 int menuManager(int *x, int *y, int *fleetSize, int *gameSize);
+void howTo();
 
 #endif
