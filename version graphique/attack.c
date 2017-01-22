@@ -209,6 +209,8 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
 // AI Attacks
 void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *alert_tab, int gameSize, int fleetSize) {
     int check = 1;
+    int ligne, column;
+    int AI = 0;
     MLV_Music* miss = MLV_load_music("sound/splash.mp3");
     MLV_Music* hit  = MLV_load_music("sound/hit.wav");
 
@@ -220,14 +222,40 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
     printf("It's your time to attack !\n");
     do {
         do {
-            *l = randomNumber(1, gameSize);
-            *c = randomNumber(1, gameSize);
-            
+            if (AI == 0) {
+                *l = randomNumber(1, gameSize);
+                *c = randomNumber(1, gameSize);
+            }
+            else {
+                column = *c+1;
+                if (checkHit(map_att, map_def, l, &column) != -1)
+                    *c=*c+1;
+                else {
+                    column = *c-1;
+                    if (checkHit(map_att, map_def, l, &column) != -1)
+                        *c=*c-1;
+                    else {
+                        ligne = *l+1;
+                        if (checkHit(map_att, map_def, &ligne, c) != -1)
+                            *l=*l+1;
+                        else {
+                            ligne = *l-1;
+                            if (checkHit(map_att, map_def, &ligne, c) != -1)
+                                *l=*l-1;
+                            else {
+                                *l = randomNumber(1, gameSize);
+                                *c = randomNumber(1, gameSize);
+                            }
+                        }
+                    }
+                }
+            }
             check = checkHit(map_att, map_def, l, c);
 
         } while (check == -1);
 
         if (check == 1) {           // If hit
+            AI = 1;
             map_att[*l][*c] = 'X';
             map_def[*l][*c] = 'X';
             shipDmg(detectShip(l, c, p_fleet));
