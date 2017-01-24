@@ -45,6 +45,15 @@ MLV_Image* image(char* img_name, char* img_num, char* format, int gameSize) {
     return my_image;
 }
 
+// Display background
+void background() {
+     MLV_Image *bg;
+
+    // Display background 
+    bg = MLV_load_image("img/splash_screen.jpg");
+    MLV_draw_image(bg, 0, 0);
+}
+
 // Display a single map 
 void displayOneMap(int map, int x_corner_map, int gameSize) {
     int i, j;
@@ -53,7 +62,11 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
     strncpy(num, "1 \0", 3);
     strncpy(letter, "A \0", 3);
     MLV_Image *water;
+    MLV_Image *pancarte_l;
+    MLV_Image *pancarte_n;
     int cel_dim = tab_dim/gameSize;
+    char file_name[6];
+    char let[3];
 
     if (map == 0) {
         water = image("water","","jpg", gameSize);
@@ -75,23 +88,33 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
 
     for (i = 0; i < gameSize; i++) {
 		for (j = 0; j < gameSize; j++) {
-			if (i == 0 && j == 0) {         // First slot
-				//map[i][j] = ' ';            
+			if (i == 0 && j == 0) {         // First slot  
                 MLV_draw_filled_rectangle(x_corner_map, y_corner, cel_dim, cel_dim, MLV_COLOR_RED);
 			}
 			else if (i == 0 && j > 0) {     // Columns
-                sprintf(num,"%d",j);          
-				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
-                MLV_draw_text_box(x_corner_map+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, num, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+                sprintf(num,"%d",j);
+                // Load the image files
+                strcat(file_name, "");
+                pancarte_n = image(file_name, num, "png", gameSize);
+                MLV_draw_image (pancarte_n, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim));        
 			}
 			else if (i > 0 && j == 0) {     // Lines
+                //sprintf(num,"%d",j);
+                //letter[0]= 'A'+i-1+' ';
+                //printf("%s", letter);
+                // Load the image files
+                //strcat(letter, "A");
+                //printf("%s", letter);
+                //strcat(num, "");
+                pancarte_l = image(letter, "", "png", gameSize);
+                MLV_draw_image (pancarte_l, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim)); 
+			}
+            /*else if (i > 0 && j == 0) {     // Lines
                 letter[0]= 'A'+i-1+' ';
 				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
                 MLV_draw_text_box(x_corner_map+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, letter, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
-			}
+			}*/
 			else {                          // Slots            
-			    //MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_BLUE);
-                //MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, ".", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
                 MLV_draw_image (water, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim));
             }
             MLV_draw_line(x_corner_map+(j*cel_dim), y_corner, x_corner_map+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
@@ -184,6 +207,7 @@ void displayShots(char **map, int x_corner, int gameSize) {
 // Display the map where you can place your fleet
 void displaySettableMap (char **map, Fleet *p_fleet, int gameSize, int fleetSize) {
     MLV_clear_window(MLV_COLOR_BLACK);
+    background();
     displayOneMap(0, x_corner_center, gameSize);
     displayFleet(p_fleet, map, x_corner_center, fleetSize, gameSize);
     MLV_actualise_window();
@@ -193,6 +217,7 @@ void displaySettableMap (char **map, Fleet *p_fleet, int gameSize, int fleetSize
 void displayAttackMap (char **map_att, int gameSize) {
     // Hide the previous display
 	MLV_clear_window(MLV_COLOR_BLACK);
+    background();
     displayOneMap(1, x_corner_center, gameSize);
     displayShots(map_att, x_corner_center, gameSize);
     MLV_actualise_window();
@@ -201,14 +226,12 @@ void displayAttackMap (char **map_att, int gameSize) {
 // Display the 2 maps
 void displayMaps(Fleet *p_fleet, char **map_def, char **map_att, int *alert_tab, int gameSize, int fleetSize) {
     int i;
-    MLV_Image *bg;
 
     // Hide the previous display
 	MLV_clear_window(MLV_COLOR_BLACK);
 
     // Display background 
-    bg = MLV_load_image("img/splash_screen.jpg");
-    MLV_draw_image (splash_screen, 0, 0);
+    background();
 
     // Defensive Map
 	displayOneMap(0, x_corner_def, gameSize);
@@ -272,6 +295,7 @@ void changePlayer( int *alert_tab) {
 // Transition screen
 void transitionScreen(int *alert_tab) {
     MLV_clear_window(MLV_COLOR_BLACK);
+    background();
     if (alert_tab[0] == 1) {
         MLV_draw_text_box(
             WIDTH/4, 250, 
@@ -299,6 +323,7 @@ void transitionScreen(int *alert_tab) {
        // MLV_wait_seconds(0.5);
 
         MLV_clear_window(MLV_COLOR_BLACK);
+        background();
 }
 
 // ALERT FUNCTIONS
@@ -323,6 +348,7 @@ int randomNumber(int a, int b){
 void winner(int game, int *p1_life) {
     char* txt = malloc(50 * sizeof(char));
     MLV_clear_window(MLV_COLOR_BLACK);
+    background();
 
     if(game == 1) {
         strcpy(txt, "Congratulations!\nYou Destroyed all your fleet !");
@@ -359,6 +385,7 @@ int restart(int *x, int *y) {
     int restart = -1;
 
     MLV_clear_window(MLV_COLOR_BLACK);
+    background();
     MLV_draw_text_box(
             WIDTH/4, 250, 
             WIDTH/2, 100, 

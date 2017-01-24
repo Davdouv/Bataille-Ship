@@ -60,31 +60,31 @@ Fleet* initFleet() {
 void createFleet(Fleet* pt_fleet) {
     Fleet my_fleet;
 
-    strncpy(my_fleet.carrier.name, "Carrier", 11);
+    strncpy(my_fleet.carrier.name, "ail", 11);
     my_fleet.carrier.length = 2;
     my_fleet.carrier.life = 2;
     my_fleet.carrier.slot.line = -1;
     my_fleet.carrier.slot.column = -1;
 
-    strncpy(my_fleet.battleship.name, "Battleship", 11);
+    strncpy(my_fleet.battleship.name, "asperge", 11);
     my_fleet.battleship.length = 3;
     my_fleet.battleship.life = 3;
     my_fleet.battleship.slot.line = -1;
     my_fleet.battleship.slot.column = -1;
 
-    strncpy(my_fleet.cruiser.name, "Cruiser", 11);
+    strncpy(my_fleet.cruiser.name, "radis", 11);
     my_fleet.cruiser.length = 3;
     my_fleet.cruiser.life = 3;
     my_fleet.cruiser.slot.line = -1;
     my_fleet.cruiser.slot.column = -1;
 
-    strncpy(my_fleet.submarine.name, "Submarine", 11);
+    strncpy(my_fleet.submarine.name, "carotte", 11);
     my_fleet.submarine.length = 4;
     my_fleet.submarine.life = 4;
     my_fleet.submarine.slot.line = -1;
     my_fleet.submarine.slot.column = -1;
 
-    strncpy(my_fleet.destroyer.name, "Destroyer", 11);
+    strncpy(my_fleet.destroyer.name, "poireau", 11);
     my_fleet.destroyer.length = 5;
     my_fleet.destroyer.life = 5;
     my_fleet.destroyer.slot.line = -1;
