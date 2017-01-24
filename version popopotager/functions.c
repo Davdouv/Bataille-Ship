@@ -201,9 +201,14 @@ void displayAttackMap (char **map_att, int gameSize) {
 // Display the 2 maps
 void displayMaps(Fleet *p_fleet, char **map_def, char **map_att, int *alert_tab, int gameSize, int fleetSize) {
     int i;
+    MLV_Image *bg;
 
     // Hide the previous display
 	MLV_clear_window(MLV_COLOR_BLACK);
+
+    // Display background 
+    bg = MLV_load_image("img/splash_screen.jpg");
+    MLV_draw_image (splash_screen, 0, 0);
 
     // Defensive Map
 	displayOneMap(0, x_corner_def, gameSize);
