@@ -20,7 +20,7 @@
 #define x_corner_center WIDTH/3        // x coordinate of the top/left corner of the grid
 #define x_corner_def WIDTH/5
 #define x_corner_att WIDTH/1.8
-#define y_corner HEIGHT/4       // y coordinate of the top/left corner of the grid
+#define y_corner HEIGHT/2       // y coordinate of the top/left corner of the grid
 #define tab_dim HEIGHT/2        // Grid size (it's a square)
 //#define cel_dim tab_dim/NDIM    // Cel size (square too)
 
@@ -50,7 +50,7 @@ void background() {
      MLV_Image *bg;
 
     // Display background 
-    bg = MLV_load_image("img/splash_screen.jpg");
+    bg = MLV_load_image("img/Background.jpg");
     MLV_draw_image(bg, 0, 0);
 }
 
@@ -66,7 +66,7 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
     int cel_dim = tab_dim/gameSize;
 
     if (map == 0) {
-        water = image("water","","jpg", gameSize);
+        water = image("sol","","png", gameSize);
         MLV_draw_text_box(
             x_corner_map, y_corner-20, tab_dim, 20,
             "Defensive Map", 9,
@@ -74,7 +74,7 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
             MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
         );
     } else {
-        water = image("water_att","","jpg", gameSize);
+        water = image("sol","","png", gameSize);
         MLV_draw_text_box(
             x_corner_map, y_corner-20, tab_dim, 20,
             "Offensive Map", 9,
@@ -86,7 +86,7 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
     for (i = 0; i < gameSize; i++) {
 		for (j = 0; j < gameSize; j++) {
 			if (i == 0 && j == 0) {         // First slot  
-                MLV_draw_filled_rectangle(x_corner_map, y_corner, cel_dim, cel_dim, MLV_COLOR_RED);
+                //MLV_draw_filled_rectangle(x_corner_map, y_corner, cel_dim, cel_dim, MLV_COLOR_RED);
 			}
 			else if (i == 0 && j > 0) {     // Columns
                 sprintf(num,"%d",j);
@@ -139,12 +139,12 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
 			else {                          // Slots            
                 MLV_draw_image (water, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim));
             }
-            MLV_draw_line(x_corner_map+(j*cel_dim), y_corner, x_corner_map+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
+            //MLV_draw_line(x_corner_map+(j*cel_dim), y_corner, x_corner_map+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
 		}
-        MLV_draw_line(x_corner_map+(j*cel_dim), y_corner, x_corner_map+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
-        MLV_draw_line(x_corner_map, y_corner+(i*cel_dim), x_corner_map+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
+        //MLV_draw_line(x_corner_map+(j*cel_dim), y_corner, x_corner_map+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
+        //MLV_draw_line(x_corner_map, y_corner+(i*cel_dim), x_corner_map+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
 	}
-    MLV_draw_line(x_corner_map, y_corner+(i*cel_dim), x_corner_map+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
+    //MLV_draw_line(x_corner_map, y_corner+(i*cel_dim), x_corner_map+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
 
     MLV_free_image(water);
     free(num);
@@ -206,8 +206,8 @@ void displayShots(char **map, int x_corner, int gameSize) {
     MLV_Image *flamme, *splash;
     int cel_dim=tab_dim/gameSize;
 
-    flamme = image("flamme","","png", gameSize);
-    splash = image("splash","","png", gameSize);
+    flamme = image("explosion","","png", gameSize);
+    splash = image("trou","","png", gameSize);
 
     // Display shots in defensive map
     for (i = 0; i < gameSize; i++) {
