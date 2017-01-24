@@ -216,7 +216,6 @@ void displayShots(char **map, int x_corner, int gameSize) {
                 MLV_draw_image (flamme, x_corner+j*cel_dim, y_corner+i*cel_dim);
             }
             if (map[i][j] == 'O') {
-                MLV_draw_filled_rectangle(x_corner+j*cel_dim, y_corner+i*cel_dim, cel_dim, cel_dim, MLV_COLOR_BLUE);
                 MLV_draw_image (splash, x_corner+j*cel_dim, y_corner+i*cel_dim);
             }
         }
