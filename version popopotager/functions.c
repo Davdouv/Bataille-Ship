@@ -60,13 +60,10 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
     char *num = malloc(3 * sizeof(char));
     char *letter = malloc(3 * sizeof(char));
     strncpy(num, "1 \0", 3);
-    strncpy(letter, "A \0", 3);
     MLV_Image *water;
     MLV_Image *pancarte_l;
     MLV_Image *pancarte_n;
     int cel_dim = tab_dim/gameSize;
-    char file_name[6];
-    char let[3];
 
     if (map == 0) {
         water = image("water","","jpg", gameSize);
@@ -94,18 +91,43 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
 			else if (i == 0 && j > 0) {     // Columns
                 sprintf(num,"%d",j);
                 // Load the image files
-                strcat(file_name, "");
-                pancarte_n = image(file_name, num, "png", gameSize);
+                pancarte_n = image("", num, "png", gameSize);
                 MLV_draw_image (pancarte_n, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim));        
 			}
 			else if (i > 0 && j == 0) {     // Lines
-                //sprintf(num,"%d",j);
-                //letter[0]= 'A'+i-1+' ';
-                //printf("%s", letter);
-                // Load the image files
-                //strcat(letter, "A");
-                //printf("%s", letter);
-                //strcat(num, "");
+                
+                switch(i) {
+                    case 1:
+                        strcpy(letter,"A");
+                        break;
+                    case 2:
+                        strcpy(letter,"B");
+                        break;
+                    case 3:
+                        strcpy(letter,"C");
+                        break;
+                    case 4:
+                        strcpy(letter,"D");
+                        break;
+                    case 5:
+                        strcpy(letter,"E");
+                        break;
+                    case 6:
+                        strcpy(letter,"F");
+                        break;
+                    case 7:
+                        strcpy(letter,"G");
+                        break;
+                    case 8:
+                        strcpy(letter,"H");
+                        break;
+                    case 9:
+                        strcpy(letter,"I");
+                        break;
+                    case 10:
+                        strcpy(letter,"J");
+                        break;
+                }
                 pancarte_l = image(letter, "", "png", gameSize);
                 MLV_draw_image (pancarte_l, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim)); 
 			}
