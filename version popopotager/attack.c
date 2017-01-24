@@ -18,7 +18,7 @@
 #define x_corner_center WIDTH/3        // x coordinate of the top/left corner of the grid
 #define x_corner_def WIDTH/5
 #define x_corner_att WIDTH/1.8
-#define y_corner HEIGHT/4       // y coordinate of the top/left corner of the grid
+#define y_corner HEIGHT/3+20       // y coordinate of the top/left corner of the grid
 #define tab_dim HEIGHT/2        // Grid size (it's a square)
 //#define cel_dim tab_dim/NDIM    // Cel size (square too)
 
