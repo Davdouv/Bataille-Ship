@@ -8,14 +8,14 @@
 #include "init.h"
 
 // Creates the maps | Return the map or NULL if malloc failed 
-char** initMap() {
+char** initMap(int gameSize) {
     int i;
-    char **map = malloc(NDIM * sizeof(char*));
+    char **map = malloc(gameSize * sizeof(char*));
     if (map == NULL) {
         return NULL;
     }
-    for (i = 0; i < NDIM; i++) {
-        map[i] = malloc(NDIM * sizeof(char));
+    for (i = 0; i < gameSize; i++) {
+        map[i] = malloc(gameSize * sizeof(char));
         if (map[i] == NULL) {
             return NULL;
         }

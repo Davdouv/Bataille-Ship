@@ -36,17 +36,6 @@ int main( int argc, char *argv[] ){
     Fleet *p2_fleet;
     int *alert_tab = malloc(10 * sizeof(int));
 
-    /* INITIALISATION */
-    /* Maps Initialisation */
-    p1_att = initMap();
-    p1_def = initMap();
-    p2_att = initMap();
-    p2_def = initMap();
-
-    /* Fleets Initialisation */
-    p1_fleet = initFleet();
-    p2_fleet = initFleet();
-
     /* Window creation and display */
     MLV_create_window( "Fire in the hole !", "jeu", WIDTH, HEIGHT);
 
@@ -56,6 +45,17 @@ int main( int argc, char *argv[] ){
         // MENU
         gameMode = menuManager(&x, &y, &fleetSize, &gameSize);
         howTo();
+
+        /* INITIALISATION */
+        /* Maps Initialisation */
+        p1_att = initMap(gameSize);
+        p1_def = initMap(gameSize);
+        p2_att = initMap(gameSize);
+        p2_def = initMap(gameSize);
+
+        /* Fleets Initialisation */
+        p1_fleet = initFleet();
+        p2_fleet = initFleet();
 
         /* Creating players */
         createPlayer(&p1_life, p1_def, p1_att, p1_fleet, fleetSize, gameSize);
@@ -122,15 +122,16 @@ int main( int argc, char *argv[] ){
 
         // End of the game //
         winner(gameMode, &p1_life);
+
+        // Free Memory //
+        freeGame(p1_att, p1_def, p1_fleet);
+        freeGame(p2_att, p2_def, p2_fleet);
+
         play = restart(&x, &y);
     }
 
     // Wait 5 secondes
     MLV_wait_seconds(1);
-
-    // Free Memory //
-    freeGame(p1_att, p1_def, p1_fleet);
-    freeGame(p2_att, p2_def, p2_fleet);
 
     // Close Window
     MLV_free_window();

@@ -3,7 +3,7 @@
 
 /* INIT.H */
 
-char** initMap();
+char** initMap(int gameSize);
 void createMap(char **map, int gameSize);
 Fleet* initFleet();
 void createFleet(Fleet* pt_fleet);
