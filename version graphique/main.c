@@ -24,7 +24,7 @@
 int main( int argc, char *argv[] ){
     int i;
     int play = 1;
-    int game;
+    int gameMode;
     int gameSize = 11;
     int fleetSize = 3;
     int line, column;
@@ -54,12 +54,12 @@ int main( int argc, char *argv[] ){
     {
         play = 0;
         // MENU
-        game = menuManager(&x, &y, &fleetSize, &gameSize);
+        gameMode = menuManager(&x, &y, &fleetSize, &gameSize);
         howTo();
 
         /* Creating players */
         createPlayer(&p1_life, p1_def, p1_att, p1_fleet, fleetSize, gameSize);
-        if (game != 1) {    // If not solo
+        if (gameMode != 1) {    // If not solo
             createPlayer(&p2_life, p2_def, p2_att, p2_fleet, fleetSize, gameSize);
         }
 
@@ -77,7 +77,7 @@ int main( int argc, char *argv[] ){
         MLV_wait_seconds(1);
         
         // Player 2 : Fleet placement //
-        if (game == 2) {    // If not solo
+        if (gameMode == 2) {    // If not solo
             changePlayer(alert_tab);
             transitionScreen(alert_tab);
             changePlayer(alert_tab);
@@ -86,12 +86,12 @@ int main( int argc, char *argv[] ){
         }
 
         // AI : Fleet placement //
-        if (game == 3) {
+        if (gameMode == 3) {
             placeRandomFleet(p2_def, &line, &column, p2_fleet, fleetSize, gameSize);
         }
         
         // GAME ON //
-        if (game == 1) {
+        if (gameMode == 1) {
             transitionScreen(alert_tab);
             while (p1_life != 0) {
                 attackSolo(p1_def, p1_att, &line, &column, p1_fleet, &p1_life, &x, &y, alert_tab, gameSize, fleetSize);
@@ -113,15 +113,15 @@ int main( int argc, char *argv[] ){
                     
                 changePlayer(alert_tab);
                 printf("* Player 2 *\n\n");
-                if (game == 2)
+                if (gameMode == 2)
                     attackFleet(p2_def, p2_att, p1_def, &line, &column, p2_fleet, p1_fleet, &p1_life, &x, &y, alert_tab, gameSize, fleetSize);
-                else if (game == 3)
+                else if (gameMode == 3)
                     attackRandomFleet(p2_def, p2_att, p1_def, &line, &column, p2_fleet, p1_fleet, &p1_life, alert_tab, gameSize, fleetSize);
             }
         }
 
         // End of the game //
-        winner(game, &p1_life);
+        winner(gameMode, &p1_life);
         play = restart(&x, &y);
     }
 
