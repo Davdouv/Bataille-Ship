@@ -85,15 +85,14 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
 
     for (i = 0; i < gameSize; i++) {
 		for (j = 0; j < gameSize; j++) {
-			if (i == 0 && j == 0) {         // First slot  
-                //MLV_draw_filled_rectangle(x_corner_map, y_corner, cel_dim, cel_dim, MLV_COLOR_RED);
-			}
-			else if (i == 0 && j > 0) {     // Columns
+
+			if (i == 0 && j > 0) {     // Columns
                 sprintf(num,"%d",j);
                 // Load the image files
                 pancarte_n = image("", num, "png", gameSize);
                 MLV_draw_image (pancarte_n, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim));        
 			}
+
 			else if (i > 0 && j == 0) {     // Lines
                 
                 switch(i) {
@@ -131,11 +130,7 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
                 pancarte_l = image(letter, "", "png", gameSize);
                 MLV_draw_image (pancarte_l, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim)); 
 			}
-            /*else if (i > 0 && j == 0) {     // Lines
-                letter[0]= 'A'+i-1+' ';
-				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
-                MLV_draw_text_box(x_corner_map+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, letter, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
-			}*/
+
 			else {                          // Slots            
                 MLV_draw_image (water, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim));
             }
@@ -147,6 +142,8 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
     //MLV_draw_line(x_corner_map, y_corner+(i*cel_dim), x_corner_map+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
 
     MLV_free_image(water);
+    MLV_free_image(pancarte_n);
+    MLV_free_image(pancarte_l);
     free(num);
     free(letter);
 }
