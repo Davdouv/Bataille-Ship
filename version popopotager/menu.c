@@ -141,6 +141,8 @@ void displayMenu(int fleetSize, int gameSize) {
     }
 
     free(num);
+    MLV_free_image(bg);
+    MLV_free_image(pan);
 
     MLV_actualise_window();
 }
@@ -203,7 +205,14 @@ int menuManager(int *x, int *y, int *fleetSize, int *gameSize){
 
 // Display how to play message
 void howTo() {
+    MLV_Font* font_30;
+    MLV_Image* bg;
+    font_30 = MLV_load_font("font/OpenSans-Bold.ttf", 30);
+
+    bg = MLV_load_image("img/jardin.jpg");
+
     MLV_clear_window(MLV_COLOR_BLACK);
+    MLV_draw_image(bg, 0, 0);
 
     MLV_draw_text_box(
             WIDTH/4, 250, 
@@ -225,5 +234,7 @@ void howTo() {
     MLV_actualise_window();
     MLV_wait_seconds(1);
     //MLV_wait_mouse(NULL, NULL);
-    MLV_wait_keyboard(NULL, NULL, NULL);    
+    MLV_wait_keyboard(NULL, NULL, NULL);
+
+    MLV_free_image(bg);
 }
