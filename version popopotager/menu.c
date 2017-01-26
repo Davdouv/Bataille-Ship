@@ -76,7 +76,7 @@ void displayMenu(int fleetSize, int gameSize) {
          100, 80, 
          "FLEET SIZE", 10, 
          MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-         MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+         MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
          MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
     );
 
@@ -99,7 +99,7 @@ void displayMenu(int fleetSize, int gameSize) {
                 20, 20, 
                 num, 10, 
                 MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-                MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+                MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
                 MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
             );
         }
@@ -111,7 +111,7 @@ void displayMenu(int fleetSize, int gameSize) {
          100, 80, 
          "GAME SIZE", 10, 
          MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-         MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+         MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
          MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
     );
 
@@ -134,13 +134,11 @@ void displayMenu(int fleetSize, int gameSize) {
                 20, 20, 
                 num, 10, 
                 MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-                MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+                MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
                 MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
             );
         }
     }
-
-    MLV_draw_rectangle(WIDTH/4, 100, WIDTH/2, 150, MLV_COLOR_RED);
 
     free(num);
 
@@ -163,15 +161,15 @@ int menuManager(int *x, int *y, int *fleetSize, int *gameSize){
             MLV_wait_mouse(x, y);
             printf("X = %d Y = %d\n", *x, *y);
             MLV_play_sound(select, 1.0);
-            if (*x >= WIDTH/4 && *x <= WIDTH/4+WIDTH/2 && *y >= 100 && *y <=200)
+            if (*x >= WIDTH/4+50 && *x <= WIDTH/4+WIDTH/2-50 && *y >= 150 && *y <=275)
             {
                 game = 1;           // SOLO
             }
-            else if (*x >= WIDTH/4 && *x <= WIDTH/4+WIDTH/2 && *y >= 300 && *y <=400)
+            else if (*x >= WIDTH/4+50 && *x <= WIDTH/4+WIDTH/2-50 && *y >= 290 && *y <=415)
             {
                 game = 2;           // PLAYER VS PLAYER
             }
-            else if (*x >= WIDTH/4 && *x <= WIDTH/4+WIDTH/2 && *y >= 500 && *y <=600)
+            else if (*x >= WIDTH/4+50 && *x <= WIDTH/4+WIDTH/2-50 && *y >= 430 && *y <=555)
             {
                 game = 3;           // PLAYER VS AI
             }
@@ -212,7 +210,7 @@ void howTo() {
             WIDTH/2, 100, 
             "Press left click to select a slot\nPress space to change ship orientation", 10, 
             MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
         );
 
@@ -221,7 +219,7 @@ void howTo() {
             WIDTH/3, 50, 
             "Press any key to continue", 10, 
             MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
         );
     MLV_actualise_window();
