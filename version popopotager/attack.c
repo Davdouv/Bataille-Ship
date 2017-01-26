@@ -109,8 +109,8 @@ void shipDmg(Ship *damaged_ship) {
 void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *x, int *y, int *alert_tab, int gameSize, int fleetSize) {
     int check = 1;
     int select = 0;
-    MLV_Music* miss = MLV_load_music("sound/miss.mp3");
-    MLV_Music* hit  = MLV_load_music("sound/boom.mp3");
+    MLV_Sound* miss = MLV_load_sound("sound/miss.mp3");
+    MLV_Sound* hit  = MLV_load_sound("sound/boom.mp3");
 
     displayMaps(my_fleet, my_map_def, map_att, alert_tab, gameSize, fleetSize);
 
@@ -128,7 +128,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
             map_def[*l][*c] = 'X';
             shipDmg(detectShip(l, c, p_fleet));
             *adversary_life -= 1;
-            MLV_play_music(hit, 1.0, 1);
+            MLV_play_sound(hit, 1.0);
             if (*adversary_life != 0) {
                 printf("You can shoot again !\n");
             }
@@ -141,7 +141,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
         else if (check == 0) {           // If miss
             map_att[*l][*c] = 'O';
             map_def[*l][*c] = 'O';
-            MLV_play_music(miss, 1.0, 1);
+            MLV_play_sound(miss, 1.0);
         }
 
         displayMaps(my_fleet, my_map_def, map_att, alert_tab, gameSize, fleetSize);
@@ -149,16 +149,16 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
     } while (check == 1);            // Attack while success
 
     MLV_wait_seconds(1);
-    MLV_free_music(hit);
-    MLV_free_music(miss);
+    MLV_free_sound(hit);
+    MLV_free_sound(miss);
 }
 
 // Solo Attack function
 void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet, int *life, int *x, int *y, int *alert_tab, int gameSize, int fleetSize) {
     int check = 1;
     int select = 0;
-    MLV_Music* miss = MLV_load_music("sound/miss.mp3");
-    MLV_Music* hit  = MLV_load_music("sound/boom.mp3");
+    MLV_Sound* miss = MLV_load_sound("sound/miss.mp3");
+    MLV_Sound* hit  = MLV_load_sound("sound/boom.mp3");
 
     displayAttackMap(map_att, gameSize);
 
@@ -176,7 +176,7 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
             map_def[*l][*c] = 'X';
             shipDmg(detectShip(l, c, my_fleet));
             *life -= 1;
-            MLV_play_music(hit, 1.0, 1);
+            MLV_play_sound(hit, 1.0);
             if (*life != 0) {
                 printf("You can shoot again !\n");
             }
@@ -189,15 +189,15 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
         else if (check == 0) {           // If miss
             map_att[*l][*c] = 'O';
             map_def[*l][*c] = 'O';
-            MLV_play_music(miss, 1.0, 1);
+            MLV_play_sound(miss, 1.0);
         }
 
         displayAttackMap(map_att, gameSize);
     } while (check == 1);            // Attack while success
 
     MLV_wait_seconds(2);
-    MLV_free_music(hit);
-    MLV_free_music(miss);
+    MLV_free_sound(hit);
+    MLV_free_sound(miss);
 }
 
 // AI Attacks
@@ -205,8 +205,8 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
     int check = 1;
     int ligne, column;
     int AI = 0;
-    MLV_Music* miss = MLV_load_music("sound/miss.mp3");
-    MLV_Music* hit  = MLV_load_music("sound/boom.mp3");
+    MLV_Sound* miss = MLV_load_sound("sound/miss.mp3");
+    MLV_Sound* hit  = MLV_load_sound("sound/boom.mp3");
 
     //displayMaps(my_fleet, my_map_def, map_att, alert_tab);
     displayAttackMap(map_att, gameSize);
@@ -252,7 +252,7 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
             map_def[*l][*c] = 'X';
             shipDmg(detectShip(l, c, p_fleet));
             *adversary_life -= 1;
-            MLV_play_music(hit, 1.0, 1);
+            MLV_play_sound(hit, 1.0);
             if (*adversary_life != 0) {
                 printf("You can shoot again !\n");
             }
@@ -265,7 +265,7 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
         else if (check == 0) {           // If miss
             map_att[*l][*c] = 'O';
             map_def[*l][*c] = 'O';
-            MLV_play_music(miss, 1.0, 1);
+            MLV_play_sound(miss, 1.0);
         }
 
         //displayMaps(my_fleet, my_map_def, map_att, alert_tab);
@@ -274,6 +274,6 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
     } while (check == 1);            // Attack while success
 
     MLV_wait_seconds(2);
-    MLV_free_music(hit);
-    MLV_free_music(miss);
+    MLV_free_sound(hit);
+    MLV_free_sound(miss);
 }

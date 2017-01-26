@@ -90,7 +90,9 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
     int temp_y = p_y;
     int temp_o = 2;
     int draw = 0;
-    MLV_Music* rotate = MLV_load_music("sound/rotate.mp3");
+    MLV_Sound* rotate;
+
+    rotate = MLV_load_sound("sound/rotate.ogg");
     int cel_dim = tab_dim/gameSize;
 
     *l = 1; // Reset line cursor
@@ -114,7 +116,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
                rotationImg(ship[k], *o);
             }
 
-            MLV_play_music(rotate, 1.0, 1);
+            MLV_play_sound(rotate, 1.0);
 
             MLV_actualise_window();
         }
@@ -167,7 +169,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
         //MLV_wait_seconds(2);
     } while(select != 1);
 
-    MLV_free_music(rotate);
+    MLV_free_sound(rotate);
 
     return *o;
 }
@@ -210,8 +212,8 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
     char *file_name = malloc(16 * sizeof(char));
     char *num = malloc(3 * sizeof(char));
     MLV_Image *ship_img[5];
-    MLV_Music* error = MLV_load_music("sound/error.mp3");
-    MLV_Music* place = MLV_load_music("sound/place.mp3");
+    MLV_Sound* error = MLV_load_sound("sound/error.ogg");
+    MLV_Sound* place = MLV_load_sound("sound/place.ogg");
     int cel_dim = tab_dim/gameSize;
 
     // Load the image files
@@ -237,17 +239,17 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
             // MLV_actualise_window();
             printf("bateau mal placé \n o = %d\n", o);
 
-            MLV_play_music(error, 1.0, 1); // (music, volume, nb of plays)
+            MLV_play_sound(error, 1.0); // (sound, volume)
         }
         else {
-            MLV_play_music(place, 1.0, 1);
+            MLV_play_sound(place, 0.1);
             MLV_wait_seconds(1);
         }
     } while(checkposition==0);
 
     // Free music
-    MLV_free_music(error);
-    MLV_free_music(place);
+    MLV_free_sound(error);
+    MLV_free_sound(place);
 
     // Load the image files
     strcpy(file_name, "fleet/");
