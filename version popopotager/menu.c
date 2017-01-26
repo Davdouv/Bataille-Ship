@@ -36,12 +36,10 @@ void displayMenu(int fleetSize, int gameSize) {
     int i;
     char* num = malloc(3 * sizeof(char));
     MLV_Font *font_50;
-    MLV_Font *font_30;
     MLV_Image *bg;
     MLV_Image *pan;
 
     font_50 = MLV_load_font("font/OpenSans-Bold.ttf", 50);
-    font_30 = MLV_load_font("font/OpenSans-Bold.ttf", 30);
 
     MLV_clear_window(MLV_COLOR_BLACK);
 
@@ -206,27 +204,57 @@ int menuManager(int *x, int *y, int *fleetSize, int *gameSize){
 
 // Display how to play message
 void howTo() {
+    MLV_Font* font_20;
     MLV_Font* font_30;
+    MLV_Font* font_50;
     MLV_Image* bg;
-    font_30 = MLV_load_font("font/OpenSans-Bold.ttf", 30);
+    MLV_Image* pan;
 
+    font_20 = MLV_load_font("font/OpenSans-Bold.ttf", 20);
+    font_30 = MLV_load_font("font/OpenSans-Bold.ttf", 30);
+    font_50 = MLV_load_font("font/OpenSans-Bold.ttf", 50);
     bg = MLV_load_image("img/jardin.jpg");
+    pan = MLV_load_image("img/1panneau.png");
 
     MLV_clear_window(MLV_COLOR_BLACK);
     MLV_draw_image(bg, 0, 0);
+    //MLV_draw_image(pan, WIDTH/4+50, HEIGHT/3);
+    MLV_draw_image(pan, WIDTH/4+50, 0);
 
+    MLV_draw_text_with_font(
+           WIDTH/4+150, 180,
+           "HOW TO PLAY", font_50,
+           MLV_COLOR_WHITE
+    );
+
+    MLV_draw_text_with_font(
+           WIDTH/3-10, HEIGHT/3+80,
+           "Press LEFT CLICK to select a slot", font_30,
+           MLV_COLOR_WHITE
+    );
+    MLV_draw_text_with_font(
+           WIDTH/3-120, HEIGHT/3+130,
+           "Press RIGHT CLICK to change ship orientation", font_30,
+           MLV_COLOR_WHITE
+    );
+    MLV_draw_text_with_font(
+           WIDTH/3-15, HEIGHT/3+180,
+           "If you hit, you can shoot again !", font_30,
+           MLV_COLOR_WHITE
+    );
+/*
     MLV_draw_text_box(
             WIDTH/4, 250, 
             WIDTH/2, 100, 
-            "Press left click to select a slot\nPress right click to change ship orientation", 10, 
+            "Press left click to select a slot\nPress right click to change ship orientation\nIf you hit, you can shoot again !", 10, 
             MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
             MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
         );
-
+*/
     MLV_draw_text_with_font(
-           WIDTH/3-30, HEIGHT-300,
-           "CLICK ANYWHERE TO CONTINUE", font_30,
+           WIDTH/2-150, HEIGHT-220,
+           "CLICK ANYWHERE TO CONTINUE", font_20,
            MLV_COLOR_WHITE
     );
     
@@ -236,4 +264,5 @@ void howTo() {
     //MLV_wait_keyboard(NULL, NULL, NULL);
 
     MLV_free_image(bg);
+    MLV_free_image(pan);
 }
