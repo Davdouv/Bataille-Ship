@@ -93,8 +93,6 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
     MLV_Music* rotate = MLV_load_music("sound/rotate.mp3");
     int cel_dim = tab_dim/gameSize;
 
-    MLV_init_audio();
-
     *l = 1; // Reset line cursor
     *c = 1; // Reset column cursor
     
@@ -170,7 +168,6 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
     } while(select != 1);
 
     MLV_free_music(rotate);
-    MLV_free_audio();
 
     return *o;
 }
@@ -217,8 +214,6 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
     MLV_Music* place = MLV_load_music("sound/place.mp3");
     int cel_dim = tab_dim/gameSize;
 
-    MLV_init_audio();
-
     // Load the image files
     strcpy(file_name, "fleet/");
     strcat(file_name, p_ship->name);         
@@ -253,7 +248,6 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
     // Free music
     MLV_free_music(error);
     MLV_free_music(place);
-    MLV_free_audio();
 
     // Load the image files
     strcpy(file_name, "fleet/");

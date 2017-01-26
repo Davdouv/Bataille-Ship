@@ -112,8 +112,6 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
     MLV_Music* miss = MLV_load_music("sound/miss.mp3");
     MLV_Music* hit  = MLV_load_music("sound/boom.mp3");
 
-    MLV_init_audio();
-
     displayMaps(my_fleet, my_map_def, map_att, alert_tab, gameSize, fleetSize);
 
     printf("It's your time to attack !\n");
@@ -153,7 +151,6 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
     MLV_wait_seconds(1);
     MLV_free_music(hit);
     MLV_free_music(miss);
-    MLV_free_audio();
 }
 
 // Solo Attack function
@@ -162,8 +159,6 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
     int select = 0;
     MLV_Music* miss = MLV_load_music("sound/miss.mp3");
     MLV_Music* hit  = MLV_load_music("sound/boom.mp3");
-
-    MLV_init_audio();
 
     displayAttackMap(map_att, gameSize);
 
@@ -203,7 +198,6 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
     MLV_wait_seconds(2);
     MLV_free_music(hit);
     MLV_free_music(miss);
-    MLV_free_audio();
 }
 
 // AI Attacks
@@ -213,8 +207,6 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
     int AI = 0;
     MLV_Music* miss = MLV_load_music("sound/miss.mp3");
     MLV_Music* hit  = MLV_load_music("sound/boom.mp3");
-
-    MLV_init_audio();
 
     //displayMaps(my_fleet, my_map_def, map_att, alert_tab);
     displayAttackMap(map_att, gameSize);
@@ -284,5 +276,4 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
     MLV_wait_seconds(2);
     MLV_free_music(hit);
     MLV_free_music(miss);
-    MLV_free_audio();
 }

@@ -36,8 +36,13 @@ int main( int argc, char *argv[] ){
     Fleet *p2_fleet;
     int *alert_tab = malloc(10 * sizeof(int));
 
+    MLV_init_audio();
+    MLV_Music* background_music  = MLV_load_music("sound/bg_music.mp3");
+
     /* Window creation and display */
     MLV_create_window( "Fire in the hole !", "jeu", WIDTH, HEIGHT);
+
+    MLV_play_music(background_music, 0.2, -1);
 
     while (play == 1)
     {
@@ -129,6 +134,10 @@ int main( int argc, char *argv[] ){
 
         play = restart(&x, &y);
     }
+
+    MLV_stop_music();
+    MLV_free_music(background_music);
+    MLV_free_audio();
 
     // Wait 5 secondes
     MLV_wait_seconds(1);

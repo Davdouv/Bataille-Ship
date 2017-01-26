@@ -145,7 +145,6 @@ int menuManager(int *x, int *y, int *fleetSize, int *gameSize){
     int i;
     MLV_Sound* select;
 
-    MLV_init_audio();
     select = MLV_load_sound("sound/select.ogg");
 
     splashScreen();
@@ -189,12 +188,10 @@ int menuManager(int *x, int *y, int *fleetSize, int *gameSize){
     printf("Game = %d\n", game);
     printf("FleetSize = %d\n", *fleetSize);
     MLV_wait_seconds(1);
-    //MLV_stop_all_sounds();
 
     MLV_clear_window(MLV_COLOR_BLACK);
 
     MLV_free_sound(select);
-    MLV_free_audio();
 
     return game;
 }
