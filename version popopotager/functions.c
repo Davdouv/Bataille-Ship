@@ -316,7 +316,7 @@ void transitionScreen(int *alert_tab) {
             WIDTH/2, 100, 
             "IT'S PLAYER 2 TURN!\n PRESS ANY KEY TO CONTINUE", 10, 
             MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
         );
     } else {
@@ -325,7 +325,7 @@ void transitionScreen(int *alert_tab) {
             WIDTH/2, 100, 
             "IT'S PLAYER 1 TURN!\n PRESS ANY KEY TO CONTINUE", 10, 
             MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
         );
     }
@@ -385,7 +385,7 @@ void winner(int game, int *p1_life) {
             WIDTH/2, 100, 
             txt, 10, 
             MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
         );
     MLV_actualise_window();
@@ -405,7 +405,7 @@ int restart(int *x, int *y) {
             WIDTH/2, 100, 
             "RESTART ?", 10, 
             MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
         );
     MLV_draw_text_box(
@@ -413,7 +413,7 @@ int restart(int *x, int *y) {
             WIDTH/4, 50, 
             "YES", 10, 
             MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
         );
     MLV_draw_text_box(
@@ -421,7 +421,7 @@ int restart(int *x, int *y) {
             WIDTH/4, 50, 
             "NO", 10, 
             MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-            MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
+            MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
         );
     MLV_actualise_window();
