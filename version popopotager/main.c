@@ -40,7 +40,7 @@ int main( int argc, char *argv[] ){
     MLV_Music* background_music  = MLV_load_music("sound/bg_music.mp3");
 
     /* Window creation and display */
-    MLV_create_window( "Popotager", "jeu", WIDTH, HEIGHT);
+    MLV_create_window( "Popopotager", "jeu", WIDTH, HEIGHT);
 
     MLV_play_music(background_music, 0.2, -1);
 
