@@ -131,15 +131,11 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
                 MLV_draw_image (pancarte_l, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim)); 
 			}
 
-			else {                          // Slots            
+            else if (i!= 0 && j!=0) {                          // Slots            
                 MLV_draw_image (water, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim));
             }
-            //MLV_draw_line(x_corner_map+(j*cel_dim), y_corner, x_corner_map+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
 		}
-        //MLV_draw_line(x_corner_map+(j*cel_dim), y_corner, x_corner_map+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);
-        //MLV_draw_line(x_corner_map, y_corner+(i*cel_dim), x_corner_map+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
 	}
-    //MLV_draw_line(x_corner_map, y_corner+(i*cel_dim), x_corner_map+tab_dim, y_corner+(i*cel_dim), MLV_COLOR_BLACK);
 
     MLV_free_image(water);
     MLV_free_image(pancarte_n);
