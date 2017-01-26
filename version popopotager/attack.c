@@ -109,8 +109,8 @@ void shipDmg(Ship *damaged_ship) {
 void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int *c, Fleet *my_fleet, Fleet *p_fleet, int *adversary_life, int *x, int *y, int *alert_tab, int gameSize, int fleetSize) {
     int check = 1;
     int select = 0;
-    MLV_Music* miss = MLV_load_music("sound/splash.mp3");
-    MLV_Music* hit  = MLV_load_music("sound/hit.wav");
+    MLV_Music* miss = MLV_load_music("sound/miss.mp3");
+    MLV_Music* hit  = MLV_load_music("sound/boom.mp3");
 
     MLV_init_audio();
 
@@ -161,7 +161,7 @@ void attackSolo(char **map_def, char **map_att, int *l, int *c, Fleet *my_fleet,
     int check = 1;
     int select = 0;
     MLV_Music* miss = MLV_load_music("sound/splash.mp3");
-    MLV_Music* hit  = MLV_load_music("sound/hit.wav");
+    MLV_Music* hit  = MLV_load_music("sound/boom.mp3");
 
     MLV_init_audio();
 
@@ -212,7 +212,7 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
     int ligne, column;
     int AI = 0;
     MLV_Music* miss = MLV_load_music("sound/splash.mp3");
-    MLV_Music* hit  = MLV_load_music("sound/hit.wav");
+    MLV_Music* hit  = MLV_load_music("sound/boom.mp3");
 
     MLV_init_audio();
 

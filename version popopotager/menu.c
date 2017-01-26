@@ -10,18 +10,16 @@
 
 void splashScreen() {
     MLV_Image *splash_screen;
+    MLV_Font *font;
+    font = MLV_load_font("font/OpenSans-Bold.ttf", 40);
 
-    splash_screen = MLV_load_image("img/splash_screen.jpg");
-    //MLV_resize_image_with_proportions(splash_screen, WIDTH, HEIGHT);
+    splash_screen = MLV_load_image("img/splash_screen_potager.jpg");
     MLV_draw_image (splash_screen, 0, 0);
 
-    MLV_draw_text_box(
-         WIDTH/4, 580, 
-         WIDTH/2, 100, 
-         "PRESS ANY KEY TO START", 10, 
-         MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-         MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
-         MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+    MLV_draw_text_with_font(
+           WIDTH/3-20, HEIGHT-300,
+           "PRESS ANY KEY TO START", font,
+           MLV_COLOR_WHITE
     );
 
     MLV_actualise_window();
@@ -30,6 +28,7 @@ void splashScreen() {
 
     MLV_clear_window(MLV_COLOR_BLACK);
     MLV_free_image(splash_screen);
+    MLV_free_font(font);
 }
 
 void displayMenu(int fleetSize, int gameSize) {
