@@ -17,7 +17,7 @@
 #define NDIM 11     // Grid dimensions
 #define NSHIPS 5    // Number of ships MUST NOT EXCEED 5!
 
-#define x_corner_center WIDTH/3        // x coordinate of the top/left corner of the grid
+#define x_corner_center WIDTH/2.7        // x coordinate of the top/left corner of the grid
 #define x_corner_def WIDTH/5
 #define x_corner_att WIDTH/1.8
 #define y_corner HEIGHT/3+20       // y coordinate of the top/left corner of the grid
@@ -64,23 +64,22 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
     MLV_Image *pancarte_l;
     MLV_Image *pancarte_n;
     int cel_dim = tab_dim/gameSize;
+    MLV_Font *font;
+    font = MLV_load_font("font/OpenSans-Bold.ttf", 20);
+    water = image("sol","","png", gameSize);
 
     if (map == 0) {
-        water = image("sol","","png", gameSize);
-        MLV_draw_text_box(
-            x_corner_map, y_corner-20, tab_dim, 20,
-            "Defensive Map", 9,
-            MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_COLOR_WHITE,
-            MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-        );
+       MLV_draw_text_with_font(
+           x_corner_map+120, y_corner-30,
+           "Defensive Map", font,
+           MLV_COLOR_WHITE
+       );
     } else {
-        water = image("sol","","png", gameSize);
-        MLV_draw_text_box(
-            x_corner_map, y_corner-20, tab_dim, 20,
-            "Offensive Map", 9,
-            MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_COLOR_WHITE,
-            MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-        );
+        MLV_draw_text_with_font(
+           x_corner_map+120, y_corner-30,
+           "Offensive Map", font,
+           MLV_COLOR_WHITE
+       );
     }
 
     for (i = 0; i < gameSize; i++) {
@@ -140,6 +139,7 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
     MLV_free_image(water);
     MLV_free_image(pancarte_n);
     MLV_free_image(pancarte_l);
+    MLV_free_font(font);
     free(num);
     free(letter);
 }

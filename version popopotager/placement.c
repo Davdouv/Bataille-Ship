@@ -16,7 +16,7 @@
 #define NDIM 11     // Grid dimensions
 #define NSHIPS 5    // Number of ships MUST NOT EXCEED 5!
 
-#define x_corner_center WIDTH/3 // x coordinate of the top/left corner of the grid
+#define x_corner_center WIDTH/2.7 // x coordinate of the top/left corner of the grid
 #define x_corner_def WIDTH/5
 #define x_corner_att WIDTH/1.8
 #define y_corner HEIGHT/3+20      // y coordinate of the top/left corner of the grid
