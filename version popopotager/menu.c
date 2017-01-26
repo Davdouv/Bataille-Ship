@@ -34,35 +34,40 @@ void splashScreen() {
 void displayMenu(int fleetSize, int gameSize) {
     int i;
     char* num = malloc(3 * sizeof(char));
+    MLV_Font *font_50;
+    MLV_Font *font_30;
+    MLV_Image *bg;
+    MLV_Image *pan;
+
+    font_50 = MLV_load_font("font/OpenSans-Bold.ttf", 50);
+    font_30 = MLV_load_font("font/OpenSans-Bold.ttf", 30);
 
     MLV_clear_window(MLV_COLOR_BLACK);
 
+    bg = MLV_load_image("img/jardin.jpg");
+    pan = MLV_load_image("img/3panneaux.png");
+    MLV_draw_image(bg, 0, 0);
+    MLV_draw_image(pan, WIDTH/4+50, 0);
+
     // MENU DISPLAY
-    MLV_draw_text_box(
-         WIDTH/4, 100, 
-         WIDTH/2, 100, 
-         "SOLO", 10, 
-         MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-         MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
-         MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+
+
+    MLV_draw_text_with_font(
+           WIDTH/2-60, 180,
+           "SOLO", font_50,
+           MLV_COLOR_WHITE
     );
 
-    MLV_draw_text_box(
-         WIDTH/4, 300, 
-         WIDTH/2, 100, 
-         "PLAYER VS PLAYER", 10, 
-         MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-         MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
-         MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+    MLV_draw_text_with_font(
+           WIDTH/2-220, 320,
+           "PLAYER VS PLAYER", font_50,
+           MLV_COLOR_WHITE
     );
 
-    MLV_draw_text_box(
-         WIDTH/4, 500, 
-         WIDTH/2, 100, 
-         "PLAYER VS AI", 10, 
-         MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-         MLV_COLOR_YELLOW, MLV_TEXT_CENTER, 
-         MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+    MLV_draw_text_with_font(
+           WIDTH/2-160, 465,
+           "PLAYER VS AI", font_50,
+           MLV_COLOR_WHITE
     );
 
     // FLEET SIZE
@@ -135,6 +140,8 @@ void displayMenu(int fleetSize, int gameSize) {
         }
     }
 
+    MLV_draw_rectangle(WIDTH/4, 100, WIDTH/2, 150, MLV_COLOR_RED);
+
     free(num);
 
     MLV_actualise_window();
@@ -151,7 +158,7 @@ int menuManager(int *x, int *y, int *fleetSize, int *gameSize){
 
     displayMenu(*fleetSize, *gameSize);
     // MENU SELECTION
-    do {
+    do {    
             displayMenu(*fleetSize, *gameSize);
             MLV_wait_mouse(x, y);
             printf("X = %d Y = %d\n", *x, *y);
