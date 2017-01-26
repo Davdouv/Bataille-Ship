@@ -314,7 +314,7 @@ void transitionScreen(int *alert_tab) {
         MLV_draw_text_box(
             WIDTH/4, 250, 
             WIDTH/2, 100, 
-            "IT'S PLAYER 2 TURN!\n PRESS ANY KEY TO CONTINUE", 10, 
+            "IT'S PLAYER 2 TURN!\n CLICK ANYWHERE TO CONTINUE", 10, 
             MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
             MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
@@ -323,7 +323,7 @@ void transitionScreen(int *alert_tab) {
         MLV_draw_text_box(
             WIDTH/4, 250, 
             WIDTH/2, 100, 
-            "IT'S PLAYER 1 TURN!\n PRESS ANY KEY TO CONTINUE", 10, 
+            "IT'S PLAYER 1 TURN!\n CLICK ANYWHERE TO CONTINUE", 10, 
             MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
             MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
@@ -332,9 +332,9 @@ void transitionScreen(int *alert_tab) {
     
 
         MLV_actualise_window();
-        MLV_wait_keyboard(NULL, NULL, NULL);
-       // MLV_wait_mouse (NULL, NULL);
-       // MLV_wait_seconds(0.5);
+        //MLV_wait_keyboard(NULL, NULL, NULL);
+        MLV_wait_mouse (NULL, NULL);
+        MLV_wait_seconds(0.5);
 
         MLV_clear_window(MLV_COLOR_BLACK);
         background();

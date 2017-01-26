@@ -91,6 +91,9 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
     int temp_o = 2;
     int draw = 0;
     MLV_Sound* rotate;
+    MLV_Event event;
+    MLV_Mouse_button click;
+    MLV_Button_state state;
 
     rotate = MLV_load_sound("sound/rotate.ogg");
     int cel_dim = tab_dim/gameSize;
@@ -101,26 +104,28 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
     // Keyboard & Mouse management // DO NOT PUT PRINTF INSIDE THIS LOOP
     do {
         MLV_get_mouse_position(x,y);
-
+        event = MLV_get_event(NULL,NULL,NULL,NULL,NULL,NULL,NULL,&click,&state);
         // If space bar pressed
-        if (MLV_get_keyboard_state(MLV_KEYBOARD_SPACE)==MLV_PRESSED) {
-            if (*o == 0)
-                *o = 1;                                       // Change orientation
-            else if (*o == 1)
-                 *o = 0;
-            
-            temp_o = *o;
-            displaySettableMap (map, p_fleet, gameSize, fleetSize);
+       // if (MLV_get_keyboard_state(MLV_KEYBOARD_SPACE)==MLV_PRESSED) {
+        if (event == MLV_MOUSE_BUTTON && state == MLV_PRESSED) {
+            if (click == MLV_BUTTON_RIGHT) {
+                if (*o == 0)
+                    *o = 1;                                       // Change orientation
+                else if (*o == 1)
+                    *o = 0;
+                
+                temp_o = *o;
+                displaySettableMap (map, p_fleet, gameSize, fleetSize);
 
-            for(k = 0; k < length; k++) {
-               rotationImg(ship[k], *o);
+                for(k = 0; k < length; k++) {
+                rotationImg(ship[k], *o);
+                }
+
+                MLV_play_sound(rotate, 1.0);
+
+                MLV_actualise_window();
             }
-
-            MLV_play_sound(rotate, 1.0);
-
-            MLV_actualise_window();
         }
-
         // Display a ship on the map
         if (mouseInsideGrid(x, y, x_corner_center, gameSize)) {
             for (i = 0; i < length; i++) {

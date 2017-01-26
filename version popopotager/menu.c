@@ -17,14 +17,15 @@ void splashScreen() {
     MLV_draw_image (splash_screen, 0, 0);
 
     MLV_draw_text_with_font(
-           WIDTH/3-20, HEIGHT-300,
-           "PRESS ANY KEY TO START", font,
+           WIDTH/3-50, HEIGHT-300,
+           "CLICK ANYWHERE TO START", font,
            MLV_COLOR_WHITE
     );
 
     MLV_actualise_window();
 
-    MLV_wait_keyboard (NULL, NULL, NULL);
+    //MLV_wait_keyboard (NULL, NULL, NULL);
+    MLV_wait_mouse(NULL, NULL);
 
     MLV_clear_window(MLV_COLOR_BLACK);
     MLV_free_image(splash_screen);
@@ -74,7 +75,7 @@ void displayMenu(int fleetSize, int gameSize) {
     MLV_draw_text_box(
          1100, 100, 
          100, 80, 
-         "FLEET SIZE", 10, 
+         "VEGETABLES", 10, 
          MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
          MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
          MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
@@ -217,24 +218,22 @@ void howTo() {
     MLV_draw_text_box(
             WIDTH/4, 250, 
             WIDTH/2, 100, 
-            "Press left click to select a slot\nPress space to change ship orientation", 10, 
+            "Press left click to select a slot\nPress right click to change ship orientation", 10, 
             MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
             MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
         );
 
-    MLV_draw_text_box(
-            WIDTH/3, 550, 
-            WIDTH/3, 50, 
-            "Press any key to continue", 10, 
-            MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-            MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
-            MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-        );
+    MLV_draw_text_with_font(
+           WIDTH/3-30, HEIGHT-300,
+           "CLICK ANYWHERE TO CONTINUE", font_30,
+           MLV_COLOR_WHITE
+    );
+    
     MLV_actualise_window();
     MLV_wait_seconds(1);
-    //MLV_wait_mouse(NULL, NULL);
-    MLV_wait_keyboard(NULL, NULL, NULL);
+    MLV_wait_mouse(NULL, NULL);
+    //MLV_wait_keyboard(NULL, NULL, NULL);
 
     MLV_free_image(bg);
 }
