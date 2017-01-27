@@ -22,7 +22,6 @@
 #define x_corner_att WIDTH/1.8
 #define y_corner HEIGHT/4       // y coordinate of the top/left corner of the grid
 #define tab_dim HEIGHT/2        // Grid size (it's a square)
-//#define cel_dim tab_dim/NDIM    // Cel size (square too)
 
 
 /* DISPLAY MAP FUNCTIONS */
@@ -75,23 +74,18 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
 
     for (i = 0; i < gameSize; i++) {
 		for (j = 0; j < gameSize; j++) {
-			if (i == 0 && j == 0) {         // First slot
-				//map[i][j] = ' ';            
+			if (i == 0 && j == 0) {         // First slot          
                 MLV_draw_filled_rectangle(x_corner_map, y_corner, cel_dim, cel_dim, MLV_COLOR_RED);
 			}
 			else if (i == 0 && j > 0) {     // Columns
                 sprintf(num,"%d",j);          
-				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
                 MLV_draw_text_box(x_corner_map+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, num, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 			}
 			else if (i > 0 && j == 0) {     // Lines
                 letter[0]= 'A'+i-1+' ';
-				//MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_YELLOW);
                 MLV_draw_text_box(x_corner_map+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, letter, 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_YELLOW, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 			}
 			else {                          // Slots            
-			    //MLV_draw_filled_rectangle(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, MLV_COLOR_BLUE);
-                //MLV_draw_text_box(x_corner+(j*cel_dim), y_corner+(i*cel_dim), cel_dim, cel_dim, ".", 10, MLV_COLOR_BLACK, MLV_COLOR_BLACK, MLV_COLOR_BLUE, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
                 MLV_draw_image (water, x_corner_map+(j*cel_dim), y_corner+(i*cel_dim));
             }
             MLV_draw_line(x_corner_map+(j*cel_dim), y_corner, x_corner_map+(j*cel_dim), y_corner+tab_dim, MLV_COLOR_BLACK);

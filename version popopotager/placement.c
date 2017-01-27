@@ -1,5 +1,4 @@
 /* PLACEMENT.C */
-#define _CRT_SECURE_NO_WARNINGS
 #define WIDTH 1280
 #define HEIGHT 720
 
@@ -13,15 +12,11 @@
 #include "functions.h"
 #include "placement.h"
 
-#define NDIM 11     // Grid dimensions
-#define NSHIPS 5    // Number of ships MUST NOT EXCEED 5!
-
 #define x_corner_center WIDTH/2.7 // x coordinate of the top/left corner of the grid
 #define x_corner_def WIDTH/5
 #define x_corner_att WIDTH/1.8
 #define y_corner HEIGHT/3+20      // y coordinate of the top/left corner of the grid
 #define tab_dim HEIGHT/2        // Grid size (it's a square)
-//#define cel_dim tab_dim/NDIM    // Cel size (square too)
 
 // START //
 
@@ -29,6 +24,7 @@ int division(int a, int b) {
     return a/b;
 }
 
+// Rotate an image
 void rotationImg(MLV_Image *img, int orientation) {
     if (orientation == 0) {
         MLV_rotate_image(img, 90);
@@ -40,8 +36,6 @@ void rotationImg(MLV_Image *img, int orientation) {
 // Give a position to each img of the ship
 void shipPosition (int *x, int *y, int *p_x, int *p_y, int orientation, int num, int gameSize) {
     float i, j;
-    //int ligne, column;
-    //int temp, new_X, new_Y;
     int cel_dim = tab_dim/gameSize;
     
     for (i = (y_corner + 2*cel_dim); i <= (y_corner+tab_dim); i = i + cel_dim) {          // Lines
@@ -105,8 +99,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
     do {
         MLV_get_mouse_position(x,y);
         event = MLV_get_event(NULL,NULL,NULL,NULL,NULL,NULL,NULL,&click,&state);
-        // If space bar pressed
-       // if (MLV_get_keyboard_state(MLV_KEYBOARD_SPACE)==MLV_PRESSED) {
+        // If right click pressed
         if (event == MLV_MOUSE_BUTTON && state == MLV_PRESSED) {
             if (click == MLV_BUTTON_RIGHT) {
                 if (*o == 0)
@@ -171,7 +164,6 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
                 }
             }
         }
-        //MLV_wait_seconds(2);
     } while(select != 1);
 
     MLV_free_sound(rotate);
@@ -235,13 +227,6 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
         printf("l = %d c = %d\n",*l, *c);
         checkposition = checkPlacement(map, l, c, o, p_ship->length, gameSize);
         if (checkposition == 0) {
-            // MLV_draw_text_box(
-            //     80, y_corner+(tab_dim/2), 250, 70,
-            //     "You ship can not be placed here.\nPlease put it somewhere else", 9,
-            //     MLV_COLOR_RED, MLV_COLOR_RED, MLV_COLOR_WHITE,
-            //     MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-            // );
-            // MLV_actualise_window();
             printf("bateau mal placé \n o = %d\n", o);
 
             MLV_play_sound(error, 1.0); // (sound, volume)

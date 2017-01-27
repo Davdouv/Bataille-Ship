@@ -20,7 +20,6 @@
 #define x_corner_att WIDTH/1.8
 #define y_corner HEIGHT/3+20       // y coordinate of the top/left corner of the grid
 #define tab_dim HEIGHT/2        // Grid size (it's a square)
-//#define cel_dim tab_dim/NDIM    // Cel size (square too)
 
 
 // ----------- START OF FLEET ATTACKING FUNCTIONS -------------- //
@@ -268,7 +267,6 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
             MLV_play_sound(miss, 1.0);
         }
 
-        //displayMaps(my_fleet, my_map_def, map_att, alert_tab);
         displayAttackMap(map_att, gameSize);
         MLV_wait_seconds(1);
     } while (check == 1);            // Attack while success

@@ -1,10 +1,9 @@
 /* * * * * * * * * * * * * * */
-/*      BATAILLE  NAVALE     */
+/*        Popopotager        */
 /*       par David Nasr      */
 /*       et Daphné Rose      */
 /* * * * * * * * * * * * * * */
 
-#define _CRT_SECURE_NO_WARNINGS
 #define WIDTH 1280
 #define HEIGHT 720
 

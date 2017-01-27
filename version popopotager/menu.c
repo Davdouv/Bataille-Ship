@@ -1,5 +1,4 @@
 /* MENU.C */
-#define _CRT_SECURE_NO_WARNINGS
 #define WIDTH 1280
 #define HEIGHT 720
 
@@ -24,7 +23,6 @@ void splashScreen() {
 
     MLV_actualise_window();
 
-    //MLV_wait_keyboard (NULL, NULL, NULL);
     MLV_wait_mouse(NULL, NULL);
 
     MLV_clear_window(MLV_COLOR_BLACK);
@@ -142,6 +140,7 @@ void displayMenu(int fleetSize, int gameSize) {
     free(num);
     MLV_free_image(bg);
     MLV_free_image(pan);
+    MLV_free_font(font_50);
 
     MLV_actualise_window();
 }
@@ -218,7 +217,6 @@ void howTo() {
 
     MLV_clear_window(MLV_COLOR_BLACK);
     MLV_draw_image(bg, 0, 0);
-    //MLV_draw_image(pan, WIDTH/4+50, HEIGHT/3);
     MLV_draw_image(pan, WIDTH/4+50, 0);
 
     MLV_draw_text_with_font(
@@ -242,16 +240,6 @@ void howTo() {
            "If you hit, you can shoot again !", font_30,
            MLV_COLOR_WHITE
     );
-/*
-    MLV_draw_text_box(
-            WIDTH/4, 250, 
-            WIDTH/2, 100, 
-            "Press left click to select a slot\nPress right click to change ship orientation\nIf you hit, you can shoot again !", 10, 
-            MLV_COLOR_BLACK, MLV_COLOR_BLACK, 
-            MLV_COLOR_WHITE, MLV_TEXT_CENTER, 
-            MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
-        );
-*/
     MLV_draw_text_with_font(
            WIDTH/2-150, HEIGHT-220,
            "CLICK ANYWHERE TO CONTINUE", font_20,
@@ -259,10 +247,12 @@ void howTo() {
     );
     
     MLV_actualise_window();
-    MLV_wait_seconds(1);
     MLV_wait_mouse(NULL, NULL);
-    //MLV_wait_keyboard(NULL, NULL, NULL);
 
     MLV_free_image(bg);
     MLV_free_image(pan);
+    MLV_free_font(font_20);
+    MLV_free_font(font_30);
+    MLV_free_font(font_50);
+
 }

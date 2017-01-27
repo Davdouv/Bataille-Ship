@@ -216,7 +216,6 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
 
     MLV_init_audio();
 
-    //displayMaps(my_fleet, my_map_def, map_att, alert_tab);
     displayAttackMap(map_att, gameSize);
 
     printf("It's your time to attack !\n");
@@ -276,7 +275,6 @@ void attackRandomFleet(char **my_map_def, char **map_att, char **map_def, int *l
             MLV_play_music(miss, 1.0, 1);
         }
 
-        //displayMaps(my_fleet, my_map_def, map_att, alert_tab);
         displayAttackMap(map_att, gameSize);
         MLV_wait_seconds(1);
     } while (check == 1);            // Attack while success

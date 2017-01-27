@@ -14,15 +14,11 @@
 #include "struct.h"
 #include "functions.h"
 
-#define NDIM 11     // Grid dimensions
-#define NSHIPS 5    // Number of ships MUST NOT EXCEED 5!
-
 #define x_corner_center WIDTH/2.7        // x coordinate of the top/left corner of the grid
 #define x_corner_def WIDTH/5
 #define x_corner_att WIDTH/1.8
 #define y_corner HEIGHT/3+20       // y coordinate of the top/left corner of the grid
 #define tab_dim HEIGHT/2        // Grid size (it's a square)
-//#define cel_dim tab_dim/NDIM    // Cel size (square too)
 
 
 /* DISPLAY MAP FUNCTIONS */
@@ -71,13 +67,13 @@ void displayOneMap(int map, int x_corner_map, int gameSize) {
     if (map == 0) {
        MLV_draw_text_with_font(
            x_corner_map+120, y_corner-30,
-           "Defensive Map", font,
+           "Your plantation", font,
            MLV_COLOR_WHITE
        );
     } else {
         MLV_draw_text_with_font(
-           x_corner_map+120, y_corner-30,
-           "Offensive Map", font,
+           x_corner_map+90, y_corner-30,
+           "Ennemy's plantation", font,
            MLV_COLOR_WHITE
        );
     }
@@ -332,7 +328,6 @@ void transitionScreen(int *alert_tab) {
     
 
         MLV_actualise_window();
-        //MLV_wait_keyboard(NULL, NULL, NULL);
         MLV_wait_mouse (NULL, NULL);
         MLV_wait_seconds(0.5);
 
