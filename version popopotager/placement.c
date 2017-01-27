@@ -236,7 +236,7 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
         }
         else {
             MLV_play_sound(place, 0.1);
-            MLV_wait_seconds(0.1);
+            MLV_wait_seconds(1);
         }
     } while(checkposition==0);
 
