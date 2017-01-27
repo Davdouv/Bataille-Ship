@@ -365,7 +365,7 @@ void winner(int game, int *p1_life) {
     background();
 
     if(game == 1) {
-        strcpy(txt, "Congratulations!\nYou Destroyed all your fleet !");
+        strcpy(txt, "Congratulations!\nYou Destroyed all your vegetables !");
     }
     else if(game == 2) {
         if(*p1_life == 0)

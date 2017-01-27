@@ -315,10 +315,13 @@ void placeFleet(char **map, char **map_att, int *l, int *c, Fleet *p_fleet, int 
     Ship *current_ship; // pointer to the ship that is placed
     current_ship = &(p_fleet->carrier); // pointer initialized to the first ship Carrier
     for (i = 0; i<fleetSize; i++) {
+        current_ship += 1; // the pointer goes to the last ship+1
+    }
+    for (i = 0; i<fleetSize; i++) {
+        current_ship -= 1; // the pointer changes to the previous ship
         printf("Set %s (%d)\n", current_ship->name, current_ship->length);
         placeShip(p_fleet, map, map_att, l, c, current_ship, i, x, y, alert_tab, gameSize, fleetSize);
         MLV_actualise_window();
-        current_ship += 1; // the pointer changes to the next ship
     }
 }
 
@@ -331,6 +334,10 @@ void placeRandomFleet(char **map, int *l, int *c, Fleet *ai_fleet, int fleetSize
     srand(time(NULL));
     current_ship = &(ai_fleet->carrier); // pointer initialized to the first ship Carrier
     for (i = 0; i<fleetSize; i++) {
+        current_ship += 1; // the pointer goes to the last ship+1
+    }
+    for (i = 0; i<fleetSize; i++) {
+        current_ship -= 1; // the pointer changes to the previous ship
         do {
             *l = randomNumber(1, gameSize);
             *c = randomNumber(1, gameSize);
@@ -352,8 +359,6 @@ void placeRandomFleet(char **map, int *l, int *c, Fleet *ai_fleet, int fleetSize
                 map[*l + j][*c] = '1'+i;
             }
         }
-
-        current_ship += 1; // the pointer changes to the next ship
     }
 }
 

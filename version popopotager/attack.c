@@ -145,7 +145,7 @@ void attackFleet(char **my_map_def, char **map_att, char **map_def, int *l, int 
         }
 
         displayMaps(my_fleet, my_map_def, map_att, alert_tab, gameSize, fleetSize);
-        MLV_wait_seconds(1);
+        //MLV_wait_seconds(1);
     } while (check == 1);            // Attack while success
 
     MLV_wait_seconds(1);

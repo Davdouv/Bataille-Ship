@@ -233,8 +233,8 @@ void howTo() {
            MLV_COLOR_WHITE
     );
     MLV_draw_text_with_font(
-           WIDTH/3-120, HEIGHT/3+130,
-           "Press RIGHT CLICK to change ship orientation", font_30,
+           WIDTH/3-140, HEIGHT/3+130,
+           "Press RIGHT CLICK to change vegetable orientation", font_30,
            MLV_COLOR_WHITE
     );
     MLV_draw_text_with_font(
