@@ -50,7 +50,9 @@ void shipPosition (int *x, int *y, int *p_x, int *p_y, int orientation, int num,
             }
         }
     }
+
 /*
+    // This is our 1st try to create a more economic function to calculate the ship position from the mouse position :
     if( o == 0 )
     {
         *p_x = division(*x,cel_dim)*cel_dim+(cel_dim*num); // calculate the nearest X position for a ship from mouse position
@@ -62,7 +64,7 @@ void shipPosition (int *x, int *y, int *p_x, int *p_y, int orientation, int num,
        *p_y = (division(*y,cel_dim)*cel_dim)-0.5*cel_dim+(cel_dim*num); // calculate the nearest Y position for a ship from mouse position
     }
 
-
+    // This is our 2nd try to create a more economic function to calculate the ship position from the mouse position :
         temp = *x * tab_dim;
         new_X = division(temp, WIDTH);
         ligne = division(new_X, cel_dim); // calculate the nearest X position for a ship from mouse position
@@ -76,6 +78,7 @@ void shipPosition (int *x, int *y, int *p_x, int *p_y, int orientation, int num,
 }
 
 // Give Orientation + selected slot
+// Display ships following the mouse
 int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **map_att, int *l, int *c, int *x, int *y, int *o, int *alert_tab, int gameSize, int fleetSize) {
     int i, j, k;
     int select = 0;
@@ -95,7 +98,7 @@ int putShip(Fleet *p_fleet, MLV_Image *ship[], int length, char **map, char **ma
     *l = 1; // Reset line cursor
     *c = 1; // Reset column cursor
     
-    // Keyboard & Mouse management // DO NOT PUT PRINTF INSIDE THIS LOOP
+    // Keyboard & Mouse management // WARNING THIS IS A VERY LONG LOOP // BE CAREFUL // AVOID PRINTF IN DEPENDANT FUNCTIONS
     do {
         MLV_get_mouse_position(x,y);
         event = MLV_get_event(NULL,NULL,NULL,NULL,NULL,NULL,NULL,&click,&state);
@@ -233,7 +236,7 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
         }
         else {
             MLV_play_sound(place, 0.1);
-            MLV_wait_seconds(1);
+            MLV_wait_seconds(0.1);
         }
     } while(checkposition==0);
 
@@ -291,7 +294,7 @@ void placeShip(Fleet *p_fleet, char **map, char **map_att, int *l, int *c, Ship 
         }
     }
 
-    MLV_wait_seconds(1); // Wait 1 second
+    MLV_wait_seconds(0.1); // Wait 1 second
 }
 
 // Place all ships
